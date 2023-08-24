@@ -1,8 +1,38 @@
-import { NextAuthOptions } from "next-auth";
+import { DefaultSession, NextAuthOptions } from "next-auth";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "~/server/db/db";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { users } from "~/server/db/schema/account";
+import { compare } from "bcrypt";
+import { DefaultJWT } from "next-auth/jwt";
+import { eq } from "drizzle-orm";
+
+/**
+ * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
+ * object and keep type safety.
+ *
+ * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
+ */
+declare module "next-auth" {
+  interface Session extends DefaultSession {
+    user: {
+      id: string;
+      // ...other properties
+      // role: UserRole;
+    } & DefaultSession["user"];
+  }
+
+  // interface User {
+  //   // ...other properties
+  //   // role: UserRole;
+  // }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT extends Record<string, unknown>, DefaultJWT {
+    sub: string;
+  }
+}
 
 export const authOptions: NextAuthOptions = {
   callbacks: {
@@ -44,8 +74,9 @@ export const authOptions: NextAuthOptions = {
 
         const { username, password } = credentials;
         const user = await db
-          .selectDistinctOn([users.id], { name: users.name })
-          .from(users);
+          .select()
+          .from(users)
+          .where(eq(users.name, username));
         // const user = await prisma.user.findUnique({
         //   where: {
         //     username,
@@ -66,7 +97,7 @@ export const authOptions: NextAuthOptions = {
         // }
 
         // eslint-disable-next-line
-        const match = await compare(password, user.password);
+        const match = await compare(password, user[0].password);
 
         if (!match) throw new Error("Incorrect credentials. Try again");
         console.log(user);
