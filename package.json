@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@opentelemetry/api": "^1.4.1",
+    "dotenv": "^16.3.1",
     "drizzle-kit": "^0.19.13",
     "eslint-config-prettier": "^9.0.0"
   }
