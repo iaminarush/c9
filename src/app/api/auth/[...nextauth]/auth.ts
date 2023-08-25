@@ -3,7 +3,7 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "~/server/db/db";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { users } from "~/server/db/schema/account";
-import { compare } from "bcrypt";
+import { compare, hash } from "bcrypt";
 import { DefaultJWT } from "next-auth/jwt";
 import { eq } from "drizzle-orm";
 
@@ -73,31 +73,30 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Please enter credentials and try again");
 
         const { username, password } = credentials;
-        const user = await db
+        const [user] = await db
           .select()
           .from(users)
-          .where(eq(users.name, username));
-        // const user = await prisma.user.findUnique({
-        //   where: {
-        //     username,
-        //   },
-        // });
+          .where(eq(users.username, username))
+          .limit(1);
 
         if (!user) throw new Error("Incorrect credentials. Try again");
 
         // if (!user) {
-        //   const createdUser = await prisma.user.create({
-        //     data: {
-        //       username,
-        //       password: await hash(password, 12), //eslint-disable-line
-        //     },
-        //   });
+        //   const passwordHash = await hash(password, 12);
+        //   const [createdUser] = await db
+        //     .insert(users)
+        //     .values({
+        //       username: username,
+        //       password: await hash(password, 12),
+        //     })
+        //     .returning();
 
-        //   return createdUser;
+        //   if (createdUser) return createdUser;
+        //   else return null;
         // }
 
         // eslint-disable-next-line
-        const match = await compare(password, user[0].password);
+        const match = await compare(password, user.password);
 
         if (!match) throw new Error("Incorrect credentials. Try again");
         console.log(user);

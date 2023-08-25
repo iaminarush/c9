@@ -6,11 +6,15 @@ import {
   integer,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccount } from "next-auth/adapters";
+import { createId } from "@paralleldrive/cuid2";
 
 export const users = pgTable("user", {
-  id: text("id").notNull().primaryKey(),
+  id: text("id")
+    .notNull()
+    .primaryKey()
+    .$default(() => createId()),
   name: text("name"),
-  email: text("email").notNull().unique(),
+  email: text("email").unique(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
