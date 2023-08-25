@@ -7,12 +7,19 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "push": "drizzle-kit push:pg"
+    "push": "drizzle-kit push:pg",
+    "pull": "drizzle-kit introspect:pg",
+    "studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^0.3.2",
+    "@mantine/core": "7.0.0-beta.1",
+    "@mantine/hooks": "7.0.0-beta.1",
     "@neondatabase/serverless": "^0.6.0",
+    "@paralleldrive/cuid2": "^2.2.2",
     "@t3-oss/env-nextjs": "^0.6.1",
+    "@tabler/icons": "^2.32.0",
+    "@ts-rest/core": "^3.28.0",
     "@types/node": "20.5.4",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
@@ -35,6 +42,9 @@
     "dotenv": "^16.3.1",
     "drizzle-kit": "^0.19.13",
     "eslint-config-prettier": "^9.0.0",
-    "pg": "^8.11.3"
+    "pg": "^8.11.3",
+    "postcss": "^8.4.28",
+    "postcss-preset-mantine": "^1.7.0",
+    "postcss-simple-vars": "^7.0.1"
   }
 }
