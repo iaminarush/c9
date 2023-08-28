@@ -1,7 +1,7 @@
 import { AppShell } from "@mantine/core";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Providers from "~/Providers";
+import Providers from "~/providers";
 
 import "@mantine/core/styles.css";
 

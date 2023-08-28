@@ -5,12 +5,11 @@ import {
   AppShellNavbar,
   Burger,
   Group,
-  Text,
   UnstyledButton,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import classes from "./NavLayout.module.css";
 import { ReactNode } from "react";
+import classes from "./NavLayout.module.css";
 
 export default function NavLayout({ children }: { children: ReactNode }) {
   const [opened, { toggle }] = useDisclosure();

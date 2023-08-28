@@ -26,9 +26,21 @@ dependencies:
   '@tabler/icons':
     specifier: ^2.32.0
     version: 2.32.0
+  '@tanstack/react-query':
+    specifier: ^4.33.0
+    version: 4.33.0(react-dom@18.2.0)(react@18.2.0)
+  '@tanstack/react-query-devtools':
+    specifier: ^4.33.0
+    version: 4.33.0(@tanstack/react-query@4.33.0)(react-dom@18.2.0)(react@18.2.0)
   '@ts-rest/core':
     specifier: ^3.28.0
     version: 3.28.0(zod@3.22.2)
+  '@ts-rest/next':
+    specifier: ^3.28.0
+    version: 3.28.0(@ts-rest/core@3.28.0)(next@13.4.19)(zod@3.22.2)
+  '@ts-rest/react-query':
+    specifier: ^3.28.0
+    version: 3.28.0(@tanstack/react-query@4.33.0)(@ts-rest/core@3.28.0)(react@18.2.0)(zod@3.22.2)
   '@types/node':
     specifier: 20.5.4
     version: 20.5.4
@@ -47,6 +59,9 @@ dependencies:
   drizzle-orm:
     specifier: ^0.28.4
     version: 0.28.4(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.4.1)(pg@8.11.3)(postgres@3.3.5)
+  drizzle-zod:
+    specifier: ^0.5.1
+    version: 0.5.1(drizzle-orm@0.28.4)(zod@3.22.2)
   eslint:
     specifier: 8.47.0
     version: 8.47.0
@@ -868,6 +883,50 @@ packages:
     resolution: {integrity: sha512-w1oNvrnqFipoBEy2/0X4/IHo2aLsijuz4QRi/HizxqiaoMfmWG5X2DpEYTw9WnGvFmixpu/rtQsQAr7Wr0Mc2w==}
     dev: false
 
+  /@tanstack/match-sorter-utils@8.8.4:
+    resolution: {integrity: sha512-rKH8LjZiszWEvmi01NR72QWZ8m4xmXre0OOwlRGnjU01Eqz/QnN+cqpty2PJ0efHblq09+KilvyR7lsbzmXVEw==}
+    engines: {node: '>=12'}
+    dependencies:
+      remove-accents: 0.4.2
+    dev: false
+
+  /@tanstack/query-core@4.33.0:
+    resolution: {integrity: sha512-qYu73ptvnzRh6se2nyBIDHGBQvPY1XXl3yR769B7B6mIDD7s+EZhdlWHQ67JI6UOTFRaI7wupnTnwJ3gE0Mr/g==}
+    dev: false
+
+  /@tanstack/react-query-devtools@4.33.0(@tanstack/react-query@4.33.0)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-6gegkuDmOoiY5e6ZKj1id48vlCXchjfE/6tIpYO8dFlVMQ7t1bYna/Ce6qQJ69+kfEHbYiTTn2lj+FDjIBH7Hg==}
+    peerDependencies:
+      '@tanstack/react-query': ^4.33.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@tanstack/match-sorter-utils': 8.8.4
+      '@tanstack/react-query': 4.33.0(react-dom@18.2.0)(react@18.2.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      superjson: 1.13.1
+      use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: false
+
+  /@tanstack/react-query@4.33.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-97nGbmDK0/m0B86BdiXzx3EW9RcDYKpnyL2+WwyuLHEgpfThYAnXFaMMmnTDuAO4bQJXEhflumIEUfKmP7ESGA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-native: '*'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      '@tanstack/query-core': 4.33.0
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: false
+
   /@ts-rest/core@3.28.0(zod@3.22.2):
     resolution: {integrity: sha512-m0Wn2DgO3O57dsGT5fqxvF/WNFPx/8/dxbqLMV9TYXwLBgaJG4vDgR7qXVIYss/c5vlHTQ0oB9X+PwxhI3ksMg==}
     peerDependencies:
@@ -876,6 +935,38 @@ packages:
       zod:
         optional: true
     dependencies:
+      zod: 3.22.2
+    dev: false
+
+  /@ts-rest/next@3.28.0(@ts-rest/core@3.28.0)(next@13.4.19)(zod@3.22.2):
+    resolution: {integrity: sha512-Ao9UyxuboVgpFDBAYOASPe47IYXpVO6KpMMZ/c/hJVE6KN66Re/CeIjz3sqetG5G36HoqxyhpkUBr6p22xYLSw==}
+    peerDependencies:
+      '@ts-rest/core': 3.28.0
+      next: ^12.0.0 || ^13.0.0
+      zod: ^3.21.0
+    peerDependenciesMeta:
+      zod:
+        optional: true
+    dependencies:
+      '@ts-rest/core': 3.28.0(zod@3.22.2)
+      next: 13.4.19(@opentelemetry/api@1.4.1)(react-dom@18.2.0)(react@18.2.0)
+      zod: 3.22.2
+    dev: false
+
+  /@ts-rest/react-query@3.28.0(@tanstack/react-query@4.33.0)(@ts-rest/core@3.28.0)(react@18.2.0)(zod@3.22.2):
+    resolution: {integrity: sha512-sLMTS48TeDYz5r0sGP2OgmHghe1MvGfHrOWLGjNux13SygDwAWuo5+RMW7YEAtN5CbxJYDIMl6xP86Zc8F2v0g==}
+    peerDependencies:
+      '@tanstack/react-query': ^4.18.0
+      '@ts-rest/core': 3.28.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      zod: ^3.21.0
+    peerDependenciesMeta:
+      zod:
+        optional: true
+    dependencies:
+      '@tanstack/react-query': 4.33.0(react-dom@18.2.0)(react@18.2.0)
+      '@ts-rest/core': 3.28.0(zod@3.22.2)
+      react: 18.2.0
       zod: 3.22.2
     dev: false
 
@@ -1299,6 +1390,13 @@ packages:
     engines: {node: '>= 0.6'}
     dev: false
 
+  /copy-anything@3.0.5:
+    resolution: {integrity: sha512-yCEafptTtb4bk7GLEQoM8KVJpxAfdBJYaXyzQEgQQQgYrZiDp8SJmGKlYza6CYjEDNstAdNdKA3UuoULlEbS6w==}
+    engines: {node: '>=12.13'}
+    dependencies:
+      is-what: 4.1.15
+    dev: false
+
   /cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
     engines: {node: '>= 8'}
@@ -1503,6 +1601,16 @@ packages:
       '@opentelemetry/api': 1.4.1
       pg: 8.11.3
       postgres: 3.3.5
+    dev: false
+
+  /drizzle-zod@0.5.1(drizzle-orm@0.28.4)(zod@3.22.2):
+    resolution: {integrity: sha512-C/8bvzUH/zSnVfwdSibOgFjLhtDtbKYmkbPbUCq46QZyZCH6kODIMSOgZ8R7rVjoI+tCj3k06MRJMDqsIeoS4A==}
+    peerDependencies:
+      drizzle-orm: '>=0.23.13'
+      zod: '*'
+    dependencies:
+      drizzle-orm: 0.28.4(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.4.1)(pg@8.11.3)(postgres@3.3.5)
+      zod: 3.22.2
     dev: false
 
   /emoji-regex@8.0.0:
@@ -2482,6 +2590,11 @@ packages:
       get-intrinsic: 1.2.1
     dev: false
 
+  /is-what@4.1.15:
+    resolution: {integrity: sha512-uKua1wfy3Yt+YqsD6mTUEa2zSi3G1oPlqTflgaPJ7z63vUGN5pxFpnQfeSLMFnJDEsdvOtkp1rUWkYjB4YfhgA==}
+    engines: {node: '>=12.13'}
+    dev: false
+
   /isarray@2.0.5:
     resolution: {integrity: sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw==}
     dev: false
@@ -3289,6 +3402,10 @@ packages:
       functions-have-names: 1.2.3
     dev: false
 
+  /remove-accents@0.4.2:
+    resolution: {integrity: sha512-7pXIJqJOq5tFgG1A2Zxti3Ht8jJF337m4sowbuHsW30ZnkQFnDzy9qBNhgzX8ZLW4+UBcXiiR7SwR6pokHsxiA==}
+    dev: false
+
   /resolve-from@4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
     engines: {node: '>=4'}
@@ -3524,6 +3641,13 @@ packages:
       postcss: 8.4.28
     dev: true
 
+  /superjson@1.13.1:
+    resolution: {integrity: sha512-AVH2eknm9DEd3qvxM4Sq+LTCkSXE2ssfh1t11MHMXyYXFQyQ1HLgVvV+guLTsaQnJU3gnaVo34TohHPulY/wLg==}
+    engines: {node: '>=10'}
+    dependencies:
+      copy-anything: 3.0.5
+    dev: false
+
   /supports-color@7.2.0:
     resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
     engines: {node: '>=8'}
@@ -3743,6 +3867,14 @@ packages:
       detect-node-es: 1.1.0
       react: 18.2.0
       tslib: 2.6.2
+    dev: false
+
+  /use-sync-external-store@1.2.0(react@18.2.0):
+    resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /util-deprecate@1.0.2:

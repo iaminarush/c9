@@ -1,12 +1,34 @@
+"use client";
+
 import { MantineProvider } from "@mantine/core";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { mantineTheme } from "./theme";
 import NavLayout from "./NavLayout";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { client } from "~/contracts/contract";
+import { SessionProvider } from "next-auth/react";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export default function Providers({ children }: { children: ReactNode }) {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 3 } },
+      })
+  );
+
   return (
-    <MantineProvider theme={mantineTheme}>
-      <NavLayout>{children}</NavLayout>
-    </MantineProvider>
+    <SessionProvider>
+      <MantineProvider theme={mantineTheme}>
+        <QueryClientProvider client={queryClient}>
+          <NavLayout>{children}</NavLayout>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </MantineProvider>
+    </SessionProvider>
   );
 }
