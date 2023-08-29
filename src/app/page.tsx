@@ -8,7 +8,7 @@ const useCategories = () =>
   });
 
 const useCategory = () =>
-  client.categories.getCategory.useQuery(["category"], { params: { id: "1" } });
+  client.categories.getCategory.useQuery(["category"], { params: { id: "2" } });
 
 export default function Home() {
   const category = useCategory();

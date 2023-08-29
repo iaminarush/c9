@@ -48,6 +48,12 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   adapter: DrizzleAdapter(db),
+  // pages: {
+  //   signIn: "/auth/signin",
+  //   signOut: "/auth/signout",
+  //   error: "/auth/error",
+  //   verifyRequest: "/auth/verify-request",
+  // },
   providers: [
     // DiscordProvider({
     //   clientId: env.DISCORD_CLIENT_ID,
