@@ -22,11 +22,8 @@ export default function Home() {
   }
 
   return (
-    <div>{category.data.body.name}</div>
-    // <div>
-    //   {categories.data.body.categories.map((cat) => (
-    //     <p key={cat.id}>{cat.name}</p>
-    //   ))}
-    // </div>
+    <>
+      <div>{category.data.body.name}</div>
+    </>
   );
 }

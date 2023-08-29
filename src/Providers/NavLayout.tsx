@@ -4,6 +4,7 @@ import {
   AppShellHeader,
   AppShellNavbar,
   Burger,
+  Container,
   Group,
   UnstyledButton,
 } from "@mantine/core";
@@ -17,6 +18,7 @@ export default function NavLayout({ children }: { children: ReactNode }) {
   return (
     <AppShell
       header={{ height: 60 }}
+      footer={{ height: 0 }}
       navbar={{
         width: 300,
         breakpoint: "sm",
@@ -49,7 +51,9 @@ export default function NavLayout({ children }: { children: ReactNode }) {
         <UnstyledButton className={classes.control}>Support</UnstyledButton>
       </AppShellNavbar>
 
-      <AppShell.Main>{children}</AppShell.Main>
+      <AppShell.Main>
+        <Container size={"xl"}>{children}</Container>
+      </AppShell.Main>
     </AppShell>
   );
 }

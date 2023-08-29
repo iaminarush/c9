@@ -10,8 +10,7 @@ export const contract = c.router(
     categories: categoryContract,
   },
   {
-    // strictStatusCodes: true,
-    // pathPrefix: "/api",
+    strictStatusCodes: true,
   }
 );
 

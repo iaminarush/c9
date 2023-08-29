@@ -26,7 +26,7 @@ export const categoryContract = c.router({
     path: `/categories/:id`,
     responses: { 200: categorySchema, 404: z.object({ message: z.string() }) },
     body: insertCategorySchema,
-    summary: "Update a post",
+    summary: "Update a category",
     metadata: {
       roles: ["user"],
       resource: "category",
