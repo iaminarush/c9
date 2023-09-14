@@ -6,7 +6,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { SessionProvider } from "next-auth/react";
 import { ReactNode, useState } from "react";
 import NavLayout from "./NavLayout";
-import { mantineTheme } from "./theme";
 
 export default function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(
