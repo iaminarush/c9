@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 import { createTheme } from "@mantine/core";
 
 const fontFamily = [
