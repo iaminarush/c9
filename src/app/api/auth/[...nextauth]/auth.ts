@@ -1,8 +1,8 @@
 import { DefaultSession, NextAuthOptions } from "next-auth";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { db } from "~/server/db/db";
+import { db } from "@/server/db/db";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { users } from "~/server/db/schema/account";
+import { users } from "@/server/db/schema/account";
 import { compare, hash } from "bcrypt";
 import { DefaultJWT } from "next-auth/jwt";
 import { eq } from "drizzle-orm";

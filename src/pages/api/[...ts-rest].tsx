@@ -2,10 +2,10 @@ import { ResponseValidationError } from "@ts-rest/core";
 import { createNextRoute, createNextRouter } from "@ts-rest/next";
 import { eq } from "drizzle-orm";
 import { NextApiRequest, NextApiResponse } from "next";
-import { contract } from "~/contracts/contract";
-import { isNumber } from "~/lib/utils";
-import { db } from "~/server/db/db";
-import { categories } from "~/server/db/schema/categories";
+import { contract } from "@/contracts/contract";
+import { isNumber } from "@/lib/utils";
+import { db } from "@/server/db/db";
+import { categories } from "@/server/db/schema/categories";
 
 const categoriesRouter = createNextRoute(contract.categories, {
   createCategory: async (args) => {

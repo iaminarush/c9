@@ -1,7 +1,7 @@
 import { initContract } from "@ts-rest/core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
-import { categories } from "~/server/db/schema/categories";
+import { categories } from "@/server/db/schema/categories";
 
 const categorySchema = createSelectSchema(categories);
 

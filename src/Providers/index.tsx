@@ -9,7 +9,7 @@ import {
   QueryClientProvider,
   useQueryClient,
 } from "@tanstack/react-query";
-import { client } from "~/contracts/contract";
+import { client } from "@/contracts/contract";
 import { SessionProvider } from "next-auth/react";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
@@ -26,7 +26,7 @@ export default function Providers({ children }: { children: ReactNode }) {
       <MantineProvider theme={mantineTheme}>
         <QueryClientProvider client={queryClient}>
           <NavLayout>{children}</NavLayout>
-          <ReactQueryDevtools initialIsOpen={false} />
+          <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
         </QueryClientProvider>
       </MantineProvider>
     </SessionProvider>

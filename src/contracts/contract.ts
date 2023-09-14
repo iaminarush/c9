@@ -1,7 +1,7 @@
 import { initContract } from "@ts-rest/core";
 import { categoryContract } from "./contract-category";
 import { initQueryClient } from "@ts-rest/react-query";
-import { env } from "~/env.mjs";
+import { env } from "@/env.mjs";
 
 const c = initContract();
 

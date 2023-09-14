@@ -3,6 +3,7 @@ import {
   AppShell,
   AppShellHeader,
   AppShellNavbar,
+  Box,
   Burger,
   Container,
   Group,
@@ -24,6 +25,7 @@ export default function NavLayout({ children }: { children: ReactNode }) {
         breakpoint: "sm",
         collapsed: { desktop: true, mobile: !opened },
       }}
+      // styles={{ main: { minHeight: "100vh", paddingBottom: 16 } }}
       padding="md"
     >
       <AppShellHeader>
@@ -52,7 +54,7 @@ export default function NavLayout({ children }: { children: ReactNode }) {
       </AppShellNavbar>
 
       <AppShell.Main>
-        <Container size={"xl"}>{children}</Container>
+        <Container>{children}</Container>
       </AppShell.Main>
     </AppShell>
   );

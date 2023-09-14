@@ -1,7 +1,7 @@
-import { AppShell } from "@mantine/core";
+import { AppShell, ColorSchemeScript } from "@mantine/core";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Providers from "~/providers";
+import Providers from "@/providers";
 
 import "@mantine/core/styles.css";
 
@@ -19,6 +19,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <ColorSchemeScript />
+      </head>
       <body className={inter.className}>
         <Providers>{children}</Providers>
       </body>
