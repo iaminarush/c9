@@ -19,7 +19,7 @@ export default function NavLayout({ children }: { children: ReactNode }) {
   return (
     <AppShell
       header={{ height: 60 }}
-      footer={{ height: 0 }}
+      // footer={{ height: 0 }}
       navbar={{
         width: 300,
         breakpoint: "sm",
