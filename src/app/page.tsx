@@ -11,15 +11,15 @@ const useCategory = () =>
   client.categories.getCategory.useQuery(["category"], { params: { id: "2" } });
 
 export default function Home() {
-  // const categories = useCategories();
+  const categories = useCategories();
 
-  // if (categories.isLoading) {
-  //   return <div>Loading...</div>;
-  // }
+  if (categories.isLoading) {
+    return <div>Loading...</div>;
+  }
 
-  // if (categories.isError) {
-  //   return <div>Error</div>;
-  // }
+  if (categories.isError) {
+    return <div>Error</div>;
+  }
 
   return (
     <>
