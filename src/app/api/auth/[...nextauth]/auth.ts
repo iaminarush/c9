@@ -105,7 +105,6 @@ export const authOptions: NextAuthOptions = {
         const match = await compare(password, user.password);
 
         if (!match) throw new Error("Incorrect credentials. Try again");
-        console.log(user);
 
         return user;
       },
