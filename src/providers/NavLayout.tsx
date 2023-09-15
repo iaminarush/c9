@@ -1,4 +1,5 @@
 "use client";
+
 import {
   AppShell,
   AppShellHeader,
@@ -19,7 +20,7 @@ export default function NavLayout({ children }: { children: ReactNode }) {
   return (
     <AppShell
       header={{ height: 60 }}
-      // footer={{ height: 0 }}
+      // footer={{ height: 1 }}
       navbar={{
         width: 300,
         breakpoint: "sm",
