@@ -22,7 +22,7 @@ export default function Providers({ children }: { children: ReactNode }) {
       >
         <QueryClientProvider client={queryClient}>
           <NavLayout>{children}</NavLayout>
-          <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+          {/* <ReactQueryDevtools initialIsOpen={false} position="bottom-right" /> */}
         </QueryClientProvider>
       </MantineProvider>
     </SessionProvider>

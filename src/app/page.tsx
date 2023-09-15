@@ -27,11 +27,11 @@ export default function Home() {
         {/* {categories.data.body.categories.map((c, i) => (
           <div key={i}>{c.name}</div>
         ))} */}
-        {Array(31)
+        {/* {Array(31)
           .fill("test")
           .map((a, i) => (
             <div key={i}>{a}</div>
-          ))}
+          ))} */}
       </div>
     </>
   );
