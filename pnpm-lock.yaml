@@ -9,11 +9,11 @@ dependencies:
     specifier: ^0.3.2
     version: 0.3.2
   '@mantine/core':
-    specifier: 7.0.0-beta.5
-    version: 7.0.0-beta.5(@mantine/hooks@7.0.0-beta.5)(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0)
+    specifier: 7.0.0-beta.6
+    version: 7.0.0-beta.6(@mantine/hooks@7.0.0-beta.6)(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0)
   '@mantine/hooks':
-    specifier: 7.0.0-beta.5
-    version: 7.0.0-beta.5(react@18.2.0)
+    specifier: 7.0.0-beta.6
+    version: 7.0.0-beta.6(react@18.2.0)
   '@neondatabase/serverless':
     specifier: ^0.6.0
     version: 0.6.0
@@ -23,9 +23,9 @@ dependencies:
   '@t3-oss/env-nextjs':
     specifier: ^0.6.1
     version: 0.6.1(typescript@5.1.6)(zod@3.22.2)
-  '@tabler/icons':
-    specifier: ^2.32.0
-    version: 2.32.0
+  '@tabler/icons-react':
+    specifier: ^2.34.0
+    version: 2.34.0(react@18.2.0)
   '@tanstack/react-query':
     specifier: 4.33.0
     version: 4.33.0(react-dom@18.2.0)(react@18.2.0)
@@ -53,6 +53,9 @@ dependencies:
   bcrypt:
     specifier: ^5.1.1
     version: 5.1.1
+  clsx:
+    specifier: ^2.0.0
+    version: 2.0.0
   drizzle-orm:
     specifier: ^0.28.4
     version: 0.28.4(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.4.1)(pg@8.11.3)(postgres@3.3.5)
@@ -460,15 +463,15 @@ packages:
   /@humanwhocodes/object-schema@1.2.1:
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
 
-  /@mantine/core@7.0.0-beta.5(@mantine/hooks@7.0.0-beta.5)(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-tMVc7QusNRPofn4oOEhO3BZjqpUdXK0CvR2K1u5OIwSWX4hvOMxg5xfEUFygvlQwNtV4IQ40xy4+PdX/Q9DyAw==}
+  /@mantine/core@7.0.0-beta.6(@mantine/hooks@7.0.0-beta.6)(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-BD9xjYhOJe49GJlOjBzu4tXGP/lnfKokIlZ+ki7k+7O0JNkLePZrWkiuN5PptQUOn5AJBZDOw5DMgtyJIiah5w==}
     peerDependencies:
-      '@mantine/hooks': 7.0.0-beta.5
+      '@mantine/hooks': 7.0.0-beta.6
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
       '@floating-ui/react': 0.24.8(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': 7.0.0-beta.5(react@18.2.0)
+      '@mantine/hooks': 7.0.0-beta.6(react@18.2.0)
       clsx: 2.0.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -480,8 +483,8 @@ packages:
       - '@types/react'
     dev: false
 
-  /@mantine/hooks@7.0.0-beta.5(react@18.2.0):
-    resolution: {integrity: sha512-nULpVscntqG3YaCCmKyq7BcXZcp9BIUeBwbT+lszPiwktmfxSx08DTWNd50hgkaO3FfI9qKW/bDzm0Nrlp/U1A==}
+  /@mantine/hooks@7.0.0-beta.6(react@18.2.0):
+    resolution: {integrity: sha512-GZCNkfVNxRCemEnPnekKZJUQFBSVkLO1ZXpJBEg7a6UTi8+WHHeYWOYfNq27C19g18iCSKw/XFZA6XXUd8Z7Tw==}
     peerDependencies:
       react: ^18.2.0
     dependencies:
@@ -671,8 +674,18 @@ packages:
       zod: 3.22.2
     dev: false
 
-  /@tabler/icons@2.32.0:
-    resolution: {integrity: sha512-w1oNvrnqFipoBEy2/0X4/IHo2aLsijuz4QRi/HizxqiaoMfmWG5X2DpEYTw9WnGvFmixpu/rtQsQAr7Wr0Mc2w==}
+  /@tabler/icons-react@2.34.0(react@18.2.0):
+    resolution: {integrity: sha512-HNNTdwwAW8IwUxLPY2HWFw+d7nPVByieamIx90qM1+Rq8UfvLjwsBFNcUKaJcfRFIAa80o4g6ZGy/NMD/Zw73A==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@tabler/icons': 2.34.0
+      prop-types: 15.8.1
+      react: 18.2.0
+    dev: false
+
+  /@tabler/icons@2.34.0:
+    resolution: {integrity: sha512-65GsJsT4ZBETWcdrNxbsjsbRoZvbVk3CcU2SafaElrzP1wpOeuAn9aELVEbxhdyZyP9dg2SCfgH6iAArJgp7lw==}
     dev: false
 
   /@tanstack/match-sorter-utils@8.8.4:
