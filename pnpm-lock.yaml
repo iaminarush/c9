@@ -55,7 +55,7 @@ dependencies:
     version: 5.1.1
   drizzle-orm:
     specifier: ^0.28.4
-    version: 0.28.4(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.4.1)(bun-types@1.0.1)(pg@8.11.3)(postgres@3.3.5)
+    version: 0.28.4(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.4.1)(pg@8.11.3)(postgres@3.3.5)
   drizzle-zod:
     specifier: ^0.5.1
     version: 0.5.1(drizzle-orm@0.28.4)(zod@3.22.2)
@@ -94,9 +94,6 @@ devDependencies:
   '@types/bcrypt':
     specifier: ^5.0.0
     version: 5.0.0
-  bun-types:
-    specifier: ^1.0.1
-    version: 1.0.1
   dotenv:
     specifier: ^16.3.1
     version: 16.3.1
@@ -1086,9 +1083,6 @@ packages:
     resolution: {integrity: sha512-a7ZpuTZU1TRtnwyCNW3I5dc0wWNC3VR9S++Ewyk2HHZdrO3CQJqSpd+95Us590V6AL7JqUAH2IwZ/398PmNFgw==}
     engines: {node: '>=4'}
 
-  /bun-types@1.0.1:
-    resolution: {integrity: sha512-7NrXqhMIaNKmWn2dSWEQ50znMZqrN/5Z0NBMXvQTRu/+Y1CvoXRznFy0pnqLe024CeZgVdXoEpARNO1JZLAPGw==}
-
   /busboy@1.6.0:
     resolution: {integrity: sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==}
     engines: {node: '>=10.16.0'}
@@ -1344,7 +1338,7 @@ packages:
       - supports-color
     dev: true
 
-  /drizzle-orm@0.28.4(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.4.1)(bun-types@1.0.1)(pg@8.11.3)(postgres@3.3.5):
+  /drizzle-orm@0.28.4(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.4.1)(pg@8.11.3)(postgres@3.3.5):
     resolution: {integrity: sha512-BEATAB0g0Y8PKbJHkHLLENlX2DXktO5XyeNyrXB6ktcNkg3dlMfePwB3LodBJkPY6d7GixFF+jvtdZsWjakJBQ==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
@@ -1408,7 +1402,6 @@ packages:
     dependencies:
       '@neondatabase/serverless': 0.6.0
       '@opentelemetry/api': 1.4.1
-      bun-types: 1.0.1
       pg: 8.11.3
       postgres: 3.3.5
     dev: false
@@ -1419,7 +1412,7 @@ packages:
       drizzle-orm: '>=0.23.13'
       zod: '*'
     dependencies:
-      drizzle-orm: 0.28.4(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.4.1)(bun-types@1.0.1)(pg@8.11.3)(postgres@3.3.5)
+      drizzle-orm: 0.28.4(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.4.1)(pg@8.11.3)(postgres@3.3.5)
       zod: 3.22.2
     dev: false
 

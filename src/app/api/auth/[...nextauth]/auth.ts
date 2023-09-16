@@ -3,7 +3,7 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "@/server/db/db";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { users } from "@/server/db/schema/account";
-// import { compare, hash } from "bcrypt";
+import { compare, hash } from "bcrypt";
 import { DefaultJWT } from "next-auth/jwt";
 import { eq } from "drizzle-orm";
 
@@ -102,10 +102,7 @@ export const authOptions: NextAuthOptions = {
         // }
 
         // eslint-disable-next-line
-        // const match = await compare(password, user.password);
-        const match = await Bun.password.hash(password, {
-          algorithm: "bcrypt",
-        });
+        const match = await compare(password, user.password);
 
         if (!match) throw new Error("Incorrect credentials. Try again");
 
