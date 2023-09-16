@@ -2,7 +2,9 @@
 
 import {
   AppShell,
+  AppShellFooter,
   AppShellHeader,
+  AppShellMain,
   AppShellNavbar,
   Box,
   Burger,
@@ -19,8 +21,7 @@ export default function NavLayout({ children }: { children: ReactNode }) {
 
   return (
     <AppShell
-      header={{ height: 60 }}
-      // footer={{ height: 1 }}
+      header={{ height: 45 }}
       navbar={{
         width: 300,
         breakpoint: "sm",
@@ -54,9 +55,11 @@ export default function NavLayout({ children }: { children: ReactNode }) {
         <UnstyledButton className={classes.control}>Support</UnstyledButton>
       </AppShellNavbar>
 
-      <AppShell.Main>
+      <AppShellMain style={{ backgroundColor: "gray" }}>
         <Container>{children}</Container>
-      </AppShell.Main>
+      </AppShellMain>
+
+      <AppShellFooter />
     </AppShell>
   );
 }
