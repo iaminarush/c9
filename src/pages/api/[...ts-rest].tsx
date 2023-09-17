@@ -35,14 +35,20 @@ const categoriesRouter = createNextRoute(contract.categories, {
   },
   getCategory: async (args) => {
     if (isNumber(args.params.id)) {
-      const [category] = await db
-        .select()
-        .from(categories)
-        .where(eq(categories.id, Number(args.params.id)));
+      // const [category] = await db
+      //   .select()
+      //   .from(categories)
+      //   .where(eq(categories.id, Number(args.params.id)));
+
+      const [category] = await db.query.categories.findMany({
+        with: {
+          items: true,
+        },
+      });
 
       if (category) {
         return { status: 200, body: category };
-      }
+      } else return { status: 404, body: null };
     }
 
     return { status: 404, body: null };

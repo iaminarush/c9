@@ -1,6 +1,16 @@
 "use client";
 import { client } from "@/contracts/contract";
-import { Stack, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  Group,
+  Modal,
+  Stack,
+  Text,
+  TextInput,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { IconPlus } from "@tabler/icons-react";
 
 const useCategory = (id: string) =>
   client.categories.getCategory.useQuery(["categories", id], {
@@ -9,6 +19,7 @@ const useCategory = (id: string) =>
 
 export default function Category({ params }: { params: { id: string } }) {
   const category = useCategory(params.id);
+  const [opened, { open, close }] = useDisclosure(false);
 
   if (category.isLoading) {
     return <div>Loading...</div>;
@@ -19,9 +30,22 @@ export default function Category({ params }: { params: { id: string } }) {
   }
 
   return (
-    <Stack>
-      <Text>Category Name {category.data.body.name}</Text>
-      <Text>Category Id {category.data.body.id}</Text>
-    </Stack>
+    <>
+      <Stack>
+        <Group justify="space-between">
+          <Text>Category Name: {category.data.body.name}</Text>
+          <ActionIcon onClick={open}>
+            <IconPlus />
+          </ActionIcon>
+        </Group>
+      </Stack>
+
+      <Modal opened={opened} onClose={close} title="Create Item">
+        <Stack>
+          <TextInput label="Name" />
+          <Button>Create</Button>
+        </Stack>
+      </Modal>
+    </>
   );
 }

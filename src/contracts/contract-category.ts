@@ -1,9 +1,14 @@
 import { initContract } from "@ts-rest/core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
+import { string, z } from "zod";
 import { categories } from "@/server/db/schema/categories";
+import { items } from "@/server/db/schema/items";
 
 const categorySchema = createSelectSchema(categories);
+
+const categoryDetailsSchema = categorySchema.extend({
+  items: z.object({ id: z.number(), name: z.string() }).array(),
+});
 
 const insertCategorySchema = categorySchema.omit({ id: true });
 
@@ -37,7 +42,7 @@ export const categoryContract = c.router({
     method: "GET",
     path: `/categories/:id`,
     responses: {
-      200: categorySchema,
+      200: categoryDetailsSchema,
       404: z.null(),
     },
     query: null,
