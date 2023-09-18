@@ -1,5 +1,7 @@
 "use client";
-import { client } from "@/contracts/contract";
+
+import { isNumber } from "@/lib/utils";
+import { itemSchema } from "@/server/db/schema/items";
 import {
   ActionIcon,
   Button,
@@ -11,15 +13,35 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
+import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { z } from "zod";
+import { useCategory, useCreateItem } from "./query";
+import TextFormField from "@/components/hook-form/TextFormField";
 
-const useCategory = (id: string) =>
-  client.categories.getCategory.useQuery(["categories", id], {
-    params: { id },
+const insertItemSchema = itemSchema.omit({ id: true });
+
+const formSchema = insertItemSchema.partial();
+type FormData = z.infer<typeof formSchema>;
+
+export default function Category({
+  params: { id },
+}: {
+  params: { id: string };
+}) {
+  const category = useCategory(id, { enabled: isNumber(id) });
+  const createItem = useCreateItem();
+  const [opened, { open, close }] = useDisclosure(false);
+  const { control, handleSubmit } = useForm<FormData>({
+    defaultValues: { category: Number(id), name: "" },
   });
 
-export default function Category({ params }: { params: { id: string } }) {
-  const category = useCategory(params.id);
-  const [opened, { open, close }] = useDisclosure(false);
+  const watch = useWatch({ control, name: "name" });
+
+  console.log(watch);
+
+  if (!isNumber(id)) {
+    return <div>{"Can't find category"}</div>;
+  }
 
   if (category.isLoading) {
     return <div>Loading...</div>;
@@ -28,6 +50,15 @@ export default function Category({ params }: { params: { id: string } }) {
   if (category.isError) {
     return <div>Error</div>;
   }
+
+  const onSubmit: SubmitHandler<FormData> = (data) => {
+    console.log(data);
+    const result = insertItemSchema.safeParse(data);
+    if (result.success) {
+      console.log(result.data);
+      createItem.mutate({ body: result.data }, { onSuccess: () => close() });
+    }
+  };
 
   return (
     <>
@@ -40,10 +71,20 @@ export default function Category({ params }: { params: { id: string } }) {
         </Group>
       </Stack>
 
-      <Modal opened={opened} onClose={close} title="Create Item">
+      <Modal opened={opened} onClose={close} title="Create Item" centered>
         <Stack>
-          <TextInput label="Name" />
-          <Button>Create</Button>
+          <TextFormField
+            label="Item Name"
+            control={control}
+            name="name"
+            rules={{ required: "Required" }}
+          />
+          <Button
+            onClick={() => void handleSubmit(onSubmit)()}
+            loading={createItem.isLoading}
+          >
+            Create
+          </Button>
         </Stack>
       </Modal>
     </>
