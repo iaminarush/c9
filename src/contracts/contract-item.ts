@@ -1,6 +1,5 @@
-import { itemSchema, items } from "@/server/db/schema/items";
+import { itemSchema } from "@/server/db/schema/items";
 import { initContract } from "@ts-rest/core";
-import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 const c = initContract();

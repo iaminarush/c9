@@ -1,12 +1,7 @@
+import { categorySchema } from "@/server/db/schema/categories";
+import { itemSchema } from "@/server/db/schema/items";
 import { initContract } from "@ts-rest/core";
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { string, z } from "zod";
-import { categories } from "@/server/db/schema/categories";
-import { items } from "@/server/db/schema/items";
-
-const categorySchema = createSelectSchema(categories);
-
-const itemSchema = createSelectSchema(items);
+import { z } from "zod";
 
 const categoryDetailsSchema = categorySchema.extend({
   items: itemSchema.array(),
