@@ -7,14 +7,10 @@ import { SessionProvider } from "next-auth/react";
 import { ReactNode, useState } from "react";
 import NavLayout from "./NavLayout";
 import { mantineTheme } from "./theme";
+import { queryClientOptions } from "./queryClient";
 
 export default function Providers({ children }: { children: ReactNode }) {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 3 } },
-      })
-  );
+  const [queryClient] = useState(() => new QueryClient(queryClientOptions));
 
   return (
     <SessionProvider>
