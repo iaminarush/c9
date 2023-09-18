@@ -6,8 +6,10 @@ import { items } from "@/server/db/schema/items";
 
 const categorySchema = createSelectSchema(categories);
 
+const itemSchema = createSelectSchema(items);
+
 const categoryDetailsSchema = categorySchema.extend({
-  items: z.object({ id: z.number(), name: z.string() }).array(),
+  items: itemSchema.array(),
 });
 
 const insertCategorySchema = categorySchema.omit({ id: true });
