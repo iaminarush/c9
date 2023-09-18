@@ -1,10 +1,8 @@
-import { itemSchema } from "@/server/db/schema/items";
+import { createItemSchema, itemSchema } from "@/server/db/schema/items";
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 
 const c = initContract();
-
-const insertItemSchema = itemSchema.omit({ id: true });
 
 export const itemContract = c.router({
   createItem: {
@@ -14,7 +12,7 @@ export const itemContract = c.router({
       201: itemSchema,
       400: z.object({ message: z.string() }),
     },
-    body: insertItemSchema,
+    body: createItemSchema,
     summary: "Create a item",
     metadata: { roles: ["user"] } as const,
   },
