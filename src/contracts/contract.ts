@@ -1,13 +1,14 @@
 import { initContract } from "@ts-rest/core";
-import { categoryContract } from "./contract-category";
 import { initQueryClient } from "@ts-rest/react-query";
-import { env } from "@/env.mjs";
+import { categoryContract } from "./contract-category";
+import { itemContract } from "./contract-item";
 
 const c = initContract();
 
 export const contract = c.router(
   {
     categories: categoryContract,
+    items: itemContract,
   },
   {
     strictStatusCodes: true,
