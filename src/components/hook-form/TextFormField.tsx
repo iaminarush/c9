@@ -1,7 +1,13 @@
 "use client";
 
 import { TextInput, TextInputProps } from "@mantine/core";
-import { Control, FieldValues, Path, useController } from "react-hook-form";
+import {
+  Control,
+  ControllerProps,
+  FieldValues,
+  Path,
+  useController,
+} from "react-hook-form";
 
 type TextFormFieldProps<TFieldValues extends FieldValues> = Omit<
   TextInputProps,
@@ -9,17 +15,19 @@ type TextFormFieldProps<TFieldValues extends FieldValues> = Omit<
 > & {
   name: Path<TFieldValues>;
   control: Control<TFieldValues>;
+  rules?: ControllerProps<TFieldValues>["rules"];
 };
 
 export default function TextFormField<TFieldValues extends FieldValues>({
   name,
   control,
+  rules,
   ...rest
 }: TextFormFieldProps<TFieldValues>) {
   const {
     field: { ref, value, onChange, onBlur },
     fieldState: { error },
-  } = useController({ control, name });
+  } = useController({ control, name, rules });
 
   return (
     <TextInput
