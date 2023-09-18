@@ -33,7 +33,8 @@ export const categoriesRouter = createNextRoute(contract.categories, {
   },
   getCategory: async (args) => {
     if (isNumber(args.params.id)) {
-      const [category] = await db.query.categories.findMany({
+      const category = await db.query.categories.findFirst({
+        where: eq(categories.id, Number(args.params.id)),
         with: {
           items: true,
         },
