@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { bigint, pgTable, serial, timestamp } from "drizzle-orm/pg-core";
 import { items } from "./items";
-import { stores } from "./store";
+import { stores } from "./stores";
 
 export const prices = pgTable("prices", {
   id: serial("id").primaryKey(),
