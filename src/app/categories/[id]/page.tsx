@@ -6,7 +6,7 @@ import { itemSchema } from "@/server/db/schema/items";
 import { ActionIcon, Button, Group, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useCategory, useCreateItem } from "./query";
 
@@ -57,6 +57,9 @@ export default function Category({
             <IconPlus />
           </ActionIcon>
         </Group>
+        {category.data.body.items.map((i) => (
+          <Button key={i.id}>{i.name}</Button>
+        ))}
       </Stack>
 
       <Modal opened={opened} onClose={close} title="Create Item" centered>
