@@ -7,10 +7,9 @@ import * as accounts from "./schema/accounts";
 import * as prices from "./schema/prices";
 import * as stores from "./schema/stores";
 
-neonConfig.fetchConnectionCache = true;
+// neonConfig.fetchConnectionCache = true;
 
-const schema = { ...accounts, ...categories, ...items, ...prices, ...stores };
+const schema = { ...accounts, ...items, ...categories, ...prices, ...stores };
 
 const sql = neon(env.DATABASE_URL);
-export const db = drizzle(sql, { schema });
-// export const db = drizzle(sql);
+export const db = drizzle(sql, { schema, logger: true });

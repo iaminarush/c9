@@ -54,14 +54,16 @@ export const categoriesRouter = createNextRoute(contract.categories, {
       .limit(args.query.limit)
       .offset(args.query.offset);
 
-    return {
-      status: 200,
-      body: {
-        categories: _categories,
-        count: _categories.length,
-        limit: args.query.limit,
-        offset: args.query.offset,
-      },
-    };
+    if (_categories) {
+      return {
+        status: 200,
+        body: {
+          categories: _categories,
+          count: _categories.length,
+          limit: args.query.limit,
+          offset: args.query.offset,
+        },
+      };
+    } else return { status: 404, body: null };
   },
 });

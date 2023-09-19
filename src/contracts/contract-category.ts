@@ -1,11 +1,10 @@
-import { categorySchema } from "@/server/db/schema/categories";
+import {
+  categoryDetailsSchema,
+  categorySchema,
+} from "@/server/db/schema/categories";
 import { itemSchema } from "@/server/db/schema/items";
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-
-const categoryDetailsSchema = categorySchema.extend({
-  items: itemSchema.array(),
-});
 
 const insertCategorySchema = categorySchema.omit({ id: true });
 
@@ -56,6 +55,7 @@ export const categoryContract = c.router({
         limit: z.number(),
         offset: z.number(),
       }),
+      404: z.null(),
     },
     query: z.object({
       limit: z.string().transform(Number),

@@ -6,8 +6,9 @@ import {
   serial,
   text,
 } from "drizzle-orm/pg-core";
-import { items } from "./items";
+import { itemSchema, items } from "./items";
 import { createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
 
 export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),
@@ -20,3 +21,7 @@ export const categoriesRelations = relations(categories, ({ many }) => ({
 }));
 
 export const categorySchema = createSelectSchema(categories);
+
+export const categoryDetailsSchema = categorySchema.extend({
+  items: z.lazy(() => itemSchema.array()),
+});

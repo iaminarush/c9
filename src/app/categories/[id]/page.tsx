@@ -1,22 +1,14 @@
 "use client";
 
+import TextFormField from "@/components/hook-form/TextFormField";
 import { isNumber } from "@/lib/utils";
 import { itemSchema } from "@/server/db/schema/items";
-import {
-  ActionIcon,
-  Button,
-  Group,
-  Modal,
-  Stack,
-  Text,
-  TextInput,
-} from "@mantine/core";
+import { ActionIcon, Button, Group, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { useCategory, useCreateItem } from "./query";
-import TextFormField from "@/components/hook-form/TextFormField";
 
 const insertItemSchema = itemSchema.omit({ id: true });
 
@@ -34,10 +26,6 @@ export default function Category({
   const { control, handleSubmit } = useForm<FormData>({
     defaultValues: { category: Number(id), name: "" },
   });
-
-  const watch = useWatch({ control, name: "name" });
-
-  console.log(watch);
 
   if (!isNumber(id)) {
     return <div>{"Can't find category"}</div>;

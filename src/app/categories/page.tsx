@@ -28,8 +28,8 @@ export default function Home() {
           <IconPlus />
         </ActionIcon>
       </Group>
-      {categories.data.body.categories.map((c, i) => (
-        <Button href={`/categories/${c.id}`} component={Link} key={i}>
+      {categories.data.body.categories.map((c) => (
+        <Button href={`/categories/${c.id}`} component={Link} key={c.id}>
           {c.name}
         </Button>
       ))}

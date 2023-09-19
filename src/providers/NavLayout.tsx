@@ -7,16 +7,16 @@ import {
   AppShellMain,
   AppShellNavbar,
   Burger,
-  Center,
   Container,
   Group,
-  Text,
+  UnstyledButton,
   useComputedColorScheme,
   useMantineColorScheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconMoon, IconSun } from "@tabler/icons-react";
 import cx from "clsx";
+import Link from "next/link";
 import { ReactNode } from "react";
 import classes from "./NavLayout.module.css";
 
@@ -42,8 +42,14 @@ export default function NavLayout({ children }: { children: ReactNode }) {
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
           <Group justify="flex-end" style={{ flex: 1 }}>
             <Group ml="xl" gap={0} visibleFrom="sm">
-              {/* <UnstyledButton className={classes.control}>Home</UnstyledButton>
-              <UnstyledButton className={classes.control}>Blog</UnstyledButton>
+              <UnstyledButton
+                className={classes.control}
+                component={Link}
+                href="/categories"
+              >
+                Category
+              </UnstyledButton>
+              {/* <UnstyledButton className={classes.control}>Blog</UnstyledButton>
               <UnstyledButton className={classes.control}>
                 Contacts
               </UnstyledButton>
@@ -55,7 +61,7 @@ export default function NavLayout({ children }: { children: ReactNode }) {
             <ActionIcon
               onClick={() =>
                 setColorScheme(
-                  computedColorScheme === "light" ? "dark" : "light"
+                  computedColorScheme === "light" ? "dark" : "light",
                 )
               }
               variant="default"
@@ -76,11 +82,15 @@ export default function NavLayout({ children }: { children: ReactNode }) {
       </AppShellHeader>
 
       <AppShellNavbar py="md" px={4}>
-        <Center>
-          <Text>WIP</Text>
-        </Center>
-        {/* <UnstyledButton className={classes.control}>Home</UnstyledButton>
-        <UnstyledButton className={classes.control}>Blog</UnstyledButton>
+        <UnstyledButton
+          className={classes.control}
+          component={Link}
+          href="/categories"
+          onClick={toggle}
+        >
+          Category
+        </UnstyledButton>
+        {/* <UnstyledButton className={classes.control}>Blog</UnstyledButton>
         <UnstyledButton className={classes.control}>Contacts</UnstyledButton>
         <UnstyledButton className={classes.control}>Support</UnstyledButton> */}
       </AppShellNavbar>
