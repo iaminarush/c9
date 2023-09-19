@@ -1,15 +1,19 @@
 import { client } from "@/contracts/contract";
 import { categoryContract } from "@/contracts/contract-category";
-import { categoryDetailsSchema } from "@/server/db/schema/categories";
 import { useQueryClient } from "@tanstack/react-query";
+import { ServerInferResponses } from "@ts-rest/core";
 import { UseQueryOptions } from "@ts-rest/react-query";
 import { produce } from "immer";
-import { z } from "zod";
 
 const keys = {
-  all: ["categories"],
+  all: ["category"],
   category: (id: string) => [...keys.all, id] as const,
 };
+
+type CategoryResponse = ServerInferResponses<
+  typeof categoryContract.getCategory,
+  200
+>;
 
 export const useCategory = (
   id: string,
@@ -28,12 +32,14 @@ export const useCreateItem = () => {
 
   return client.items.createItem.useMutation({
     onSuccess: ({ body }) => {
-      queryClient.setQueryData<z.infer<typeof categoryDetailsSchema>>(
+      queryClient.setQueryData<CategoryResponse>(
         keys.category(`${body.category}`),
         (oldData) => {
+          console.log(oldData);
+
           if (!oldData) return undefined;
           const newData = produce(oldData, (draft) => {
-            draft.items.push(body);
+            draft.body.items.push(body);
           });
           return newData;
         },
