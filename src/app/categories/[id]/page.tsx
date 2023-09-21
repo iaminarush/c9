@@ -3,7 +3,7 @@
 import TextFormField from "@/components/hook-form/TextFormField";
 import { isNumber } from "@/lib/utils";
 import { itemSchema } from "@/server/db/schema/items";
-import { ActionIcon, Button, Group, Modal, Stack, Text } from "@mantine/core";
+import { ActionIcon, Button, Group, Modal, Skeleton, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -15,11 +15,7 @@ const insertItemSchema = itemSchema.omit({ id: true });
 const formSchema = insertItemSchema.partial();
 type FormData = z.infer<typeof formSchema>;
 
-export default function Category({
-  params: { id },
-}: {
-  params: { id: string };
-}) {
+export default function Category({ params: { id } }: { params: { id: string } }) {
   const category = useCategory(id, { enabled: isNumber(id) });
   const createItem = useCreateItem();
   const [opened, { open, close }] = useDisclosure(false);
@@ -32,7 +28,7 @@ export default function Category({
   }
 
   if (category.isLoading) {
-    return <div>Loading...</div>;
+    return <Skeleton h={250} />;
   }
 
   if (category.isError) {
@@ -70,10 +66,7 @@ export default function Category({
             name="name"
             rules={{ required: "Required" }}
           />
-          <Button
-            onClick={() => void handleSubmit(onSubmit)()}
-            loading={createItem.isLoading}
-          >
+          <Button onClick={() => void handleSubmit(onSubmit)()} loading={createItem.isLoading}>
             Create
           </Button>
         </Stack>

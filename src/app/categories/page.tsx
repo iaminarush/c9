@@ -1,7 +1,7 @@
 "use client";
 
 import { client } from "@/contracts/contract";
-import { ActionIcon, Button, Group, Stack } from "@mantine/core";
+import { ActionIcon, Button, Group, Skeleton, Stack } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
 
@@ -14,7 +14,7 @@ export default function Home() {
   const categories = useCategories();
 
   if (categories.isLoading) {
-    return <div>Loading...</div>;
+    return <Skeleton h={250} />;
   }
 
   if (categories.isError) {
