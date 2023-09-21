@@ -2,7 +2,7 @@
 
 import TextFormField from "@/components/hook-form/TextFormField";
 import { isNumber } from "@/lib/utils";
-import { itemSchema } from "@/server/db/schema/items";
+import { createItemSchema } from "@/server/db/schema/items";
 import { ActionIcon, Button, Group, Modal, Skeleton, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
@@ -10,9 +10,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useCategory, useCreateItem } from "./query";
 
-const insertItemSchema = itemSchema.omit({ id: true });
-
-const formSchema = insertItemSchema.partial();
+const formSchema = createItemSchema;
 type FormData = z.infer<typeof formSchema>;
 
 export default function Category({ params: { id } }: { params: { id: string } }) {
@@ -37,7 +35,7 @@ export default function Category({ params: { id } }: { params: { id: string } })
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
     console.log(data);
-    const result = insertItemSchema.safeParse(data);
+    const result = createItemSchema.safeParse(data);
     if (result.success) {
       console.log(result.data);
       createItem.mutate({ body: result.data }, { onSuccess: () => close() });
