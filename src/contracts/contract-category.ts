@@ -16,7 +16,7 @@ export const categoryContract = c.router({
     },
     body: insertCategorySchema,
     summary: "Create a category",
-    metadata: { roles: ["user"] } as const,
+    // metadata: { roles: ["user"] } as const,
   },
   updateCategory: {
     method: "PATCH",
@@ -24,11 +24,11 @@ export const categoryContract = c.router({
     responses: { 200: categorySchema, 404: z.object({ message: z.string() }) },
     body: insertCategorySchema,
     summary: "Update a category",
-    metadata: {
-      roles: ["user"],
-      resource: "category",
-      identifierPath: "params.id",
-    } as const,
+    // metadata: {
+    //   roles: ["user"],
+    //   resource: "category",
+    //   identifierPath: "params.id",
+    // } as const,
   },
   getCategory: {
     method: "GET",
@@ -39,7 +39,7 @@ export const categoryContract = c.router({
     },
     query: null,
     summary: "Get a category by id",
-    metadata: { roles: ["user"] } as const,
+    // metadata: { roles: ["user"] } as const,
   },
   getCategories: {
     method: "GET",
