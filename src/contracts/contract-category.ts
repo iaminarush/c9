@@ -1,8 +1,4 @@
-import {
-  categoryDetailsSchema,
-  categorySchema,
-} from "@/server/db/schema/categories";
-import { itemSchema } from "@/server/db/schema/items";
+import { categoryDetailsSchema, categorySchema } from "@/server/db/schema/categories";
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 
