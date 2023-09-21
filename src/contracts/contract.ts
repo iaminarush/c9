@@ -12,7 +12,7 @@ export const contract = c.router(
   },
   {
     strictStatusCodes: true,
-  }
+  },
 );
 
 const getBaseUrl = () => {
@@ -23,6 +23,5 @@ const getBaseUrl = () => {
 
 export const client = initQueryClient(contract, {
   baseUrl: getBaseUrl(),
-  // baseUrl: "",
   baseHeaders: {},
 });

@@ -3,6 +3,7 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "@/server/db/db";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { users } from "@/server/db/schema/accounts";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { compare, hash } from "bcrypt";
 import { DefaultJWT } from "next-auth/jwt";
 import { eq } from "drizzle-orm";
@@ -75,15 +76,10 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials)
-          throw new Error("Please enter credentials and try again");
+        if (!credentials) throw new Error("Please enter credentials and try again");
 
         const { username, password } = credentials;
-        const [user] = await db
-          .select()
-          .from(users)
-          .where(eq(users.username, username))
-          .limit(1);
+        const [user] = await db.select().from(users).where(eq(users.username, username)).limit(1);
 
         if (!user) throw new Error("Incorrect credentials. Try again");
 

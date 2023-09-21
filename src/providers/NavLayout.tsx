@@ -1,5 +1,3 @@
-"use client";
-
 import {
   ActionIcon,
   AppShell,
@@ -22,10 +20,6 @@ import classes from "./NavLayout.module.css";
 
 export default function NavLayout({ children }: { children: ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
-  const { setColorScheme } = useMantineColorScheme();
-  const computedColorScheme = useComputedColorScheme("light", {
-    getInitialValueInEffect: true,
-  });
 
   return (
     <AppShell
@@ -42,11 +36,7 @@ export default function NavLayout({ children }: { children: ReactNode }) {
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
           <Group justify="flex-end" style={{ flex: 1 }}>
             <Group ml="xl" gap={0} visibleFrom="sm">
-              <UnstyledButton
-                className={classes.control}
-                component={Link}
-                href="/categories"
-              >
+              <UnstyledButton className={classes.control} component={Link} href="/categories">
                 Category
               </UnstyledButton>
               {/* <UnstyledButton className={classes.control}>Blog</UnstyledButton>
@@ -58,25 +48,7 @@ export default function NavLayout({ children }: { children: ReactNode }) {
               </UnstyledButton> */}
             </Group>
 
-            <ActionIcon
-              onClick={() =>
-                setColorScheme(
-                  computedColorScheme === "light" ? "dark" : "light",
-                )
-              }
-              variant="default"
-              size="lg"
-              aria-label="Toggle color scheme"
-            >
-              <IconSun
-                className={cx(classes.icon, classes.light)}
-                stroke={1.5}
-              />
-              <IconMoon
-                className={cx(classes.icon, classes.dark)}
-                stroke={1.5}
-              />
-            </ActionIcon>
+            <ColorSchemToggle />
           </Group>
         </Group>
       </AppShellHeader>
@@ -101,3 +73,22 @@ export default function NavLayout({ children }: { children: ReactNode }) {
     </AppShell>
   );
 }
+
+const ColorSchemToggle = () => {
+  const { setColorScheme } = useMantineColorScheme();
+  const computedColorScheme = useComputedColorScheme("light", {
+    getInitialValueInEffect: true,
+  });
+
+  return (
+    <ActionIcon
+      onClick={() => setColorScheme(computedColorScheme === "light" ? "dark" : "light")}
+      variant="default"
+      size="lg"
+      aria-label="Toggle color scheme"
+    >
+      <IconSun className={cx(classes.icon, classes.light)} stroke={1.5} />
+      <IconMoon className={cx(classes.icon, classes.dark)} stroke={1.5} />
+    </ActionIcon>
+  );
+};
