@@ -9,7 +9,8 @@
     "lint": "next lint",
     "push": "drizzle-kit push:pg",
     "pull": "drizzle-kit introspect:pg",
-    "studio": "drizzle-kit studio --verbose"
+    "studio": "drizzle-kit studio --verbose",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^0.3.2",
