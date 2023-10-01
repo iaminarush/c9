@@ -5,6 +5,7 @@ import {
   pgTable,
   serial,
   text,
+  timestamp,
 } from "drizzle-orm/pg-core";
 import { itemSchema, items } from "./items";
 import { createSelectSchema } from "drizzle-zod";
@@ -13,6 +14,9 @@ import { z } from "zod";
 export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),
   name: text("name").notNull().unique(),
+  remark: text("remark"),
+  updatedAt: timestamp("updated_at"),
+  createdAt: timestamp("created_at").defaultNow(),
   parentId: integer("parent_id").references((): AnyPgColumn => categories.id),
 });
 

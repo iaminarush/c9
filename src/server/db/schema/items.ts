@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { integer, pgTable, serial, text } from "drizzle-orm/pg-core";
+import { integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { categories } from "./categories";
 import { prices } from "./prices";
@@ -7,6 +7,9 @@ import { prices } from "./prices";
 export const items = pgTable("items", {
   id: serial("id").primaryKey(),
   name: text("name").notNull().unique(),
+  remark: text("remark"),
+  updatedAt: timestamp("updated_at"),
+  createdAt: timestamp("created_at").defaultNow(),
   category: integer("category_id")
     .references(() => categories.id)
     .notNull(),

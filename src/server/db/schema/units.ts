@@ -1,16 +1,16 @@
 import { relations } from "drizzle-orm";
-import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
-import { prices } from "./prices";
+import { bigint, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { records } from "./records";
 
-export const stores = pgTable("stores", {
+export const units = pgTable("units", {
   id: serial("id").primaryKey(),
   name: text("name").notNull().unique(),
   remark: text("remark"),
+  amount: bigint("amount", { mode: "number" }).notNull(),
   updatedAt: timestamp("updated_at"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const storesRelations = relations(stores, ({ one, many }) => ({
+export const unitsRelations = relations(units, ({ one, many }) => ({
   records: many(records),
 }));
