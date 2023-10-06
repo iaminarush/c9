@@ -1,5 +1,13 @@
 import { relations } from "drizzle-orm";
-import { decimal, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  decimal,
+  integer,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
+import { stores } from "./stores";
 
 export const records = pgTable("records", {
   id: serial("id").primaryKey(),
@@ -8,6 +16,12 @@ export const records = pgTable("records", {
   remark: text("remark"),
   updatedAt: timestamp("updated_at"),
   createdAt: timestamp("created_at").defaultNow(),
+  storeId: integer("store_id"),
 });
 
-export const recordsRelations = relations(records, ({ many, one }) => ({}));
+export const recordsRelations = relations(records, ({ many, one }) => ({
+  store: one(stores, {
+    fields: [records.storeId],
+    references: [stores.id],
+  }),
+}));
