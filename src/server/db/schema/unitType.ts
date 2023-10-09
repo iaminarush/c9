@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 
 export const unitType = pgTable("unit_type", {
@@ -7,3 +8,5 @@ export const unitType = pgTable("unit_type", {
   updatedAt: timestamp("updated_at"),
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+export const unitTypeRelations = relations(unitType, ({ one, many }) => ({}));

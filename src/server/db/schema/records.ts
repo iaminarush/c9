@@ -8,6 +8,7 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { stores } from "./stores";
+import { units } from "./units";
 
 export const records = pgTable("records", {
   id: serial("id").primaryKey(),
@@ -17,11 +18,16 @@ export const records = pgTable("records", {
   updatedAt: timestamp("updated_at"),
   createdAt: timestamp("created_at").defaultNow(),
   storeId: integer("store_id"),
+  unitId: integer("unit_id"),
 });
 
 export const recordsRelations = relations(records, ({ many, one }) => ({
   store: one(stores, {
     fields: [records.storeId],
     references: [stores.id],
+  }),
+  unit: one(units, {
+    fields: [records.unitId],
+    references: [units.id],
   }),
 }));
