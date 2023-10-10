@@ -1,14 +1,21 @@
 "use client";
 
+import TextFormField from "@/components/hook-form/TextFormField";
 import { client } from "@/contracts/contract";
-import { ActionIcon, Button, Group, Skeleton, Stack } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  Group,
+  Modal,
+  Skeleton,
+  Stack,
+  Text,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
-
-const useCategories = () =>
-  client.categories.getCategories.useQuery(["categories"], {
-    query: { limit: "100", offset: "0" },
-  });
+import { useForm } from "react-hook-form";
+import { useCategories } from "./query";
 
 export default function Home() {
   const categories = useCategories();
@@ -24,10 +31,12 @@ export default function Home() {
   return (
     <Stack>
       <Group justify="flex-end">
-        <ActionIcon>
-          <IconPlus />
-        </ActionIcon>
+        <AddCategory />
       </Group>
+
+      {categories.data.body.categories.length === 0 && (
+        <Text>No Categories</Text>
+      )}
       {categories.data.body.categories.map((c) => (
         <Button href={`/categories/${c.id}`} component={Link} key={c.id}>
           {c.name}
@@ -36,3 +45,33 @@ export default function Home() {
     </Stack>
   );
 }
+
+const AddCategory = () => {
+  const [opened, handlers] = useDisclosure(false);
+  const { control, handleSubmit } = useForm();
+
+  return (
+    <>
+      <ActionIcon>
+        <IconPlus />
+      </ActionIcon>
+
+      <Modal opened={opened} onClose={close} title="Create Item" centered>
+        <Stack>
+          <TextFormField
+            label="Item Name"
+            control={control}
+            name="name"
+            rules={{ required: "Required" }}
+          />
+          <Button
+            onClick={() => void handleSubmit(onSubmit)()}
+            loading={createItem.isLoading}
+          >
+            Create
+          </Button>
+        </Stack>
+      </Modal>
+    </>
+  );
+};
