@@ -3,6 +3,7 @@ import { integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { categories } from "./categories";
 import { prices } from "./prices";
+import { records } from "./records";
 
 export const items = pgTable("items", {
   id: serial("id").primaryKey(),
@@ -21,6 +22,7 @@ export const itemsRelations = relations(items, ({ one, many }) => ({
     references: [categories.id],
   }),
   prices: many(prices),
+  records: many(records),
 }));
 
 export const itemSchema = createSelectSchema(items);

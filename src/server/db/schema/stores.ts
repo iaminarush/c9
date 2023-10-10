@@ -1,6 +1,5 @@
 import { relations } from "drizzle-orm";
 import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
-import { prices } from "./prices";
 import { records } from "./records";
 
 export const stores = pgTable("stores", {
@@ -11,6 +10,6 @@ export const stores = pgTable("stores", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const storesRelations = relations(stores, ({ one, many }) => ({
+export const storesRelations = relations(stores, ({ many }) => ({
   records: many(records),
 }));
