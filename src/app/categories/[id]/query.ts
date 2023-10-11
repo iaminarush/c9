@@ -36,6 +36,7 @@ export const useCreateItem = () => {
         keys.category(`${body.category}`),
         (oldData) => {
           if (!oldData) return undefined;
+
           const newData = produce(oldData, (draft) => {
             draft.body.items.push(body);
           });
