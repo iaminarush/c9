@@ -8,7 +8,7 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { itemSchema, items } from "./items";
-import { createSelectSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const categories = pgTable("categories", {
@@ -29,3 +29,7 @@ export const categorySchema = createSelectSchema(categories);
 export const categoryDetailsSchema = categorySchema.extend({
   items: z.lazy(() => itemSchema.array()),
 });
+
+export const createCategorySchema = createInsertSchema(categories);
+
+export const updateCategorySchema = createSelectSchema(categories);

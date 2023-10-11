@@ -1,8 +1,11 @@
-import { categoryDetailsSchema, categorySchema } from "@/server/db/schema/categories";
+import {
+  categoryDetailsSchema,
+  categorySchema,
+  createCategorySchema,
+  updateCategorySchema,
+} from "@/server/db/schema/categories";
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-
-const insertCategorySchema = categorySchema.omit({ id: true });
 
 const c = initContract();
 
@@ -14,21 +17,15 @@ export const categoryContract = c.router({
       201: categorySchema,
       400: z.object({ message: z.string() }),
     },
-    body: insertCategorySchema,
+    body: createCategorySchema,
     summary: "Create a category",
-    // metadata: { roles: ["user"] } as const,
   },
   updateCategory: {
     method: "PATCH",
     path: `/categories/:id`,
     responses: { 200: categorySchema, 404: z.object({ message: z.string() }) },
-    body: insertCategorySchema,
+    body: updateCategorySchema,
     summary: "Update a category",
-    // metadata: {
-    //   roles: ["user"],
-    //   resource: "category",
-    //   identifierPath: "params.id",
-    // } as const,
   },
   getCategory: {
     method: "GET",
@@ -39,7 +36,6 @@ export const categoryContract = c.router({
     },
     query: null,
     summary: "Get a category by id",
-    // metadata: { roles: ["user"] } as const,
   },
   getCategories: {
     method: "GET",

@@ -14,8 +14,10 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
-import { useCategories } from "./query";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useCategories, useCreateCategory } from "./query";
+import { createCategorySchema } from "@/server/db/schema";
+import { z } from "zod";
 
 export default function Home() {
   const categories = useCategories();
@@ -46,27 +48,45 @@ export default function Home() {
   );
 }
 
+type FormData = z.infer<typeof createCategorySchema>;
+
 const AddCategory = () => {
   const [opened, handlers] = useDisclosure(false);
-  const { control, handleSubmit } = useForm();
+  const { control, handleSubmit } = useForm<FormData>();
+  const createCategory = useCreateCategory();
+
+  const onSubmit: SubmitHandler<FormData> = (data) => {
+    const result = createCategorySchema.safeParse(data);
+    if (result.success) {
+      createCategory.mutate(
+        { body: result.data },
+        { onSuccess: () => handlers.close() },
+      );
+    }
+  };
 
   return (
     <>
-      <ActionIcon>
+      <ActionIcon onClick={handlers.open}>
         <IconPlus />
       </ActionIcon>
 
-      <Modal opened={opened} onClose={close} title="Create Item" centered>
+      <Modal
+        opened={opened}
+        onClose={handlers.close}
+        title="Create Category"
+        centered
+      >
         <Stack>
           <TextFormField
-            label="Item Name"
+            label="Category"
             control={control}
             name="name"
             rules={{ required: "Required" }}
           />
           <Button
             onClick={() => void handleSubmit(onSubmit)()}
-            loading={createItem.isLoading}
+            loading={createCategory.isLoading}
           >
             Create
           </Button>

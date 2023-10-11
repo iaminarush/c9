@@ -11,6 +11,7 @@ export const itemContract = c.router({
     responses: {
       201: itemSchema,
       400: z.object({ message: z.string() }),
+      404: z.null(),
     },
     body: createItemSchema,
     summary: "Create a item",

@@ -36,7 +36,11 @@ export default function NavLayout({ children }: { children: ReactNode }) {
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
           <Group justify="flex-end" style={{ flex: 1 }}>
             <Group ml="xl" gap={0} visibleFrom="sm">
-              <UnstyledButton className={classes.control} component={Link} href="/categories">
+              <UnstyledButton
+                className={classes.control}
+                component={Link}
+                href="/categories"
+              >
                 Category
               </UnstyledButton>
               {/* <UnstyledButton className={classes.control}>Blog</UnstyledButton>
@@ -82,7 +86,9 @@ const ColorSchemToggle = () => {
 
   return (
     <ActionIcon
-      onClick={() => setColorScheme(computedColorScheme === "light" ? "dark" : "light")}
+      onClick={() =>
+        setColorScheme(computedColorScheme === "light" ? "dark" : "light")
+      }
       variant="default"
       size="lg"
       aria-label="Toggle color scheme"

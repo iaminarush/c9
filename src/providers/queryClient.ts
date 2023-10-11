@@ -6,6 +6,7 @@ export const queryClientOptions: QueryClientConfig = {
       refetchOnWindowFocus: false,
       refetchOnMount: false,
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+      retry: 2,
     },
   },
 };

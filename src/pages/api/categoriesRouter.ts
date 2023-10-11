@@ -10,6 +10,7 @@ export const categoriesRouter = createNextRoute(contract.categories, {
     const [newCategory] = await db
       .insert(categories)
       .values(args.body)
+      .onConflictDoNothing()
       .returning();
 
     return newCategory
