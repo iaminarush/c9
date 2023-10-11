@@ -35,8 +35,6 @@ export const useCreateItem = () => {
       queryClient.setQueryData<CategoryResponse>(
         keys.category(`${body.category}`),
         (oldData) => {
-          console.log(oldData);
-
           if (!oldData) return undefined;
           const newData = produce(oldData, (draft) => {
             draft.body.items.push(body);

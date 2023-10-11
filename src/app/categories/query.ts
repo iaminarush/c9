@@ -7,22 +7,24 @@ const keys = {
   all: ["categories"],
 };
 
+type CategoriesResponse = ServerInferResponses<
+  typeof categoryContract.getCategories,
+  200
+>;
+
 export const useCategories = () =>
   client.categories.getCategories.useQuery(keys.all, {
     query: { limit: "100", offset: "0" },
   });
-
-type CategoryResponse = ServerInferResponses<
-  typeof categoryContract.createCategory,
-  201
->;
 
 export const useCreateCategory = () => {
   const queryClient = useQueryClient();
 
   return client.categories.createCategory.useMutation({
     onSuccess: ({ body }) => {
-      queryClient.setQueryData<CategoryResponse>();
+      queryClient.setQueryData<CategoriesResponse>(keys.all, (oldData) => {
+        return oldData;
+      });
     },
   });
 };
