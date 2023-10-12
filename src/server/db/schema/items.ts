@@ -7,7 +7,7 @@ import { records } from "./records";
 
 export const items = pgTable("items", {
   id: serial("id").primaryKey(),
-  name: text("name").notNull().unique(),
+  name: text("name").notNull(),
   remark: text("remark"),
   updatedAt: timestamp("updated_at"),
   createdAt: timestamp("created_at").defaultNow(),
