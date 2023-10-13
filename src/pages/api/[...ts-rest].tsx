@@ -1,5 +1,4 @@
 import { contract } from "@/contracts/contract";
-import { ResponseValidationError } from "@ts-rest/core";
 import { createNextRoute, createNextRouter } from "@ts-rest/next";
 import { NextApiRequest, NextApiResponse } from "next";
 import { categoriesRouter } from "./categoriesRouter";
@@ -13,7 +12,7 @@ const router = createNextRoute(contract, {
 export default createNextRouter(contract, router, {
   responseValidation: true,
   errorHandler: (error: unknown, req: NextApiRequest, res: NextApiResponse) => {
-    return res.status(500).json({ message: error });
+    return res.status(500).json({ message: JSON.stringify(error) });
     // console.log(typeof error, error);
     // if (error instanceof ResponseValidationError) {
     //   return res.status(500).json({ message: "Internal Server Error" });
