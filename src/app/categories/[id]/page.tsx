@@ -17,6 +17,7 @@ import { IconPlus } from "@tabler/icons-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useCategory, useCreateItem } from "./query";
+import Link from "next/link";
 
 type FormData = z.infer<typeof createItemSchema>;
 
@@ -25,45 +26,12 @@ export default function Category({
 }: {
   params: { id: string };
 }) {
-  // const category = useCategory(id, { enabled: isNumber(id) });
-  // const testCat = useCategory("10");
+  const category = useCategory(id, { enabled: isNumber(id) });
   const createItem = useCreateItem();
   const [opened, { open, close }] = useDisclosure(false);
   const { control, handleSubmit } = useForm<FormData>({
     defaultValues: { category: Number(id), name: "" },
   });
-
-  const onSubmit: SubmitHandler<FormData> = (data) => {
-    const result = createItemSchema.safeParse(data);
-    if (result.success) {
-      createItem.mutate({ body: result.data }, { onSuccess: () => close() });
-    }
-  };
-
-  return (
-    <>
-      <ActionIcon onClick={open}>
-        <IconPlus />
-      </ActionIcon>
-
-      <Modal opened={opened} onClose={close} title="Create Item" centered>
-        <Stack>
-          <TextFormField
-            label="Item Name"
-            control={control}
-            name="name"
-            rules={{ required: "Required" }}
-          />
-          <Button
-            onClick={() => void handleSubmit(onSubmit)()}
-            loading={createItem.isLoading}
-          >
-            Create
-          </Button>
-        </Stack>
-      </Modal>
-    </>
-  );
 
   if (!isNumber(id)) {
     return <div>{"Can't find category"}</div>;
@@ -77,12 +45,12 @@ export default function Category({
     return <div>Error</div>;
   }
 
-  // const onSubmit: SubmitHandler<FormData> = (data) => {
-  //   const result = createItemSchema.safeParse(data);
-  //   if (result.success) {
-  //     createItem.mutate({ body: result.data }, { onSuccess: () => close() });
-  //   }
-  // };
+  const onSubmit: SubmitHandler<FormData> = (data) => {
+    const result = createItemSchema.safeParse(data);
+    if (result.success) {
+      createItem.mutate({ body: result.data }, { onSuccess: () => close() });
+    }
+  };
 
   return (
     <>
@@ -94,7 +62,9 @@ export default function Category({
           </ActionIcon>
         </Group>
         {category.data.body.items.map((i) => (
-          <Button key={i.id}>{i.name}</Button>
+          <Button key={i.id} component={Link} href={`/items/${i.id}`}>
+            {i.name}
+          </Button>
         ))}
       </Stack>
 
