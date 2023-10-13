@@ -13,9 +13,10 @@ const router = createNextRoute(contract, {
 export default createNextRouter(contract, router, {
   responseValidation: true,
   errorHandler: (error: unknown, req: NextApiRequest, res: NextApiResponse) => {
-    console.log(typeof error, error);
-    if (error instanceof ResponseValidationError) {
-      return res.status(500).json({ message: "Internal Server Error" });
-    }
+    return res.status(500).json({ message: error });
+    // console.log(typeof error, error);
+    // if (error instanceof ResponseValidationError) {
+    //   return res.status(500).json({ message: "Internal Server Error" });
+    // }
   },
 });
