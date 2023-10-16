@@ -34,7 +34,7 @@ export default function Category({
   });
 
   if (!isNumber(id)) {
-    return <div>{"Can't find category"}</div>;
+    return <Text>Category Id must be a number</Text>;
   }
 
   if (category.isLoading) {
