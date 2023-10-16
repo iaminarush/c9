@@ -1,7 +1,9 @@
 import { contract } from "@/contracts/contract";
+import { isNumber } from "@/lib/utils";
 import { db } from "@/server/db/db";
 import { items } from "@/server/db/schema/items";
 import { createNextRoute } from "@ts-rest/next";
+import { eq } from "drizzle-orm";
 
 export const itemsRouter = createNextRoute(contract.items, {
   createItem: async (args) => {
@@ -10,5 +12,18 @@ export const itemsRouter = createNextRoute(contract.items, {
     return newItem
       ? { status: 201, body: newItem }
       : { status: 400, body: { message: "Error" } };
+  },
+  getItem: async (args) => {
+    if (isNumber(args.params.id)) {
+      const item = await db.query.items.findFirst({
+        where: eq(items.id, Number(args.params.id)),
+      });
+
+      if (item) {
+        return { status: 200, body: item };
+      }
+    }
+
+    return { status: 404, body: { message: "Item not found" } };
   },
 });

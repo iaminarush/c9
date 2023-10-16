@@ -15,6 +15,14 @@ export const itemContract = c.router({
     },
     body: createItemSchema,
     summary: "Create a item",
-    metadata: { roles: ["user"] } as const,
+  },
+  getItem: {
+    method: "GET",
+    path: "/items/:id",
+    responses: {
+      200: itemSchema,
+      404: z.object({ message: z.string() }),
+    },
+    summary: "Get a item by id",
   },
 });
