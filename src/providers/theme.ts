@@ -1,5 +1,5 @@
 // "use client";
-import { ActionIcon, Button, createTheme } from "@mantine/core";
+import { ActionIcon, Button, Skeleton, createTheme } from "@mantine/core";
 
 const fontFamily = [
   "Inter",
@@ -27,6 +27,11 @@ export const mantineTheme = createTheme({
     ActionIcon: ActionIcon.extend({
       defaultProps: {
         variant: "default",
+      },
+    }),
+    Skeleton: Skeleton.extend({
+      defaultProps: {
+        h: 250,
       },
     }),
   },
