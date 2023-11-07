@@ -1,7 +1,6 @@
 "use client";
 
 import TextFormField from "@/components/hook-form/TextFormField";
-import { client } from "@/contracts/contract";
 import {
   ActionIcon,
   Button,

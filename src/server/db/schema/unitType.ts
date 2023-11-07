@@ -10,6 +10,6 @@ export const unitType = pgTable("unit_type", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const unitTypeRelations = relations(unitType, ({ one, many }) => ({
+export const unitTypeRelations = relations(unitType, ({ many }) => ({
   units: many(units),
 }));
