@@ -3,10 +3,14 @@ import { createNextRoute, createNextRouter } from "@ts-rest/next";
 import { NextApiRequest, NextApiResponse } from "next";
 import { categoriesRouter } from "./categoriesRouter";
 import { itemsRouter } from "./itemsRouter";
+import { recordsRouter } from "./recordsRouter";
+import { storesRouter } from "./storesRouter";
 
 const router = createNextRoute(contract, {
   categories: categoriesRouter,
   items: itemsRouter,
+  records: recordsRouter,
+  store: storesRouter,
 });
 
 export default createNextRouter(contract, router, {

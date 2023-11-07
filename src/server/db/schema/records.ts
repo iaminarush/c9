@@ -10,6 +10,7 @@ import {
 import { stores } from "./stores";
 import { units } from "./units";
 import { items } from "./items";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 export const records = pgTable("records", {
   id: serial("id").primaryKey(),
@@ -18,8 +19,8 @@ export const records = pgTable("records", {
   remark: text("remark"),
   updatedAt: timestamp("updated_at"),
   createdAt: timestamp("created_at").defaultNow(),
-  itemId: integer("item_id"),
-  storeId: integer("store_id"),
+  itemId: integer("item_id").notNull(),
+  storeId: integer("store_id").notNull(),
   unitId: integer("unit_id"),
 });
 
@@ -37,3 +38,7 @@ export const recordsRelations = relations(records, ({ one }) => ({
     references: [items.id],
   }),
 }));
+
+export const recordSchema = createSelectSchema(records);
+
+export const createRecordSchema = createInsertSchema(records);

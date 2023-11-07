@@ -2,6 +2,8 @@ import { initContract } from "@ts-rest/core";
 import { initQueryClient } from "@ts-rest/react-query";
 import { categoryContract } from "./contract-category";
 import { itemContract } from "./contract-item";
+import { recordContract } from "./contract-record";
+import { storeContract } from "./contract-store";
 
 const c = initContract();
 
@@ -9,6 +11,8 @@ export const contract = c.router(
   {
     categories: categoryContract,
     items: itemContract,
+    records: recordContract,
+    store: storeContract,
   },
   {
     strictStatusCodes: true,

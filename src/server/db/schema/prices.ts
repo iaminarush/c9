@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import { bigint, pgTable, serial, timestamp } from "drizzle-orm/pg-core";
 import { items } from "./items";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 export const prices = pgTable("prices", {
   id: serial("id").primaryKey(),
@@ -15,3 +16,7 @@ export const pricesRelations = relations(prices, ({ one }) => ({
   }),
   // stores: many(stores),
 }));
+
+export const priceSchema = createSelectSchema(prices);
+
+export const createPriceSchema = createInsertSchema(prices);
