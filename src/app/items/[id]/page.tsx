@@ -16,11 +16,12 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useItem } from "./query";
 import NumberFormField from "@/components/hook-form/NumberFormField";
 import TextFormField from "@/components/hook-form/TextFormField";
+import { produce } from "immer";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -51,6 +52,13 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
   if (isLoading) return <Skeleton />;
 
   if (isError) return <Text>Error</Text>;
+
+  const onSubmit: SubmitHandler<FormData> = (data) => {
+    const submitData = produce(data, (draft) => {
+      draft.storeId = Number(draft.storeId);
+    });
+    console.log(submitData);
+  };
 
   return (
     <>
