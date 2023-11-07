@@ -22,28 +22,28 @@ dependencies:
     version: 2.2.2
   '@t3-oss/env-nextjs':
     specifier: ^0.6.1
-    version: 0.6.1(typescript@5.1.6)(zod@3.22.2)
+    version: 0.6.1(typescript@5.1.6)(zod@3.22.4)
   '@tabler/icons-react':
     specifier: ^2.34.0
     version: 2.34.0(react@18.2.0)
   '@tanstack/react-query':
-    specifier: 4.33.0
-    version: 4.33.0(react-dom@18.2.0)(react@18.2.0)
+    specifier: 4.36.1
+    version: 4.36.1(react-dom@18.2.0)(react@18.2.0)
   '@tanstack/react-query-devtools':
-    specifier: 4.33.0
-    version: 4.33.0(@tanstack/react-query@4.33.0)(react-dom@18.2.0)(react@18.2.0)
+    specifier: 4.36.1
+    version: 4.36.1(@tanstack/react-query@4.36.1)(react-dom@18.2.0)(react@18.2.0)
   '@ts-rest/core':
-    specifier: ^3.28.0
-    version: 3.30.2(zod@3.22.2)
+    specifier: ^3.30.4
+    version: 3.30.4(zod@3.22.4)
   '@ts-rest/next':
-    specifier: ^3.28.0
-    version: 3.30.2(@ts-rest/core@3.30.2)(next@13.5.4)(zod@3.22.2)
+    specifier: ^3.30.4
+    version: 3.30.4(@ts-rest/core@3.30.4)(next@13.5.4)(zod@3.22.4)
   '@ts-rest/open-api':
-    specifier: ^3.30.2
-    version: 3.30.2(@ts-rest/core@3.30.2)(zod@3.22.2)
+    specifier: ^3.30.4
+    version: 3.30.4(@ts-rest/core@3.30.4)(zod@3.22.4)
   '@ts-rest/react-query':
-    specifier: ^3.28.0
-    version: 3.30.2(@tanstack/react-query@4.33.0)(@ts-rest/core@3.30.2)(react@18.2.0)(zod@3.22.2)
+    specifier: ^3.30.4
+    version: 3.30.4(@tanstack/react-query@4.36.1)(@ts-rest/core@3.30.4)(react@18.2.0)(zod@3.22.4)
   '@types/node':
     specifier: 20.5.4
     version: 20.5.4
@@ -64,7 +64,7 @@ dependencies:
     version: 0.28.6(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.6.0)(pg@8.11.3)(postgres@3.3.5)
   drizzle-zod:
     specifier: ^0.5.1
-    version: 0.5.1(drizzle-orm@0.28.6)(zod@3.22.2)
+    version: 0.5.1(drizzle-orm@0.28.6)(zod@3.22.4)
   eslint:
     specifier: 8.47.0
     version: 8.47.0
@@ -102,8 +102,8 @@ dependencies:
     specifier: 5.1.6
     version: 5.1.6
   zod:
-    specifier: ^3.22.2
-    version: 3.22.2
+    specifier: ^3.22.4
+    version: 3.22.4
 
 devDependencies:
   '@opentelemetry/api':
@@ -164,7 +164,7 @@ packages:
     resolution: {integrity: sha512-1Yjs2SvM8TflER/OD3cOjhWWOZb58A2t7wpE2S9XfBYTiIl+XFhQG2bjy4Pu1I+EAlCNUzRDYDdFwFYUKvXcIA==}
     engines: {node: '>=0.10.0'}
 
-  /@anatine/zod-openapi@1.14.2(openapi3-ts@2.0.2)(zod@3.22.2):
+  /@anatine/zod-openapi@1.14.2(openapi3-ts@2.0.2)(zod@3.22.4):
     resolution: {integrity: sha512-q0qHfnuNYVKu0Swrnnvfj9971AEyW7c8v9jCOZGCl5ZbyGMNG4RPyJkRcMi/JC8CRfdOe0IDfNm1nNsi2avprg==}
     peerDependencies:
       openapi3-ts: ^2.0.0 || ^3.0.0
@@ -172,7 +172,7 @@ packages:
     dependencies:
       openapi3-ts: 2.0.2
       ts-deepmerge: 6.2.0
-      zod: 3.22.2
+      zod: 3.22.4
     dev: false
 
   /@auth/core@0.12.0:
@@ -1388,25 +1388,25 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /@t3-oss/env-core@0.6.1(typescript@5.1.6)(zod@3.22.2):
+  /@t3-oss/env-core@0.6.1(typescript@5.1.6)(zod@3.22.4):
     resolution: {integrity: sha512-KQD7qEDJtkWIWWmTVjNvk0wnHpkvAQ6CRbUxbWMFNG/fiosBQDQvtRpBNu6USxBscJCoC4z6y7P9MN52/mLOzw==}
     peerDependencies:
       typescript: '>=4.7.2'
       zod: ^3.0.0
     dependencies:
       typescript: 5.1.6
-      zod: 3.22.2
+      zod: 3.22.4
     dev: false
 
-  /@t3-oss/env-nextjs@0.6.1(typescript@5.1.6)(zod@3.22.2):
+  /@t3-oss/env-nextjs@0.6.1(typescript@5.1.6)(zod@3.22.4):
     resolution: {integrity: sha512-z1dIC++Vxj9kmzX5nSPfcrCSkszy3dTEPC4Ssx7Ap5AqR3c2Qa7S0xf8axn6coy7D/vCXDAAnHYnCMDhtcY3SQ==}
     peerDependencies:
       typescript: '>=4.7.2'
       zod: ^3.0.0
     dependencies:
-      '@t3-oss/env-core': 0.6.1(typescript@5.1.6)(zod@3.22.2)
+      '@t3-oss/env-core': 0.6.1(typescript@5.1.6)(zod@3.22.4)
       typescript: 5.1.6
-      zod: 3.22.2
+      zod: 3.22.4
     dev: false
 
   /@tabler/icons-react@2.34.0(react@18.2.0):
@@ -1430,27 +1430,27 @@ packages:
       remove-accents: 0.4.2
     dev: false
 
-  /@tanstack/query-core@4.33.0:
-    resolution: {integrity: sha512-qYu73ptvnzRh6se2nyBIDHGBQvPY1XXl3yR769B7B6mIDD7s+EZhdlWHQ67JI6UOTFRaI7wupnTnwJ3gE0Mr/g==}
+  /@tanstack/query-core@4.36.1:
+    resolution: {integrity: sha512-DJSilV5+ytBP1FbFcEJovv4rnnm/CokuVvrBEtW/Va9DvuJ3HksbXUJEpI0aV1KtuL4ZoO9AVE6PyNLzF7tLeA==}
     dev: false
 
-  /@tanstack/react-query-devtools@4.33.0(@tanstack/react-query@4.33.0)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-6gegkuDmOoiY5e6ZKj1id48vlCXchjfE/6tIpYO8dFlVMQ7t1bYna/Ce6qQJ69+kfEHbYiTTn2lj+FDjIBH7Hg==}
+  /@tanstack/react-query-devtools@4.36.1(@tanstack/react-query@4.36.1)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-WYku83CKP3OevnYSG8Y/QO9g0rT75v1om5IvcWUwiUZJ4LanYGLVCZ8TdFG5jfsq4Ej/lu2wwDAULEUnRIMBSw==}
     peerDependencies:
-      '@tanstack/react-query': ^4.33.0
+      '@tanstack/react-query': ^4.36.1
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       '@tanstack/match-sorter-utils': 8.8.4
-      '@tanstack/react-query': 4.33.0(react-dom@18.2.0)(react@18.2.0)
+      '@tanstack/react-query': 4.36.1(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      superjson: 1.13.1
+      superjson: 1.13.3
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
-  /@tanstack/react-query@4.33.0(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-97nGbmDK0/m0B86BdiXzx3EW9RcDYKpnyL2+WwyuLHEgpfThYAnXFaMMmnTDuAO4bQJXEhflumIEUfKmP7ESGA==}
+  /@tanstack/react-query@4.36.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-y7ySVHFyyQblPl3J3eQBWpXZkliroki3ARnBKsdJchlgt7yJLRDUcf4B8soufgiYt3pEQIkBWBx1N9/ZPIeUWw==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
@@ -1461,65 +1461,65 @@ packages:
       react-native:
         optional: true
     dependencies:
-      '@tanstack/query-core': 4.33.0
+      '@tanstack/query-core': 4.36.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
-  /@ts-rest/core@3.30.2(zod@3.22.2):
-    resolution: {integrity: sha512-XPqKbHSPIk3piMGVJiutmwRhFjIkXqnu1ya5zhGOCGVkkMnguprr7VY4g+Tsks6rxeK6DoYoPoD5+LNymkfUYw==}
+  /@ts-rest/core@3.30.4(zod@3.22.4):
+    resolution: {integrity: sha512-wHI3OHnqpak8jmz2drjzMtgvFVLBrTMvxkkWIUIsGDkEpFwuF/9592RpawkCLIvlxbrxTzp0MzqqwwbzlG6BkA==}
     peerDependencies:
-      zod: ^3.21.0
+      zod: ^3.22.3
     peerDependenciesMeta:
       zod:
         optional: true
     dependencies:
-      zod: 3.22.2
+      zod: 3.22.4
     dev: false
 
-  /@ts-rest/next@3.30.2(@ts-rest/core@3.30.2)(next@13.5.4)(zod@3.22.2):
-    resolution: {integrity: sha512-uRklLlg+CO61wExwnPv/2W+4tLuHMtIKYG/Xmrs/3Ey/0njDFi9789TyRasd47IqhIkRkkWzVxlyVBcVOyyEUA==}
+  /@ts-rest/next@3.30.4(@ts-rest/core@3.30.4)(next@13.5.4)(zod@3.22.4):
+    resolution: {integrity: sha512-MxIhtcxQlKqRvAY9uN2Pzl8oVF/C9vIHcITcF/ghiDhiQTHgQewh9M95Sd9WUcnuEDEmwsx7vhJs4NWpd01MMA==}
     peerDependencies:
-      '@ts-rest/core': 3.30.2
+      '@ts-rest/core': 3.30.4
       next: ^12.0.0 || ^13.0.0
-      zod: ^3.21.0
+      zod: ^3.22.3
     peerDependenciesMeta:
       zod:
         optional: true
     dependencies:
-      '@ts-rest/core': 3.30.2(zod@3.22.2)
+      '@ts-rest/core': 3.30.4(zod@3.22.4)
       next: 13.5.4(@opentelemetry/api@1.6.0)(react-dom@18.2.0)(react@18.2.0)
-      zod: 3.22.2
+      zod: 3.22.4
     dev: false
 
-  /@ts-rest/open-api@3.30.2(@ts-rest/core@3.30.2)(zod@3.22.2):
-    resolution: {integrity: sha512-Pk4vorqI9y8fqfyUpmRbCACWiMgZfnGhuANHr80Z1sD5wzwLzlyxWQz0zqdJyz7Y3b5Jd4oCvYNDpfk4ErExFQ==}
+  /@ts-rest/open-api@3.30.4(@ts-rest/core@3.30.4)(zod@3.22.4):
+    resolution: {integrity: sha512-ZIGFPQFi3o2UooF6tJON14J1KL003VoakL8Y6l6pQsyqTwdIkzPOm/7JgTuS7sfmlGe9giGoiaU/+RwjnBQtCQ==}
     peerDependencies:
-      '@ts-rest/core': 3.30.2
-      zod: ^3.21.0
+      '@ts-rest/core': 3.30.4
+      zod: ^3.22.3
     dependencies:
-      '@anatine/zod-openapi': 1.14.2(openapi3-ts@2.0.2)(zod@3.22.2)
-      '@ts-rest/core': 3.30.2(zod@3.22.2)
+      '@anatine/zod-openapi': 1.14.2(openapi3-ts@2.0.2)(zod@3.22.4)
+      '@ts-rest/core': 3.30.4(zod@3.22.4)
       openapi3-ts: 2.0.2
-      zod: 3.22.2
+      zod: 3.22.4
     dev: false
 
-  /@ts-rest/react-query@3.30.2(@tanstack/react-query@4.33.0)(@ts-rest/core@3.30.2)(react@18.2.0)(zod@3.22.2):
-    resolution: {integrity: sha512-bkFKSF8b7OSb38/HCdz0CMbEQ/xsHNYxLGaqxSem6t6ORUxYjHPBPqhlqqjVfC0sbx6apsaBbnP17UjcYlH15Q==}
+  /@ts-rest/react-query@3.30.4(@tanstack/react-query@4.36.1)(@ts-rest/core@3.30.4)(react@18.2.0)(zod@3.22.4):
+    resolution: {integrity: sha512-4crsnuVXXJfowgrj7IVVbWGmglitlcoWe3VES2zPGfaOgjhNEuIL/Dq4FBeWAEFG8DmK7oef0AhgpkVos/H6xQ==}
     peerDependencies:
       '@tanstack/react-query': ^4.0.0
-      '@ts-rest/core': 3.30.2
+      '@ts-rest/core': 3.30.4
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
-      zod: ^3.21.0
+      zod: ^3.22.3
     peerDependenciesMeta:
       zod:
         optional: true
     dependencies:
-      '@tanstack/react-query': 4.33.0(react-dom@18.2.0)(react@18.2.0)
-      '@ts-rest/core': 3.30.2(zod@3.22.2)
+      '@tanstack/react-query': 4.36.1(react-dom@18.2.0)(react@18.2.0)
+      '@ts-rest/core': 3.30.4(zod@3.22.4)
       react: 18.2.0
-      zod: 3.22.2
+      zod: 3.22.4
     dev: false
 
   /@types/bcrypt@5.0.0:
@@ -2173,7 +2173,7 @@ packages:
     resolution: {integrity: sha512-yCEafptTtb4bk7GLEQoM8KVJpxAfdBJYaXyzQEgQQQgYrZiDp8SJmGKlYza6CYjEDNstAdNdKA3UuoULlEbS6w==}
     engines: {node: '>=12.13'}
     dependencies:
-      is-what: 4.1.15
+      is-what: 4.1.16
     dev: false
 
   /copy-to-clipboard@3.3.3:
@@ -2404,7 +2404,7 @@ packages:
       hanji: 0.0.5
       json-diff: 0.9.0
       minimatch: 7.4.6
-      zod: 3.22.2
+      zod: 3.22.4
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -2477,14 +2477,14 @@ packages:
       postgres: 3.3.5
     dev: false
 
-  /drizzle-zod@0.5.1(drizzle-orm@0.28.6)(zod@3.22.2):
+  /drizzle-zod@0.5.1(drizzle-orm@0.28.6)(zod@3.22.4):
     resolution: {integrity: sha512-C/8bvzUH/zSnVfwdSibOgFjLhtDtbKYmkbPbUCq46QZyZCH6kODIMSOgZ8R7rVjoI+tCj3k06MRJMDqsIeoS4A==}
     peerDependencies:
       drizzle-orm: '>=0.23.13'
       zod: '*'
     dependencies:
       drizzle-orm: 0.28.6(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.6.0)(pg@8.11.3)(postgres@3.3.5)
-      zod: 3.22.2
+      zod: 3.22.4
     dev: false
 
   /electron-to-chromium@1.4.523:
@@ -3617,8 +3617,8 @@ packages:
       get-intrinsic: 1.2.1
     dev: false
 
-  /is-what@4.1.15:
-    resolution: {integrity: sha512-uKua1wfy3Yt+YqsD6mTUEa2zSi3G1oPlqTflgaPJ7z63vUGN5pxFpnQfeSLMFnJDEsdvOtkp1rUWkYjB4YfhgA==}
+  /is-what@4.1.16:
+    resolution: {integrity: sha512-ZhMwEosbFJkA0YhFnNDgTM4ZxDRsS6HqTo7qsZM08fehyRYIYa0yHu5R6mgo1n/8MgaPBXiPimPD77baVFYg+A==}
     engines: {node: '>=12.13'}
     dev: false
 
@@ -5577,8 +5577,8 @@ packages:
       postcss: 8.4.29
     dev: true
 
-  /superjson@1.13.1:
-    resolution: {integrity: sha512-AVH2eknm9DEd3qvxM4Sq+LTCkSXE2ssfh1t11MHMXyYXFQyQ1HLgVvV+guLTsaQnJU3gnaVo34TohHPulY/wLg==}
+  /superjson@1.13.3:
+    resolution: {integrity: sha512-mJiVjfd2vokfDxsQPOwJ/PtanO87LhpYY88ubI5dUB1Ab58Txbyje3+jpm+/83R/fevaq/107NNhtYBLuoTrFg==}
     engines: {node: '>=10'}
     dependencies:
       copy-anything: 3.0.5
@@ -6150,5 +6150,5 @@ packages:
     resolution: {integrity: sha512-jEA1znR7b4C/NnaycInCU6h/d15ZzCd1jmsruqOKnZP6WXQSMH3W2GL+OXbkruslU4h+Tzuos0HdswzRUk/Vgg==}
     dev: false
 
-  /zod@3.22.2:
-    resolution: {integrity: sha512-wvWkphh5WQsJbVk1tbx1l1Ly4yg+XecD+Mq280uBGt9wa5BKSWf4Mhp6GmrkPixhMxmabYY7RbzlwVP32pbGCg==}
+  /zod@3.22.4:
+    resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
