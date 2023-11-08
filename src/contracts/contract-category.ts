@@ -50,8 +50,8 @@ export const categoryContract = c.router({
       404: z.null(),
     },
     query: z.object({
-      limit: z.string().transform(Number),
-      offset: z.string().transform(Number),
+      limit: z.number(),
+      offset: z.number(),
     }),
   },
 });

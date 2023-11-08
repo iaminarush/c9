@@ -22,4 +22,5 @@ export default createNextRouter(contract, router, {
     //   return res.status(500).json({ message: "Internal Server Error" });
     // }
   },
+  jsonQuery: true,
 });
