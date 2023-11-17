@@ -15,7 +15,7 @@ type CategoriesResponse = ServerInferResponses<
 
 export const useCategories = () =>
   client.categories.getCategories.useQuery(keys.all, {
-    query: { limit: "100", offset: "0" },
+    query: { limit: 100, offset: 0 },
   });
 
 export const useCreateCategory = () => {

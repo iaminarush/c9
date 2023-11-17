@@ -10,7 +10,7 @@ const router = createNextRoute(contract, {
   categories: categoriesRouter,
   items: itemsRouter,
   records: recordsRouter,
-  store: storesRouter,
+  stores: storesRouter,
 });
 
 export default createNextRouter(contract, router, {

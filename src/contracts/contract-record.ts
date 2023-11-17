@@ -15,4 +15,15 @@ export const recordContract = c.router({
     body: createRecordSchema,
     summary: "Create a record for an item",
   },
+  getRecords: {
+    method: "GET",
+    path: "/topkek",
+    responses: {
+      200: recordSchema.array(),
+      404: z.null(),
+    },
+    query: z.object({
+      item: z.number(),
+    }),
+  },
 });

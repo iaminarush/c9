@@ -12,7 +12,7 @@ export const contract = c.router(
     categories: categoryContract,
     items: itemContract,
     records: recordContract,
-    store: storeContract,
+    stores: storeContract,
   },
   {
     strictStatusCodes: true,

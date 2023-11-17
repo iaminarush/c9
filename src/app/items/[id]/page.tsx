@@ -6,6 +6,7 @@ import { isNumber } from "@/lib/utils";
 import { createRecordSchema } from "@/server/db/schema";
 import {
   ActionIcon,
+  Button,
   ComboboxItem,
   Group,
   Modal,
@@ -35,13 +36,17 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
       remark: "",
     },
   });
-  const stores = client.store.getStores.useQuery(
+  const records = client.records.getRecords.useQuery(["record", id], {
+    query: { item: Number(id) },
+  });
+  const stores = client.stores.getStores.useQuery(
     ["stores"],
     {},
     {
       //@ts-expect-error ts-rest bug
       select: (data) =>
         data.body.map((d) => ({ label: d.name, value: `${d.id}` })),
+      enabled: opened,
     },
   );
 
@@ -81,17 +86,30 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
             label="Store"
             rules={{ required: "Required" }}
             searchable
+            withAsterisk
           />
 
           <NumberFormField
             control={control}
             name="price"
             rules={{ required: "Required" }}
+            label="Price"
+            withAsterisk
+            min={0}
+            prefix="$"
+            decimalScale={2}
+            thousandSeparator=","
           />
 
-          <TextFormField control={control} name="description" />
+          <TextFormField
+            control={control}
+            name="description"
+            label="Description"
+          />
 
-          <TextFormField control={control} name="remark" />
+          <TextFormField control={control} name="remark" label="Remark" />
+
+          <Button onClick={() => void handleSubmit(onSubmit)()}>Submit</Button>
         </Stack>
       </Modal>
     </>

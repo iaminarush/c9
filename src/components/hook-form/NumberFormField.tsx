@@ -13,18 +13,19 @@ type NumberFormFieldProps<TFieldValues extends FieldValues> = Omit<
 > & {
   name: Path<TFieldValues>;
   control: Control<TFieldValues>;
-  rules?: ControllerProps["rules"];
+  rules?: ControllerProps<TFieldValues>["rules"];
 };
 
 export default function NumberFormField<TFieldValues extends FieldValues>({
   name,
   control,
+  rules,
   ...rest
 }: NumberFormFieldProps<TFieldValues>) {
   const {
     field: { ref, value, onChange, onBlur },
     fieldState: { error },
-  } = useController({ control, name });
+  } = useController({ control, name, rules });
 
   return (
     <NumberInput
