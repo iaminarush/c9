@@ -23,6 +23,7 @@ import { useItem } from "./query";
 import NumberFormField from "@/components/hook-form/NumberFormField";
 import TextFormField from "@/components/hook-form/TextFormField";
 import { produce } from "immer";
+import { useCreateCategory } from "@/app/categories/query";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -49,6 +50,7 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
       enabled: opened,
     },
   );
+  const createRecord = useCreateCategory();
 
   if (!isNumber(id)) {
     return <Text>Item Id must be a number</Text>;
@@ -61,8 +63,13 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
   const onSubmit: SubmitHandler<FormData> = (data) => {
     const submitData = produce(data, (draft) => {
       draft.storeId = Number(draft.storeId);
+      draft.price = `${draft.price}`;
     });
-    console.log(submitData);
+
+    const result = createRecordSchema.safeParse(submitData);
+    if (result.success) {
+      createRecord.mutate({ body: result.data });
+    }
   };
 
   return (

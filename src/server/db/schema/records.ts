@@ -11,6 +11,7 @@ import { stores } from "./stores";
 import { units } from "./units";
 import { items } from "./items";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
 
 export const records = pgTable("records", {
   id: serial("id").primaryKey(),
@@ -42,3 +43,5 @@ export const recordsRelations = relations(records, ({ one }) => ({
 export const recordSchema = createSelectSchema(records);
 
 export const createRecordSchema = createInsertSchema(records);
+
+type kek = z.infer<typeof createRecordSchema>;
