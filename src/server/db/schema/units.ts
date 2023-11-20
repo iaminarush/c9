@@ -9,6 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { records } from "./records";
 import { unitType } from "./unitType";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 export const units = pgTable("units", {
   id: serial("id").primaryKey(),
@@ -28,3 +29,7 @@ export const unitsRelations = relations(units, ({ one, many }) => ({
     references: [unitType.id],
   }),
 }));
+
+export const unitSchema = createSelectSchema(units);
+
+export const createUnitSchema = createInsertSchema(units);

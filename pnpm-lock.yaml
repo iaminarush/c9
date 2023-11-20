@@ -59,6 +59,9 @@ dependencies:
   clsx:
     specifier: ^2.0.0
     version: 2.0.0
+  convert:
+    specifier: ^4.14.0
+    version: 4.14.0
   drizzle-orm:
     specifier: ^0.28.4
     version: 0.28.6(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.6.0)(pg@8.11.3)(postgres@3.3.5)
@@ -2169,6 +2172,10 @@ packages:
 
   /console-control-strings@1.1.0:
     resolution: {integrity: sha512-ty/fTekppD2fIwRvnZAVdeOiGd1c7YXEixbgJTNzqcxJWKQnjJ/V1bNEEE6hygpM3WjwHFUVK6HTjWSzV4a8sQ==}
+    dev: false
+
+  /convert@4.14.0:
+    resolution: {integrity: sha512-Lb+zARTdyUZMesbmppDzIixaMuDj1B48O5/1n7gHV9WdWrySbBfUM6MEqTLXZfiVFH7fXsnmiwaHyUZwWwDNsg==}
     dev: false
 
   /cookie@0.5.0:

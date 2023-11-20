@@ -43,5 +43,3 @@ export const recordsRelations = relations(records, ({ one }) => ({
 export const recordSchema = createSelectSchema(records);
 
 export const createRecordSchema = createInsertSchema(records);
-
-type kek = z.infer<typeof createRecordSchema>;

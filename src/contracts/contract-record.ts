@@ -1,6 +1,18 @@
-import { createRecordSchema, recordSchema } from "@/server/db/schema";
+import {
+  createRecordSchema,
+  recordSchema,
+  storeSchema,
+  unitSchema,
+} from "@/server/db/schema";
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
+
+const recordDetailSchema = recordSchema.merge(
+  z.object({
+    store: storeSchema,
+    unit: unitSchema,
+  }),
+);
 
 const c = initContract();
 
@@ -17,9 +29,9 @@ export const recordContract = c.router({
   },
   getRecords: {
     method: "GET",
-    path: "/topkek",
+    path: "/records",
     responses: {
-      200: recordSchema.array(),
+      200: recordDetailSchema.array(),
       404: z.null(),
     },
     query: z.object({

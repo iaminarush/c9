@@ -18,6 +18,10 @@ export const recordsRouter = createNextRoute(contract.records, {
     if (isNumber(args.query.item)) {
       const result = await db.query.records.findMany({
         where: eq(records.itemId, Number(args.query.item)),
+        with: {
+          store: true,
+          unit: true,
+        },
       });
 
       if (result) {

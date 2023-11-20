@@ -1,12 +1,15 @@
 "use client";
 
+import NumberFormField from "@/components/hook-form/NumberFormField";
 import SelectFormField from "@/components/hook-form/SelectFormField";
+import TextFormField from "@/components/hook-form/TextFormField";
 import { client } from "@/contracts/contract";
 import { isNumber } from "@/lib/utils";
-import { createRecordSchema } from "@/server/db/schema";
+import { createRecordSchema, recordSchema } from "@/server/db/schema";
 import {
   ActionIcon,
   Button,
+  Card,
   ComboboxItem,
   Group,
   Modal,
@@ -17,13 +20,11 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { z } from "zod";
-import { useItem } from "./query";
-import NumberFormField from "@/components/hook-form/NumberFormField";
-import TextFormField from "@/components/hook-form/TextFormField";
 import { produce } from "immer";
-import { useCreateCategory } from "@/app/categories/query";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { record, z } from "zod";
+import { useCreateRecord, useItem } from "./query";
+import { Mass } from "convert";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -37,9 +38,6 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
       remark: "",
     },
   });
-  const records = client.records.getRecords.useQuery(["record", id], {
-    query: { item: Number(id) },
-  });
   const stores = client.stores.getStores.useQuery(
     ["stores"],
     {},
@@ -50,7 +48,7 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
       enabled: opened,
     },
   );
-  const createRecord = useCreateCategory();
+  const createRecord = useCreateRecord();
 
   if (!isNumber(id)) {
     return <Text>Item Id must be a number</Text>;
@@ -81,6 +79,8 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
             <IconPlus />
           </ActionIcon>
         </Group>
+
+        <RecordList recordId={id} />
       </Stack>
 
       <Modal opened={opened} onClose={close} title="Add Price" centered>
@@ -122,3 +122,45 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
     </>
   );
 }
+
+const RecordList = ({ recordId }: { recordId: string }) => {
+  const records = client.records.getRecords.useQuery(["record", recordId], {
+    query: { item: Number(recordId) },
+  });
+
+  if (records.isFetching) {
+    return <Skeleton />;
+  }
+
+  if (records.isSuccess) {
+    return (
+      <>
+        {records.data.body.length ? (
+          <Stack>
+            {records.data.body.map((r) => (
+              <RecordCard key={r.id} {...r} />
+            ))}
+          </Stack>
+        ) : (
+          <Text>No Records</Text>
+        )}
+      </>
+    );
+  }
+
+  return (
+    <>
+      <></>
+    </>
+  );
+};
+
+type Record = z.infer<typeof recordSchema>;
+
+const RecordCard = (record: Record) => {
+  return (
+    <Card>
+      <Text>{record.storeId}</Text>
+    </Card>
+  );
+};
