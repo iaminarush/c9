@@ -4,5 +4,4 @@ export * from "./schema/items";
 export * from "./schema/prices";
 export * from "./schema/records";
 export * from "./schema/stores";
-export * from "./schema/units";
-export * from "./schema/unitType";
+export * from "./schema/unitTypes";
