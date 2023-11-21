@@ -5,12 +5,14 @@ import { categoriesRouter } from "./categoriesRouter";
 import { itemsRouter } from "./itemsRouter";
 import { recordsRouter } from "./recordsRouter";
 import { storesRouter } from "./storesRouter";
+import { unitTypesRouter } from "./unitTypesRouter";
 
 const router = createNextRoute(contract, {
   categories: categoriesRouter,
   items: itemsRouter,
   records: recordsRouter,
   stores: storesRouter,
+  unitTypes: unitTypesRouter,
 });
 
 export default createNextRouter(contract, router, {

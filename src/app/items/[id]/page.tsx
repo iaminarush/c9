@@ -2,10 +2,11 @@
 
 import NumberFormField from "@/components/hook-form/NumberFormField";
 import SelectFormField from "@/components/hook-form/SelectFormField";
-import TextFormField from "@/components/hook-form/TextFormField";
 import { client } from "@/contracts/contract";
+import { recordDetailSchema } from "@/contracts/contract-record";
+import { useStoresData, useUnitTypesData } from "@/lib/commonQueries";
 import { isNumber } from "@/lib/utils";
-import { createRecordSchema, recordSchema } from "@/server/db/schema";
+import { createRecordSchema } from "@/server/db/schema";
 import {
   ActionIcon,
   Button,
@@ -22,14 +23,14 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 import { produce } from "immer";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { record, z } from "zod";
+import { z } from "zod";
 import { useCreateRecord, useItem } from "./query";
-import { Mass } from "convert";
+import { toast } from "react-hot-toast";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
 export default function Item({ params: { id } }: { params: { id: string } }) {
-  const { isLoading, isError, data } = useItem(id);
+  const { isLoading, isError, data } = useItem(id, { enabled: isNumber(id) });
   const [opened, { open, close }] = useDisclosure(false);
   const { control, handleSubmit } = useForm<FormData>({
     defaultValues: {
@@ -38,16 +39,8 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
       remark: "",
     },
   });
-  const stores = client.stores.getStores.useQuery(
-    ["stores"],
-    {},
-    {
-      //@ts-expect-error ts-rest bug
-      select: (data) =>
-        data.body.map((d) => ({ label: d.name, value: `${d.id}` })),
-      enabled: opened,
-    },
-  );
+  const stores = useStoresData({ queryOptions: { enabled: opened } });
+  const unitTypes = useUnitTypesData({ queryOptions: { enabled: opened } });
   const createRecord = useCreateRecord();
 
   if (!isNumber(id)) {
@@ -61,12 +54,16 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
   const onSubmit: SubmitHandler<FormData> = (data) => {
     const submitData = produce(data, (draft) => {
       draft.storeId = Number(draft.storeId);
+      // draft.unitTypeId = Number(draft.unitTypeId);
       draft.price = `${draft.price}`;
     });
 
     const result = createRecordSchema.safeParse(submitData);
     if (result.success) {
       createRecord.mutate({ body: result.data });
+    } else {
+      toast.error("Error, view console");
+      console.log(result.error.issues);
     }
   };
 
@@ -108,13 +105,35 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
             thousandSeparator=","
           />
 
-          <TextFormField
+          <SelectFormField
+            control={control}
+            name="unitTypeId"
+            data={unitTypes.data as unknown as ComboboxItem[]}
+            loading={unitTypes.isLoading}
+            label="Unit Type"
+            rules={{ required: "Required" }}
+            searchable
+            withAsterisk
+          />
+
+          <NumberFormField
+            control={control}
+            name="amount"
+            rules={{ required: "Required" }}
+            label="Amount"
+            withAsterisk
+            min={0.01}
+            decimalScale={0}
+            thousandSeparator=","
+          />
+
+          {/* <TextFormField
             control={control}
             name="description"
             label="Description"
           />
 
-          <TextFormField control={control} name="remark" label="Remark" />
+          <TextFormField control={control} name="remark" label="Remark" /> */}
 
           <Button onClick={() => void handleSubmit(onSubmit)()}>Submit</Button>
         </Stack>
@@ -155,7 +174,7 @@ const RecordList = ({ recordId }: { recordId: string }) => {
   );
 };
 
-type Record = z.infer<typeof recordSchema>;
+type Record = z.infer<typeof recordDetailSchema>;
 
 const RecordCard = (record: Record) => {
   return (

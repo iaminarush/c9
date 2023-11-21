@@ -4,6 +4,7 @@ import { categoryContract } from "./contract-category";
 import { itemContract } from "./contract-item";
 import { recordContract } from "./contract-record";
 import { storeContract } from "./contract-store";
+import { unitTypesContract } from "./contract-unitType";
 
 const c = initContract();
 
@@ -13,6 +14,7 @@ export const contract = c.router(
     items: itemContract,
     records: recordContract,
     stores: storeContract,
+    unitTypes: unitTypesContract,
   },
   {
     strictStatusCodes: true,

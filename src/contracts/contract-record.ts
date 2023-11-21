@@ -2,15 +2,15 @@ import {
   createRecordSchema,
   recordSchema,
   storeSchema,
-  unitSchema,
+  unitTypesSchema,
 } from "@/server/db/schema";
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 
-const recordDetailSchema = recordSchema.merge(
+export const recordDetailSchema = recordSchema.merge(
   z.object({
     store: storeSchema,
-    unit: unitSchema,
+    unitType: unitTypesSchema,
   }),
 );
 
@@ -21,7 +21,7 @@ export const recordContract = c.router({
     method: "POST",
     path: "/records",
     responses: {
-      201: recordSchema,
+      201: recordDetailSchema,
       400: z.object({ message: z.string() }),
     },
     body: createRecordSchema,

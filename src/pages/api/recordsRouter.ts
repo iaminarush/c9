@@ -7,27 +7,39 @@ import { eq } from "drizzle-orm";
 
 export const recordsRouter = createNextRoute(contract.records, {
   createRecord: async (args) => {
-    const [newRecord] = await db.insert(records).values(args.body).returning();
+    const [newRecord] = await db
+      .insert(records)
+      .values(args.body)
+      .returning({ id: records.id });
 
-    return newRecord
-      ? { status: 201, body: newRecord }
-      : { status: 400, body: { message: "Error" } };
+    if (newRecord) {
+      const createdRecord = await db.query.records.findFirst({
+        where: eq(records.id, newRecord.id),
+        with: { store: true, unitType: true },
+      });
+
+      if (createdRecord) {
+        return { status: 201, body: createdRecord };
+      }
+    }
+
+    return { status: 400, body: { message: "Error" } };
   },
   getRecords: async (args) => {
     console.log(typeof args.query.item, isNumber(args.query.item));
-    if (isNumber(args.query.item)) {
-      const result = await db.query.records.findMany({
-        where: eq(records.itemId, Number(args.query.item)),
-        with: {
-          store: true,
-          unit: true,
-        },
-      });
+    // if (isNumber(args.query.item)) {
+    const result = await db.query.records.findMany({
+      where: eq(records.itemId, Number(args.query.item)),
+      with: {
+        store: true,
+        unitType: true,
+      },
+    });
 
-      if (result) {
-        return { status: 200, body: result };
-      }
+    if (result) {
+      return { status: 200, body: result };
     }
+    // }
     return { status: 404, body: null };
   },
 });
