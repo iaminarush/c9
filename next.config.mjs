@@ -5,7 +5,15 @@ const nextConfig = {
   reactStrictMode: false,
   typescript: { ignoreBuildErrors: true },
   eslint: { ignoreDuringBuilds: true },
-  swcMinify: true
+  swcMinify: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "placehold.co",
+      },
+    ],
+  },
 };
 
 // module.exports = nextConfig;
