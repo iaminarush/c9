@@ -9,6 +9,7 @@ import { produce } from "immer";
 const keys = {
   all: ["item"],
   item: (id: string) => [...keys.all, id] as const,
+  record: (id: string) => ["record", id],
 };
 
 type RecordsResponse = ServerInferResponses<
@@ -26,12 +27,13 @@ export const useItem = (
     queryOptions,
   );
 
-export const useCreateRecord = () => {
+export const useCreateRecord = (id: string) => {
   const queryClient = useQueryClient();
 
   return client.records.createRecord.useMutation({
     onSuccess: ({ body }) => {
-      queryClient.setQueryData<RecordsResponse>(keys.all, (oldData) => {
+      queryClient.setQueryData<RecordsResponse>(keys.record(id), (oldData) => {
+        console.log(oldData, id, keys.record(id));
         if (!oldData) return undefined;
 
         const newData = produce(oldData, (draft) => {
