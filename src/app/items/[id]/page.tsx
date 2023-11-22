@@ -13,19 +13,23 @@ import {
   Card,
   ComboboxItem,
   Group,
+  Image,
   Modal,
+  NumberFormatter,
   Skeleton,
   Stack,
   Text,
   Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconPlus } from "@tabler/icons-react";
+import { IconPhoto, IconPlus } from "@tabler/icons-react";
 import { produce } from "immer";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useCreateRecord, useItem } from "./query";
 import { toast } from "react-hot-toast";
+import NextImage from "next/image";
+import convert, { Mass } from "convert";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -41,7 +45,7 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
   });
   const stores = useStoresData({ queryOptions: { enabled: opened } });
   const unitTypes = useUnitTypesData({ queryOptions: { enabled: opened } });
-  const createRecord = useCreateRecord();
+  const createRecord = useCreateRecord(id);
 
   if (!isNumber(id)) {
     return <Text>Item Id must be a number</Text>;
@@ -54,13 +58,13 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
   const onSubmit: SubmitHandler<FormData> = (data) => {
     const submitData = produce(data, (draft) => {
       draft.storeId = Number(draft.storeId);
-      // draft.unitTypeId = Number(draft.unitTypeId);
+      draft.unitTypeId = Number(draft.unitTypeId);
       draft.price = `${draft.price}`;
     });
 
     const result = createRecordSchema.safeParse(submitData);
     if (result.success) {
-      createRecord.mutate({ body: result.data });
+      createRecord.mutate({ body: result.data }, { onSuccess: () => close() });
     } else {
       toast.error("Error, view console");
       console.log(result.error.issues);
@@ -135,7 +139,12 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
 
           <TextFormField control={control} name="remark" label="Remark" /> */}
 
-          <Button onClick={() => void handleSubmit(onSubmit)()}>Submit</Button>
+          <Button
+            onClick={() => void handleSubmit(onSubmit)()}
+            loading={createRecord.isLoading}
+          >
+            Submit
+          </Button>
         </Stack>
       </Modal>
     </>
@@ -177,9 +186,37 @@ const RecordList = ({ recordId }: { recordId: string }) => {
 type Record = z.infer<typeof recordDetailSchema>;
 
 const RecordCard = (record: Record) => {
+  // console.log(Number(record.amount));
   return (
+    // <Card style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
     <Card>
-      <Text>{record.storeId}</Text>
+      <Group>
+        <IconPhoto size={36} />
+
+        <Stack gap="xs" style={{ flexGrow: 1 }}>
+          <Text>{record.store.name}</Text>
+
+          <Group justify="space-between">
+            <Group>
+              <NumberFormatter
+                prefix="$ "
+                value={record.price}
+                thousandSeparator
+              />
+
+              <Text>
+                Weight: {record.amount} {record.unitType.name}
+              </Text>
+            </Group>
+
+            <NumberFormatter
+              prefix="$ "
+              suffix={` / ${record.unitType.name}`}
+              value={Number(record.price) / Number(record.amount)}
+            />
+          </Group>
+        </Stack>
+      </Group>
     </Card>
   );
 };
