@@ -1,0 +1,106 @@
+table account {
+  userId text [not null]
+  type text [not null]
+  provider text [not null]
+  providerAccountId text [not null]
+  refresh_token text
+  access_token text
+  expires_at integer
+  token_type text
+  scope text
+  id_token text
+  session_state text
+
+  indexes {
+    (provider, providerAccountId) [pk]
+  }
+}
+
+table categories {
+  id serial [pk, not null, increment]
+  name text [not null, unique]
+  remark text
+  updated_at timestamp
+  created_at timestamp [default: `now()`]
+  parent_id integer
+}
+
+table items {
+  id serial [pk, not null, increment]
+  name text [not null]
+  remark text
+  updated_at timestamp
+  created_at timestamp [default: `now()`]
+  category_id integer [not null]
+}
+
+table prices {
+  id serial [pk, not null, increment]
+  price bigint [not null]
+  timestamp timestamp [default: `now()`]
+}
+
+table records {
+  id serial [pk, not null, increment]
+  price numeric [not null]
+  description text
+  amount numeric [not null]
+  remark text
+  updated_at timestamp
+  created_at timestamp [default: `now()`]
+  item_id integer [not null]
+  store_id integer [not null]
+  unit_type_id integer [not null]
+}
+
+table session {
+  sessionToken text [pk, not null]
+  userId text [not null]
+  expires timestamp [not null]
+}
+
+table stores {
+  id serial [pk, not null, increment]
+  name text [not null, unique]
+  remark text
+  updated_at timestamp
+  created_at timestamp [default: `now()`]
+}
+
+table unit_types {
+  id serial [pk, not null, increment]
+  name text [not null]
+  remark text
+  updated_at timestamp
+  created_at timestamp [default: `now()`]
+}
+
+table user {
+  id text [pk, not null]
+  name text
+  email text [unique]
+  username text [not null, unique]
+  password text [not null]
+  emailVerified timestamp
+  image text
+}
+
+table verificationToken {
+  identifier text [not null]
+  token text [not null]
+  expires timestamp [not null]
+
+  indexes {
+    (identifier, token) [pk]
+  }
+}
+
+ref: items.category_id > categories.id
+
+ref: prices.id > items.id
+
+ref: records.unit_type_id > unit_types.id
+
+ref: records.store_id > stores.id
+
+ref: records.item_id > items.id
