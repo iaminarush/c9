@@ -43,13 +43,14 @@ export default function NavLayout({ children }: { children: ReactNode }) {
               >
                 Category
               </UnstyledButton>
-              {/* <UnstyledButton className={classes.control}>Blog</UnstyledButton>
-              <UnstyledButton className={classes.control}>
-                Contacts
+
+              <UnstyledButton
+                className={classes.control}
+                component={Link}
+                href="/comparison"
+              >
+                Comparison
               </UnstyledButton>
-              <UnstyledButton className={classes.control}>
-                Support
-              </UnstyledButton> */}
             </Group>
 
             <ColorSchemToggle />
@@ -66,9 +67,14 @@ export default function NavLayout({ children }: { children: ReactNode }) {
         >
           Category
         </UnstyledButton>
-        {/* <UnstyledButton className={classes.control}>Blog</UnstyledButton>
-        <UnstyledButton className={classes.control}>Contacts</UnstyledButton>
-        <UnstyledButton className={classes.control}>Support</UnstyledButton> */}
+
+        <UnstyledButton
+          className={classes.control}
+          component={Link}
+          href="/comparison"
+        >
+          Comparison
+        </UnstyledButton>
       </AppShellNavbar>
 
       <AppShellMain>
