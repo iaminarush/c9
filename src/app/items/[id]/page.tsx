@@ -9,11 +9,11 @@ import { isNumber } from "@/lib/utils";
 import { createRecordSchema } from "@/server/db/schema";
 import {
   ActionIcon,
+  Box,
   Button,
   Card,
   ComboboxItem,
   Group,
-  Image,
   Modal,
   NumberFormatter,
   Skeleton,
@@ -25,11 +25,11 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconPhoto, IconPlus } from "@tabler/icons-react";
 import { produce } from "immer";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
 import { z } from "zod";
 import { useCreateRecord, useItem } from "./query";
-import { toast } from "react-hot-toast";
-import NextImage from "next/image";
-import convert, { Mass } from "convert";
+import TextFormField from "@/components/hook-form/TextFormField";
+import { Mass } from "convert";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -131,13 +131,13 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
             thousandSeparator=","
           />
 
-          {/* <TextFormField
+          <TextFormField
             control={control}
             name="description"
             label="Description"
           />
 
-          <TextFormField control={control} name="remark" label="Remark" /> */}
+          {/* <TextFormField control={control} name="remark" label="Remark" /> */}
 
           <Button
             onClick={() => void handleSubmit(onSubmit)()}
@@ -176,11 +176,7 @@ const RecordList = ({ recordId }: { recordId: string }) => {
     );
   }
 
-  return (
-    <>
-      <></>
-    </>
-  );
+  return <Text>Error loading records</Text>;
 };
 
 type Record = z.infer<typeof recordDetailSchema>;
@@ -188,13 +184,20 @@ type Record = z.infer<typeof recordDetailSchema>;
 const RecordCard = (record: Record) => {
   // console.log(Number(record.amount));
   return (
-    // <Card style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
     <Card>
       <Group>
         <IconPhoto size={36} />
 
         <Stack gap="xs" style={{ flexGrow: 1 }}>
-          <Text>{record.store.name}</Text>
+          <Group gap={0}>
+            <Text>{record.store.name}</Text>
+            {!!record.description && (
+              <>
+                &nbsp;
+                <Text> - {record.store.name}</Text>
+              </>
+            )}
+          </Group>
 
           <Group justify="space-between">
             <Group>
