@@ -1,35 +1,32 @@
 import { client } from "@/contracts/contract";
 import { storeContract } from "@/contracts/contract-store";
+import { unitFamiliesContract } from "@/contracts/contract-unitFamily";
+import { unitTypesContract } from "@/contracts/contract-unitType";
 import { UseQueryOptions } from "@ts-rest/react-query";
 
 export const useStoresData = ({
   queryOptions,
 }: {
-  queryOptions?: UseQueryOptions<typeof storeContract.getStores>;
-}) =>
-  client.stores.getStores.useQuery(
-    ["stores"],
-    {},
-    {
-      //@ts-expect-error ts-rest bug
-      select: (data) =>
-        data.body.map((d) => ({ label: d.name, value: `${d.id}` })),
-      ...queryOptions,
-    },
-  );
+  queryOptions?: UseQueryOptions<typeof storeContract.getStoresFormatted>;
+}) => client.stores.getStoresFormatted.useQuery(["stores"], {}, queryOptions);
 
 export const useUnitTypesData = ({
   queryOptions,
 }: {
-  queryOptions?: UseQueryOptions<typeof storeContract.getStores>;
+  queryOptions?: UseQueryOptions<
+    typeof unitTypesContract.getUnitTypesFormatted
+  >;
+}) => client.unitTypes.getUnitTypesFormatted.useQuery([""], {}, queryOptions);
+
+export const useUnitFamiliesData = ({
+  queryOptions,
+}: {
+  queryOptions?: UseQueryOptions<
+    typeof unitFamiliesContract.getUnitFamiliesFormatted
+  >;
 }) =>
-  client.unitTypes.getUnitTypes.useQuery(
-    ["unit types"],
+  client.unitFamilies.getUnitFamiliesFormatted.useQuery(
+    ["unit families"],
     {},
-    {
-      //@ts-expect-error ts-rest bug
-      select: (data) =>
-        data.body.map((d) => ({ label: d.name, value: `${d.id}` })),
-      ...queryOptions,
-    },
+    queryOptions,
   );

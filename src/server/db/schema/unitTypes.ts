@@ -10,7 +10,7 @@ export const unitTypes = pgTable("unit_types", {
   remark: text("remark"),
   updatedAt: timestamp("updated_at"),
   createdAt: timestamp("created_at").defaultNow(),
-  unitFamilyId: integer("unit_family_id"),
+  unitFamilyId: integer("unit_family_id").notNull(),
 });
 
 export const unitTypesRelations = relations(unitTypes, ({ one, many }) => ({

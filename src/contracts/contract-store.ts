@@ -1,3 +1,4 @@
+import { selectSchema } from "@/lib/zodScehmas";
 import { storeSchema } from "@/server/db/schema";
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
@@ -10,7 +11,15 @@ export const storeContract = c.router({
     path: "/stores",
     responses: {
       200: storeSchema.array(),
-      400: z.object({ message: z.string() }),
+      404: null,
+    },
+  },
+  getStoresFormatted: {
+    method: "GET",
+    path: "/stores-formatted",
+    responses: {
+      200: selectSchema.array(),
+      404: null,
     },
   },
 });

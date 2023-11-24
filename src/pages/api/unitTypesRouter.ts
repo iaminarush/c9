@@ -12,4 +12,29 @@ export const unitTypesRouter = createNextRoute(contract.unitTypes, {
       return { status: 404, body: null };
     }
   },
+  getUnitTypesFormatted: async () => {
+    const result = await db.query.unitTypes.findMany({
+      columns: { id: true, name: true },
+      with: {
+        unitFamily: {
+          columns: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    if (result) {
+      return {
+        status: 200,
+        body: result.map((ut) => ({
+          value: `${ut.id}`,
+          label: ut.name,
+          unitFamilyId: ut.unitFamily.id,
+        })),
+      };
+    } else {
+      return { status: 404, body: null };
+    }
+  },
 });

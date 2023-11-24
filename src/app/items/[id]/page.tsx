@@ -89,7 +89,7 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
           <SelectFormField
             control={control}
             name="storeId"
-            data={stores.data as unknown as ComboboxItem[]}
+            data={stores.data?.body}
             loading={stores.isLoading}
             label="Store"
             rules={{ required: "Required" }}
@@ -112,7 +112,7 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
           <SelectFormField
             control={control}
             name="unitTypeId"
-            data={unitTypes.data as unknown as ComboboxItem[]}
+            data={unitTypes.data?.body}
             loading={unitTypes.isLoading}
             label="Unit Type"
             rules={{ required: "Required" }}

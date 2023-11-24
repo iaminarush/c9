@@ -9,10 +9,23 @@ export const storesRouter = createNextRoute(contract.stores, {
 
     if (result) {
       return { status: 200, body: result };
-    } else
+    } else {
       return {
-        status: 400,
-        body: { message: "Error" },
+        status: 404,
+        body: null,
       };
+    }
+  },
+  getStoresFormatted: async () => {
+    const result = await db.query.stores.findMany();
+
+    if (result) {
+      return {
+        status: 200,
+        body: result.map((s) => ({ value: `${s.id}`, label: s.name })),
+      };
+    } else {
+      return { status: 404, body: null };
+    }
   },
 });

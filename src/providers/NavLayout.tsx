@@ -72,6 +72,7 @@ export default function NavLayout({ children }: { children: ReactNode }) {
           className={classes.control}
           component={Link}
           href="/comparison"
+          onClick={toggle}
         >
           Comparison
         </UnstyledButton>
