@@ -1,34 +1,32 @@
 "use client";
 
 import { useUnitFamiliesData, useUnitTypesData } from "@/lib/commonQueries";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import {
   ComboboxItem,
   Divider,
+  Group,
   Loader,
+  NumberFormatter,
   NumberInput,
   Select,
   Stack,
   Switch,
+  Text,
 } from "@mantine/core";
-import { useEffect, useMemo, useState } from "react";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useDidUpdate } from "@mantine/hooks";
+import { Fragment, useMemo, useState } from "react";
+import { number } from "zod";
 
 export default function Comparison() {
   const [sameFamily, setSameFamily] = useState(true);
   const [unitFamily, setUnitFamily] = useState<string | null>();
-
-  const [price1, setPrice1] = useState<string | number>("");
-  const [price2, setPrice2] = useState<string | number>("");
-  const [unit1, setUnit1] = useState<string | null>(null);
-  const [unit2, setUnit2] = useState<string | null>(null);
+  const [prices, setPrices] = useState([0, 0]);
 
   const [parent] = useAutoAnimate({ duration: 200 });
 
   const unitTypes = useUnitTypesData({});
   const unitFamilies = useUnitFamiliesData({});
-
-  console.log(unitFamilies.data);
 
   const filteredUnitTypes = useMemo<ComboboxItem[]>(() => {
     if (
@@ -40,19 +38,18 @@ export default function Comparison() {
       return unitTypes.data.body.filter(
         (ut) => `${ut.unitFamilyId}` === unitFamily,
       );
+    } else if (unitTypes.isSuccess && !sameFamily) {
+      return unitTypes.data.body;
     } else {
       return [];
     }
-  }, [unitFamilies.data, unitFamily, sameFamily]);
-
-  console.log(filteredUnitTypes);
-
-  useDidUpdate(() => {
-    if (sameFamily) {
-      setUnit1(null);
-      setUnit2(null);
-    }
-  }, [sameFamily]);
+  }, [
+    unitFamily,
+    sameFamily,
+    unitTypes.isSuccess,
+    unitFamilies.isSuccess,
+    unitTypes.data?.body,
+  ]);
 
   return (
     <Stack ref={parent}>
@@ -72,41 +69,83 @@ export default function Comparison() {
         />
       )}
 
-      <NumberInput
-        value={price1}
-        onChange={setPrice1}
-        label="Price 1"
-        prefix="$ "
-        min={0}
-        decimalScale={2}
-        thousandSeparator=","
-      />
-
-      <Select
-        data={unitTypes.data?.body}
-        label="Unit 1"
-        value={unit1}
-        onChange={setUnit1}
-      />
-
-      <Divider />
-
-      <NumberInput
-        value={price2}
-        onChange={setPrice2}
-        label="Price 2"
-        prefix="$ "
-        min={0}
-        decimalScale={2}
-        thousandSeparator=","
-      />
-
-      <Select
-        data={unitTypes.data?.body}
-        label="Unit 2"
-        value={unit2}
-        onChange={setUnit2}
-      />
+      {prices.map((p, i) => (
+        <Fragment key={i}>
+          <PriceStack
+            index={i}
+            unitTypes={filteredUnitTypes}
+            sameFamily={sameFamily}
+          />
+          {i + 1 !== prices.length && <Divider />}
+        </Fragment>
+      ))}
     </Stack>
   );
 }
+
+const PriceStack = ({
+  index,
+  unitTypes,
+  sameFamily,
+}: {
+  index: number;
+  unitTypes: ComboboxItem[];
+  sameFamily: boolean;
+}) => {
+  const [price, setPrice] = useState<string | number>("");
+  const [amount, setAmount] = useState<string | number>("");
+  const [unit, setUnit] = useState<string | null>(null);
+  const [unitLabel, setUnitLabel] = useState<string | undefined>("");
+
+  const order = index + 1;
+
+  useDidUpdate(() => {
+    setUnit(null);
+  }, [sameFamily]);
+
+  return (
+    <>
+      <Select
+        value={unit}
+        onChange={(value) => {
+          setUnit(value);
+          setUnitLabel(unitTypes.find((ut) => ut.value === value)?.label);
+        }}
+        data={unitTypes}
+        label={`Unit ${order}`}
+      />
+
+      <NumberInput
+        value={price}
+        onChange={setPrice}
+        label={`Price ${order}`}
+        min={0}
+        decimalScale={2}
+        prefix="$ "
+        thousandSeparator=","
+      />
+
+      <NumberInput
+        value={amount}
+        onChange={setAmount}
+        label={`Amount ${order}`}
+        min={0}
+        suffix={unitLabel}
+        decimalScale={2}
+        thousandSeparator=","
+      />
+
+      <Group justify="flex-end" gap={6}>
+        Price:
+        <NumberFormatter
+          prefix="$"
+          value={Number(price) / Number(amount) || ""}
+          decimalScale={2}
+          thousandSeparator=","
+        />
+        <Text>/</Text>
+        {unit ? <Text>{unitLabel}</Text> : "Unit"}
+      </Group>
+    </>
+  );
+};
