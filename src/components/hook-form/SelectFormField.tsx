@@ -29,17 +29,21 @@ export default function SelectFormField<TFieldValues extends FieldValues>({
   loading,
   data,
   rules,
+  onChange,
   ...rest
 }: SelectFormFieldProps<TFieldValues>) {
   const {
-    field: { ref, value, onChange, onBlur },
+    field: { ref, value, onChange: fieldOnChange, onBlur },
     fieldState: { error },
   } = useController({ control, name, rules });
 
   return (
     <Select
       value={value || null}
-      onChange={onChange}
+      onChange={(e) => {
+        fieldOnChange(e);
+        onChange?.(e);
+      }}
       onBlur={onBlur}
       ref={ref}
       data={data || []}

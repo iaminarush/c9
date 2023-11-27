@@ -5,6 +5,10 @@ import { z } from "zod";
 
 const c = initContract();
 
+const unitTypesZod = z.object({
+  label: z.enum(["g"]),
+});
+
 export const unitTypesContract = c.router({
   getUnitTypes: {
     method: "GET",
