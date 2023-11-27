@@ -79,7 +79,7 @@ export default function NavLayout({ children }: { children: ReactNode }) {
       </AppShellNavbar>
 
       <AppShellMain>
-        <Container>{children}</Container>
+        <Container p={0}>{children}</Container>
       </AppShellMain>
     </AppShell>
   );
