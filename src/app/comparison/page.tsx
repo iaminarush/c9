@@ -3,6 +3,7 @@
 import NumberFormField from "@/components/hook-form/NumberFormField";
 import SelectFormField from "@/components/hook-form/SelectFormField";
 import SwitchFormField from "@/components/hook-form/SwitchFormField";
+import { unitTypesZod } from "@/contracts/contract-unitType";
 import { useUnitFamiliesData, useUnitTypesData } from "@/lib/commonQueries";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import {
@@ -26,6 +27,7 @@ import {
   useForm,
   useWatch,
 } from "react-hook-form";
+import { z } from "zod";
 
 type FormData = {
   sameUnitFamily: boolean;
@@ -40,6 +42,7 @@ type FormData = {
 export default function Comparison() {
   const [parent] = useAutoAnimate({ duration: 200 });
   const [scroll, scrollTo] = useWindowScroll();
+  const [unitFamilyLabel, setUnitFamilyLabel] = useState<string | undefined>();
 
   const unitTypes = useUnitTypesData({});
   const unitFamilies = useUnitFamiliesData({});
@@ -75,7 +78,7 @@ export default function Comparison() {
     });
   }, [sameUnitFamily, unitFamilies]);
 
-  const filteredUnitTypes = useMemo<ComboboxItem[]>(() => {
+  const filteredUnitTypes = useMemo(() => {
     if (
       unitTypes.isSuccess &&
       unitFamilies.isSuccess &&
@@ -113,6 +116,11 @@ export default function Comparison() {
           data={unitFamilies.data?.body}
           loading={unitFamilies.isLoading}
           label="Unit Family"
+          onChange={(value) =>
+            setUnitFamilyLabel(
+              unitFamilies.data?.body.find((uf) => uf.value === value)?.label,
+            )
+          }
         />
       )}
 
@@ -126,6 +134,7 @@ export default function Comparison() {
             length={fields.length}
             control={control}
             remove={remove}
+            unitFamilyLabel={unitFamilyLabel}
           />
           {index + 1 !== fields.length && <Divider mt={4} />}
         </Fragment>
@@ -153,12 +162,15 @@ const PriceStack = ({
   length,
   control,
   remove,
+  unitFamilyLabel,
 }: {
   index: number;
-  unitTypes: ComboboxItem[];
+  // unitTypes: ComboboxItem[];
+  unitTypes: z.infer<typeof unitTypesZod>[];
   length: number;
   control: Control<FormData>;
   remove: UseFieldArrayRemove;
+  unitFamilyLabel: string | undefined;
 }) => {
   const [unitLabel, setUnitLabel] = useState<Mass | Volume | undefined>();
 
@@ -169,15 +181,19 @@ const PriceStack = ({
   const amount = useWatch({ control, name: `prices.${index}.amount` });
   const unit = useWatch({ control, name: `prices.${index}.unit` });
 
-  // const standardUnit = (() => {
-  //   if (!sameUnitFamily) {
-  //     return "Unit";
-  //   } else {
+  const standardUnit = (() => {
+    if (!sameUnitFamily) {
+      return "Unit";
+    } else {
+      if (unitFamilyLabel === "Mass") {
+        return "g";
+      } else if (unitFamilyLabel === "Volume") {
+        return "ml";
+      } else return "Unit";
+    }
+  })();
 
-  //   }
-  // })();
-
-  console.log(unit);
+  //todo add convert
 
   return (
     <>
@@ -234,7 +250,7 @@ const PriceStack = ({
           thousandSeparator=","
         />
         <Text>/</Text>
-        {unit ? <Text>{unitLabel}</Text> : "Unit"}
+        <Text>{standardUnit}</Text>
       </Group>
     </>
   );
