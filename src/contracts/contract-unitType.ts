@@ -1,14 +1,21 @@
 import { unitTypesSchema } from "@/server/db/schema";
 import { initContract } from "@ts-rest/core";
+import { Mass, Volume } from "convert";
 import { z } from "zod";
 
 const c = initContract();
 
 export const unitTypesZod = z.object({
-  label: z.enum(["g"]),
+  label: z.string(),
   value: z.string(),
   unitFamilyId: z.number(),
 });
+
+export type UnitTypes = {
+  label: Mass | Volume;
+  value: string;
+  unitFamilyId: number;
+};
 
 export const unitTypesContract = c.router({
   getUnitTypes: {

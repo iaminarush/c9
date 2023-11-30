@@ -3,13 +3,13 @@
 import NumberFormField from "@/components/hook-form/NumberFormField";
 import SelectFormField from "@/components/hook-form/SelectFormField";
 import SwitchFormField from "@/components/hook-form/SwitchFormField";
-import { unitTypesZod } from "@/contracts/contract-unitType";
+import { UnitTypes } from "@/contracts/contract-unitType";
 import { useUnitFamiliesData, useUnitTypesData } from "@/lib/commonQueries";
+import { isNumber } from "@/lib/utils";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import {
   ActionIcon,
   Button,
-  ComboboxItem,
   Divider,
   Group,
   NumberFormatter,
@@ -27,7 +27,6 @@ import {
   useForm,
   useWatch,
 } from "react-hook-form";
-import { z } from "zod";
 
 type FormData = {
   sameUnitFamily: boolean;
@@ -130,7 +129,7 @@ export default function Comparison() {
         <Fragment key={field.key}>
           <PriceStack
             index={index}
-            unitTypes={filteredUnitTypes}
+            unitTypes={filteredUnitTypes as UnitTypes[]}
             length={fields.length}
             control={control}
             remove={remove}
@@ -165,35 +164,59 @@ const PriceStack = ({
   unitFamilyLabel,
 }: {
   index: number;
-  // unitTypes: ComboboxItem[];
-  unitTypes: z.infer<typeof unitTypesZod>[];
+  // unitTypes: z.infer<typeof unitTypesZod>[];
+  unitTypes: UnitTypes[];
   length: number;
   control: Control<FormData>;
   remove: UseFieldArrayRemove;
   unitFamilyLabel: string | undefined;
 }) => {
-  const [unitLabel, setUnitLabel] = useState<Mass | Volume | undefined>();
-
   const order = index + 1;
 
   const sameUnitFamily = useWatch({ control, name: "sameUnitFamily" });
   const price = useWatch({ control, name: `prices.${index}.price` });
   const amount = useWatch({ control, name: `prices.${index}.amount` });
   const unit = useWatch({ control, name: `prices.${index}.unit` });
+  const unitFamily = useWatch({ control, name: "unitFamily" });
+
+  const unitFamilies = useUnitFamiliesData({});
 
   const standardUnit = (() => {
     if (!sameUnitFamily) {
-      return "Unit";
+      return "unit";
     } else {
       if (unitFamilyLabel === "Mass") {
         return "g";
       } else if (unitFamilyLabel === "Volume") {
         return "ml";
-      } else return "Unit";
+      } else return "unit";
     }
   })();
 
-  //todo add convert
+  const unitLabel = useMemo(() => {
+    if (unitFamily && unit) {
+      const _unit = unitTypes.find((ut) => ut.value === unit)?.label;
+
+      if (_unit) {
+        return _unit;
+      } else return "";
+    } else return "";
+  }, [unit, unitTypes, unitFamily]);
+
+  const convertedAmount = useMemo(() => {
+    if (sameUnitFamily) {
+      const unitFamilyName = unitFamilies.data?.body.find(
+        (uf) => uf.value === unitFamily,
+      )?.label;
+      if (unitFamilyName && isNumber(amount) && unitLabel) {
+        if (unitFamilyName === "Mass") {
+          return convert(Number(amount), unitLabel as Mass).to("g");
+        } else if (unitFamilyName === "Volume") {
+          return convert(Number(amount), unitLabel as Volume).to("mL");
+        }
+      }
+    }
+  }, [sameUnitFamily, unitFamilies.data?.body, unitFamily, amount, unitLabel]);
 
   return (
     <>
@@ -204,14 +227,11 @@ const PriceStack = ({
             name={`prices.${index}.unit`}
             data={unitTypes}
             label={`Unit ${order}`}
-            onChange={(value) => {
-              setUnitLabel(unitTypes.find((ut) => ut.value === value)?.label);
-            }}
           />
 
           <NumberFormField
             control={control}
-            name={`prices.${index}.amount`}
+            name={`prices.${index}.price`}
             label={`Price ${order}`}
             min={0}
             decimalScale={2}
@@ -221,7 +241,7 @@ const PriceStack = ({
 
           <NumberFormField
             control={control}
-            name={`prices.${index}.price`}
+            name={`prices.${index}.amount`}
             label={`Amount ${order}`}
             min={0}
             decimalScale={2}
@@ -245,7 +265,7 @@ const PriceStack = ({
         <Text>Price:</Text>
         <NumberFormatter
           prefix="$"
-          value={Number(price) / Number(amount) || ""}
+          value={Number(price) / Number(convertedAmount) || ""}
           decimalScale={2}
           thousandSeparator=","
         />
