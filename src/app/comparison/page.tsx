@@ -11,6 +11,8 @@ import {
   ActionIcon,
   Button,
   Divider,
+  Grid,
+  GridCol,
   Group,
   NumberFormatter,
   Stack,
@@ -125,21 +127,23 @@ export default function Comparison() {
 
       <Divider mt={12} />
 
-      {fields.map((field, index) => (
-        <Fragment key={field.key}>
-          <PriceStack
-            index={index}
-            unitTypes={filteredUnitTypes as UnitTypes[]}
-            length={fields.length}
-            control={control}
-            remove={remove}
-            unitFamilyLabel={unitFamilyLabel}
-          />
-          {index + 1 !== fields.length && <Divider mt={4} />}
-        </Fragment>
-      ))}
+      <Grid>
+        {fields.map((field, index) => (
+          <GridCol span={6} key={field.key}>
+            <PriceStack
+              index={index}
+              unitTypes={filteredUnitTypes as UnitTypes[]}
+              length={fields.length}
+              control={control}
+              remove={remove}
+              unitFamilyLabel={unitFamilyLabel}
+            />
+            {/* {index + 1 !== fields.length && <Divider mt={4} />} */}
+          </GridCol>
+        ))}
+      </Grid>
 
-      <Divider mb={8} />
+      {/* <Divider mb={8} /> */}
 
       <Button
         onClick={() => {
@@ -219,7 +223,7 @@ const PriceStack = ({
   }, [sameUnitFamily, unitFamilies.data?.body, unitFamily, amount, unitLabel]);
 
   return (
-    <>
+    <Stack gap={4}>
       <Group>
         <Stack style={{ flexGrow: 1 }} gap={4}>
           <SelectFormField
@@ -272,6 +276,6 @@ const PriceStack = ({
         <Text>/</Text>
         <Text>{standardUnit}</Text>
       </Group>
-    </>
+    </Stack>
   );
 };
