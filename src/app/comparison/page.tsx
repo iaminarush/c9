@@ -21,7 +21,7 @@ import {
 import { useDidUpdate, useWindowScroll } from "@mantine/hooks";
 import { IconTrash } from "@tabler/icons-react";
 import convert, { Mass, Volume } from "convert";
-import { Fragment, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Control,
   UseFieldArrayRemove,
@@ -77,7 +77,7 @@ export default function Comparison() {
     fields.map((field, index) => {
       setValue(`prices.${index}.unit`, null);
     });
-  }, [sameUnitFamily, unitFamilies]);
+  }, [sameUnitFamily, unitFamilies.data]);
 
   const filteredUnitTypes = useMemo(() => {
     if (
