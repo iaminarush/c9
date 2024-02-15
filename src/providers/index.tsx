@@ -9,6 +9,7 @@ import NavLayout from "./NavLayout";
 import ToastProvider from "./ToastProvider";
 import { queryClientOptions } from "./queryClient";
 import { mantineTheme } from "./theme";
+import { RouterTransition } from "@/components/util/RouterTransition";
 
 export default function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient(queryClientOptions));
@@ -17,6 +18,7 @@ export default function Providers({ children }: { children: ReactNode }) {
     <SessionProvider>
       <MantineProvider theme={mantineTheme}>
         <QueryClientProvider client={queryClient}>
+          <RouterTransition />
           <NavLayout>{children}</NavLayout>
           <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
           <ToastProvider />

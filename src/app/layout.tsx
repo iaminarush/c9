@@ -1,4 +1,5 @@
 import "@mantine/core/styles.css";
+import "@mantine/nprogress/styles.css";
 
 import Providers from "@/providers";
 import { ColorSchemeScript } from "@mantine/core";
