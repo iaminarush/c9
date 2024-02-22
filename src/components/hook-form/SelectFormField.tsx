@@ -40,9 +40,9 @@ export default function SelectFormField<TFieldValues extends FieldValues>({
   return (
     <Select
       value={value || null}
-      onChange={(e) => {
+      onChange={(e, option) => {
         fieldOnChange(e);
-        onChange?.(e);
+        onChange?.(e, option);
       }}
       onBlur={onBlur}
       ref={ref}
