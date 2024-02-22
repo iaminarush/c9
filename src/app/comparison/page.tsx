@@ -10,6 +10,7 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import {
   ActionIcon,
   Button,
+  Center,
   Divider,
   Grid,
   GridCol,
@@ -225,7 +226,7 @@ const PriceStack = ({
   return (
     <Stack gap={4}>
       <Group>
-        <Stack style={{ flexGrow: 1 }} gap={4}>
+        <Stack style={{ flexGrow: 1 }} gap={4} justify="center" align="stretch">
           <SelectFormField
             control={control}
             name={`prices.${index}.unit`}
@@ -255,13 +256,15 @@ const PriceStack = ({
         </Stack>
 
         {length > 2 && (
-          <ActionIcon
-            color="red"
-            variant="filled"
-            onClick={() => remove(index)}
-          >
-            <IconTrash />
-          </ActionIcon>
+          <Center inline>
+            <ActionIcon
+              color="red"
+              variant="filled"
+              onClick={() => remove(index)}
+            >
+              <IconTrash />
+            </ActionIcon>
+          </Center>
         )}
       </Group>
 
