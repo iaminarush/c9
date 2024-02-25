@@ -23,7 +23,7 @@ import Link from "next/link";
 import { ComponentPropsWithRef } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
-import { useCategory, useCreateItem } from "./query";
+import { useCategory, useCreateItem, useCreateSubCategory } from "./query";
 import { createSubCategorySchema } from "@/server/db/schema";
 
 export default function Category({
@@ -132,9 +132,17 @@ const CategoryModal = ({
   handlers: DisclosureHandlers;
   id: string;
 }) => {
-  const { control } = useForm<CategoryFormData>({
+  const { control, handleSubmit } = useForm<CategoryFormData>({
     defaultValues: { parentId: Number(id), name: "" },
   });
+  const createSubCategory = useCreateSubCategory();
+
+  const onSubmit: SubmitHandler<CategoryFormData> = (data) => {
+    const result = createSubCategorySchema.safeParse(data);
+    if (result.success) {
+      createSubCategory.mutate({ body: result.data });
+    }
+  };
 
   return (
     <Modal opened={opened} onClose={handlers.close} title="Add a Category">
@@ -145,7 +153,12 @@ const CategoryModal = ({
           name="name"
           rules={{ required: "Required" }}
         />
-        <Button>Create</Button>
+        <Button
+          onClick={() => void handleSubmit(onSubmit)()}
+          loading={createSubCategory.isLoading}
+        >
+          Create
+        </Button>
       </Stack>
     </Modal>
   );
