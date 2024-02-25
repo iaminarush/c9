@@ -66,4 +66,14 @@ export const categoriesRouter = createNextRoute(contract.categories, {
       };
     } else return { status: 404, body: null };
   },
+  createSubCategory: async (args) => {
+    const [newCategory] = await db
+      .insert(categories)
+      .values(args.body)
+      .returning();
+
+    return newCategory
+      ? { status: 201, body: newCategory }
+      : { status: 400, body: { message: "Error" } };
+  },
 });

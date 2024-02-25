@@ -46,3 +46,7 @@ export const useCreateItem = () => {
     },
   });
 };
+
+export const useCreateSubCategory = () => {
+  return client.categories.createSubCategory.useMutation();
+};

@@ -2,6 +2,8 @@ import {
   categoryDetailsSchema,
   categorySchema,
   createCategorySchema,
+  createSubCategorySchema,
+  subCategorySchema,
   updateCategorySchema,
 } from "@/server/db/schema/categories";
 import { initContract } from "@ts-rest/core";
@@ -23,7 +25,10 @@ export const categoryContract = c.router({
   updateCategory: {
     method: "PATCH",
     path: `/categories/:id`,
-    responses: { 200: categorySchema, 404: z.object({ message: z.string() }) },
+    responses: {
+      200: categorySchema,
+      404: z.object({ message: z.string() }),
+    },
     body: updateCategorySchema,
     summary: "Update a category",
   },
@@ -53,5 +58,15 @@ export const categoryContract = c.router({
       limit: z.number(),
       offset: z.number(),
     }),
+  },
+  createSubCategory: {
+    method: "POST",
+    path: "/subCategories",
+    responses: {
+      201: categorySchema,
+      400: z.object({ message: z.string() }),
+    },
+    body: createSubCategorySchema,
+    summary: "Create a Sub Category",
   },
 });

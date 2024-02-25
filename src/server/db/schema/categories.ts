@@ -32,8 +32,12 @@ export const categoryDetailsSchema = categorySchema.extend({
 
 export const createCategorySchema = createInsertSchema(categories);
 
-export const createSubCategorySchema = createCategorySchema.merge(
+export const updateCategorySchema = createSelectSchema(categories);
+
+export const subCategorySchema = categorySchema.merge(
   z.object({ parentId: z.number() }),
 );
 
-export const updateCategorySchema = createSelectSchema(categories);
+export const createSubCategorySchema = createCategorySchema.merge(
+  z.object({ parentId: z.number() }),
+);
