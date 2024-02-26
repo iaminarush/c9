@@ -38,6 +38,7 @@ declare module "next-auth/jwt" {
 export const authOptions: NextAuthOptions = {
   callbacks: {
     session({ session, token }) {
+      console.log(session, token)
       if (session.user) {
         session.user.id = token.sub;
         // session.user.role = user.role; <-- put other properties on the session here
