@@ -3,7 +3,7 @@ import { isNumber } from "@/lib/utils";
 import { db } from "@/server/db/db";
 import { categories } from "@/server/db/schema/categories";
 import { createNextRoute } from "@ts-rest/next";
-import { eq } from "drizzle-orm";
+import { eq, isNull } from "drizzle-orm";
 
 export const categoriesRouter = createNextRoute(contract.categories, {
   createCategory: async (args) => {
@@ -40,8 +40,12 @@ export const categoriesRouter = createNextRoute(contract.categories, {
         },
       });
 
+      const subCategories = await db.query.categories.findMany({
+        where: eq(categories.parentId, Number(args.params.id)),
+      });
+
       if (category) {
-        return { status: 200, body: category };
+        return { status: 200, body: { ...category, subCategories } };
       } else return { status: 404, body: null };
     }
 
@@ -51,6 +55,7 @@ export const categoriesRouter = createNextRoute(contract.categories, {
     const _categories = await db
       .select()
       .from(categories)
+      .where(isNull(categories.parentId))
       .limit(args.query.limit)
       .offset(args.query.offset);
 
