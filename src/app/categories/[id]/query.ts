@@ -48,5 +48,21 @@ export const useCreateItem = () => {
 };
 
 export const useCreateSubCategory = () => {
-  return client.categories.createSubCategory.useMutation();
+  const queryClient = useQueryClient();
+
+  return client.categories.createSubCategory.useMutation({
+    onSuccess: ({ body }) => {
+      queryClient.setQueryData<CategoryResponse>(
+        keys.category(`${body.parentId}`),
+        (oldData) => {
+          if (!oldData) return undefined;
+
+          const newData = produce(oldData, (draft) => {
+            draft.body.subCategories.push(body);
+          });
+          return newData;
+        },
+      );
+    },
+  });
 };
