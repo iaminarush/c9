@@ -28,6 +28,7 @@ export const categorySchema = createSelectSchema(categories);
 
 export const categoryDetailsSchema = categorySchema.extend({
   items: z.lazy(() => itemSchema.array()),
+  subCategories: z.lazy(() => categorySchema.array()),
 });
 
 export const createCategorySchema = createInsertSchema(categories);
