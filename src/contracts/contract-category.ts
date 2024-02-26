@@ -3,7 +3,6 @@ import {
   categorySchema,
   createCategorySchema,
   createSubCategorySchema,
-  subCategorySchema,
   updateCategorySchema,
 } from "@/server/db/schema/categories";
 import { initContract } from "@ts-rest/core";
