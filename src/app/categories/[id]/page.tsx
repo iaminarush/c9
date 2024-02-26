@@ -5,6 +5,10 @@ import { isNumber } from "@/lib/utils";
 import { createItemSchema } from "@/server/db/schema/items";
 import { DisclosureHandlers } from "@/util/commonTypes";
 import {
+  Accordion,
+  AccordionControl,
+  AccordionItem,
+  AccordionPanel,
   ActionIcon,
   Button,
   ButtonProps,
@@ -20,7 +24,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
-import { ComponentPropsWithRef } from "react";
+import { ComponentPropsWithRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useCategory, useCreateItem, useCreateSubCategory } from "./query";
@@ -36,6 +40,7 @@ export default function Category({
   const [popoverOpened, popoverHandlers] = useDisclosure(false);
   const [categoryOpened, categoryHandlers] = useDisclosure(false);
   const [itemOpened, itemHandlers] = useDisclosure(false);
+  const [value, setValue] = useState<string | null>(null);
 
   if (!isNumber(id)) {
     return <Text>Category Id must be a number</Text>;
@@ -48,8 +53,6 @@ export default function Category({
   if (category.isError) {
     return <div>Error</div>;
   }
-
-  console.log(popoverOpened);
 
   return (
     <>
@@ -85,11 +88,46 @@ export default function Category({
             </PopoverDropdown>
           </Popover>
         </Group>
-        {category.data.body.items.map((i) => (
-          <Button key={i.id} component={Link} href={`/items/${i.id}`}>
-            {i.name}
-          </Button>
-        ))}
+
+        <Accordion>
+          <AccordionItem value="categories">
+            <AccordionControl>Categories</AccordionControl>
+            <AccordionPanel>
+              <Stack mt="11">
+                {category.data.body.subCategories.length ? (
+                  category.data.body.subCategories.map((sc, i) => (
+                    <Button
+                      key={i}
+                      component={Link}
+                      href={`/categories/${sc.id}`}
+                    >
+                      {sc.name}
+                    </Button>
+                  ))
+                ) : (
+                  <Text>No Categories</Text>
+                )}
+              </Stack>
+            </AccordionPanel>
+          </AccordionItem>
+
+          <AccordionItem value="items">
+            <AccordionControl>Items</AccordionControl>
+            <AccordionPanel>
+              <Stack mt="11">
+                {category.data.body.items.length ? (
+                  category.data.body.items.map((item, i) => (
+                    <Button key={i} component={Link} href={`/items/${item.id}`}>
+                      {item.name}
+                    </Button>
+                  ))
+                ) : (
+                  <Text>No Items </Text>
+                )}
+              </Stack>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
       </Stack>
 
       <CategoryModal
