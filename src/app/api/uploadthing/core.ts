@@ -1,20 +1,25 @@
 import { createUploadthing } from "uploadthing/next";
 import { UploadThingError, type FileRouter } from "uploadthing/server";
+import { auth } from "../auth/[...nextauth]/auth";
 
 const f = createUploadthing();
 
-const auth = () => ({ id: "fakeId" });
-
-// const auth = (req: Request, res: unknown) => getServerSession(req, res, authOptions)
+// const auth = () => ({ id: "fakeId" });
 
 export const ourFileRouter = {
   imageUploader: f({ image: { maxFileSize: "2MB" } })
-    .middleware(async ({ req }) => {
-      const user = await auth();
+    .middleware(async ({ req, res }) => {
+      // const user = await auth();
 
-      if (!user) throw new UploadThingError("Unauthorized");
+      // if (!user) throw new UploadThingError("Unauthorized");
 
-      return { userId: user.id };
+      // return { userId: user.id };
+
+      const session = await auth();
+
+      if (!session) throw new UploadThingError("Unauthorized");
+
+      return { userId: session.user.id };
     })
     .onUploadComplete(async ({ metadata, file }) => {
       console.log("Upload complete for userId:", metadata.userId);

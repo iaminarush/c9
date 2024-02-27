@@ -30,6 +30,7 @@ import { z } from "zod";
 import { useCreateRecord, useItem } from "./query";
 import TextFormField from "@/components/hook-form/TextFormField";
 import { Mass } from "convert";
+import { UploadButton } from "@/components/util/uploadthing";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -82,6 +83,17 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
         </Group>
 
         <RecordList recordId={id} />
+
+        <UploadButton
+          endpoint="imageUploader"
+          onClientUploadComplete={(res) => {
+            console.log("Files: ", res);
+            alert("Upload Completed");
+          }}
+          onUploadError={(error: Error) => {
+            alert(`Error ${error.message}`);
+          }}
+        />
       </Stack>
 
       <Modal opened={opened} onClose={close} title="Add Price" centered>

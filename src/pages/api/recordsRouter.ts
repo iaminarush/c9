@@ -26,7 +26,6 @@ export const recordsRouter = createNextRoute(contract.records, {
     return { status: 400, body: { message: "Error" } };
   },
   getRecords: async (args) => {
-    console.log(typeof args.query.item, isNumber(args.query.item));
     const result = await db.query.records.findMany({
       where: eq(records.itemId, Number(args.query.item)),
       with: {
