@@ -17,6 +17,7 @@ export const categoryContract = c.router({
     responses: {
       201: categorySchema,
       400: z.object({ message: z.string() }),
+      403: z.object({ message: z.string() }),
     },
     body: createCategorySchema,
     summary: "Create a category",
@@ -26,6 +27,7 @@ export const categoryContract = c.router({
     path: `/categories/:id`,
     responses: {
       200: categorySchema,
+      403: z.object({ message: z.string() }),
       404: z.object({ message: z.string() }),
     },
     body: updateCategorySchema,
@@ -64,6 +66,7 @@ export const categoryContract = c.router({
     responses: {
       201: categorySchema,
       400: z.object({ message: z.string() }),
+      403: z.object({ message: z.string() }),
     },
     body: createSubCategorySchema,
     summary: "Create a Sub Category",

@@ -1,12 +1,17 @@
 import { contract } from "@/contracts/contract";
-import { isNumber } from "@/lib/utils";
 import { db } from "@/server/db/db";
 import { records } from "@/server/db/schema";
 import { createNextRoute } from "@ts-rest/next";
 import { eq } from "drizzle-orm";
+import { getToken } from "next-auth/jwt";
 
 export const recordsRouter = createNextRoute(contract.records, {
   createRecord: async (args) => {
+    const token = await getToken({ req: args.req });
+
+    if (!token?.admin)
+      return { status: 403, body: { message: "No Permission" } };
+
     const [newRecord] = await db
       .insert(records)
       .values(args.body)

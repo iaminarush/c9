@@ -2,6 +2,7 @@
 
 import NumberFormField from "@/components/hook-form/NumberFormField";
 import SelectFormField from "@/components/hook-form/SelectFormField";
+import TextFormField from "@/components/hook-form/TextFormField";
 import { client } from "@/contracts/contract";
 import { recordDetailSchema } from "@/contracts/contract-record";
 import { useStoresData, useUnitTypesData } from "@/lib/commonQueries";
@@ -9,10 +10,8 @@ import { isNumber } from "@/lib/utils";
 import { createRecordSchema } from "@/server/db/schema";
 import {
   ActionIcon,
-  Box,
   Button,
   Card,
-  ComboboxItem,
   Group,
   Modal,
   NumberFormatter,
@@ -28,9 +27,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
 import { useCreateRecord, useItem } from "./query";
-import TextFormField from "@/components/hook-form/TextFormField";
-import { Mass } from "convert";
-import { UploadButton } from "@/components/util/uploadthing";
+import { useSession } from "next-auth/react";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -47,6 +44,7 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
   const stores = useStoresData({ queryOptions: { enabled: opened } });
   const unitTypes = useUnitTypesData({ queryOptions: { enabled: opened } });
   const createRecord = useCreateRecord(id);
+  const session = useSession();
 
   if (!isNumber(id)) {
     return <Text>Item Id must be a number</Text>;
@@ -77,23 +75,12 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
       <Stack>
         <Group justify="space-between">
           <Title>{data.body.name}</Title>
-          <ActionIcon onClick={open}>
+          <ActionIcon onClick={open} disabled={!session.data?.user.admin}>
             <IconPlus />
           </ActionIcon>
         </Group>
 
         <RecordList recordId={id} />
-
-        <UploadButton
-          endpoint="imageUploader"
-          onClientUploadComplete={(res) => {
-            console.log("Files: ", res);
-            alert("Upload Completed");
-          }}
-          onUploadError={(error: Error) => {
-            alert(`Error ${error.message}`);
-          }}
-        />
       </Stack>
 
       <Modal opened={opened} onClose={close} title="Add Price" centered>

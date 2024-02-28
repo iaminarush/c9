@@ -17,6 +17,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useCategories, useCreateCategory } from "./query";
 import { createCategorySchema } from "@/server/db/schema";
 import { z } from "zod";
+import { useSession } from "next-auth/react";
 
 export default function Home() {
   const categories = useCategories();
@@ -53,6 +54,7 @@ const AddCategory = () => {
   const [opened, handlers] = useDisclosure(false);
   const { control, handleSubmit } = useForm<FormData>();
   const createCategory = useCreateCategory();
+  const session = useSession();
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
     const result = createCategorySchema.safeParse(data);
@@ -66,7 +68,7 @@ const AddCategory = () => {
 
   return (
     <>
-      <ActionIcon onClick={handlers.open}>
+      <ActionIcon onClick={handlers.open} disabled={!session.data?.user.admin}>
         <IconPlus />
       </ActionIcon>
 

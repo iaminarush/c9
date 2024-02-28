@@ -29,6 +29,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useCategory, useCreateItem, useCreateSubCategory } from "./query";
 import { createSubCategorySchema } from "@/server/db/schema";
+import { useSession } from "next-auth/react";
 
 export default function Category({
   params: { id },
@@ -41,6 +42,7 @@ export default function Category({
   const [categoryOpened, categoryHandlers] = useDisclosure(false);
   const [itemOpened, itemHandlers] = useDisclosure(false);
   const [value, setValue] = useState<string | null>(null);
+  const session = useSession();
 
   if (!isNumber(id)) {
     return <Text>Category Id must be a number</Text>;
@@ -61,7 +63,10 @@ export default function Category({
           <Text>Category: {category.data.body.name}</Text>
           <Popover opened={popoverOpened} onClose={popoverHandlers.close}>
             <PopoverTarget>
-              <ActionIcon onClick={popoverHandlers.open}>
+              <ActionIcon
+                onClick={popoverHandlers.open}
+                disabled={!session.data?.user.admin}
+              >
                 <IconPlus />
               </ActionIcon>
             </PopoverTarget>

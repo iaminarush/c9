@@ -4,9 +4,15 @@ import { db } from "@/server/db/db";
 import { items } from "@/server/db/schema/items";
 import { createNextRoute } from "@ts-rest/next";
 import { eq } from "drizzle-orm";
+import { getToken } from "next-auth/jwt";
 
 export const itemsRouter = createNextRoute(contract.items, {
   createItem: async (args) => {
+    const token = await getToken({ req: args.req });
+
+    if (!token?.admin)
+      return { status: 403, body: { message: "No Permission" } };
+
     const [newItem] = await db.insert(items).values(args.body).returning();
 
     return newItem

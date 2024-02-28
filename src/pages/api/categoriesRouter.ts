@@ -4,9 +4,15 @@ import { db } from "@/server/db/db";
 import { categories } from "@/server/db/schema/categories";
 import { createNextRoute } from "@ts-rest/next";
 import { eq, isNull } from "drizzle-orm";
+import { getToken } from "next-auth/jwt";
 
 export const categoriesRouter = createNextRoute(contract.categories, {
   createCategory: async (args) => {
+    const token = await getToken({ req: args.req });
+
+    if (!token?.admin)
+      return { status: 403, body: { message: "No Permission" } };
+
     const [newCategory] = await db
       .insert(categories)
       .values(args.body)
@@ -17,7 +23,12 @@ export const categoriesRouter = createNextRoute(contract.categories, {
       : { status: 400, body: { message: "Error" } };
   },
   updateCategory: async (args) => {
-    if (isNumber(args.params.id)) {
+    const token = await getToken({ req: args.req });
+
+    if (!token?.admin)
+      return { status: 403, body: { message: "No Permission" } };
+
+    if (isNumber(args.params.id) && token?.admin) {
       const [updatedCategory] = await db
         .update(categories)
         .set({ name: args.body.name })
@@ -72,6 +83,11 @@ export const categoriesRouter = createNextRoute(contract.categories, {
     } else return { status: 404, body: null };
   },
   createSubCategory: async (args) => {
+    const token = await getToken({ req: args.req });
+
+    if (!token?.admin)
+      return { status: 403, body: { message: "No Permission" } };
+
     const [newCategory] = await db
       .insert(categories)
       .values(args.body)
