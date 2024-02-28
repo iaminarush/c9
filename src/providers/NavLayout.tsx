@@ -17,6 +17,8 @@ import cx from "clsx";
 import Link from "next/link";
 import { ReactNode } from "react";
 import classes from "./NavLayout.module.css";
+import clsx from "clsx";
+import { signOut } from "next-auth/react";
 
 export default function NavLayout({ children }: { children: ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
@@ -51,6 +53,8 @@ export default function NavLayout({ children }: { children: ReactNode }) {
               >
                 Comparison
               </UnstyledButton>
+
+              <LogoutButton />
             </Group>
 
             <ColorSchemToggle />
@@ -76,6 +80,8 @@ export default function NavLayout({ children }: { children: ReactNode }) {
         >
           Comparison
         </UnstyledButton>
+
+        <LogoutButton />
       </AppShellNavbar>
 
       <AppShellMain>
@@ -84,6 +90,17 @@ export default function NavLayout({ children }: { children: ReactNode }) {
     </AppShell>
   );
 }
+
+const LogoutButton = () => {
+  return (
+    <UnstyledButton
+      className={clsx(classes.control, classes.logout)}
+      onClick={() => signOut()}
+    >
+      Logout
+    </UnstyledButton>
+  );
+};
 
 const ColorSchemToggle = () => {
   const { setColorScheme } = useMantineColorScheme();
