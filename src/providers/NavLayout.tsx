@@ -21,6 +21,7 @@ import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { ReactNode } from "react";
 import classes from "./NavLayout.module.css";
+import GlobalSearch from "@/components/globalSearch";
 
 export default function NavLayout({ children }: { children: ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
@@ -61,6 +62,7 @@ export default function NavLayout({ children }: { children: ReactNode }) {
               <Space w="xs" />
               <ColorSchemToggle />
             </Group>
+            <GlobalSearch />
           </Group>
         </Group>
       </AppShellHeader>
