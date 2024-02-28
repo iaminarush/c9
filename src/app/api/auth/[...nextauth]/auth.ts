@@ -1,17 +1,17 @@
-import { DefaultSession, NextAuthOptions, getServerSession } from "next-auth";
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "@/server/db/db";
-import CredentialsProvider from "next-auth/providers/credentials";
 import { users } from "@/server/db/schema/accounts";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { DefaultSession, NextAuthOptions, getServerSession } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { compare, hash } from "bcrypt";
-import { DefaultJWT } from "next-auth/jwt";
+import { compare } from "bcrypt";
 import { eq } from "drizzle-orm";
 import {
   GetServerSidePropsContext,
   NextApiRequest,
   NextApiResponse,
 } from "next";
+import { DefaultJWT } from "next-auth/jwt";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -22,37 +22,39 @@ import {
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
+      admin: boolean;
+      username: string;
       id: string;
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];
   }
-
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
 }
 
 declare module "next-auth/jwt" {
   interface JWT extends Record<string, unknown>, DefaultJWT {
     sub: string;
+    admin: boolean;
+    username: string;
   }
 }
 
 export const authOptions: NextAuthOptions = {
   callbacks: {
     jwt({ token, user }) {
-      console.log("user", user);
       if (user) {
-        return { ...token, id: user.id };
+        // eslint-disable-next-line
+        // @ts-ignore
+        return { ...token, admin: user.admin, username: user.username };
       }
       return token;
     },
-    session({ session, token, ...rest }) {
-      console.log(token);
+    session({ session, token }) {
       if (session.user) {
+        session.user.admin = token.admin;
+        session.user.username = token.username;
         session.user.id = token.sub;
+        // session.user.id = token.sub;
         // session.user.role = user.role; <-- put other properties on the session here
       }
       return session;
@@ -119,7 +121,16 @@ export const authOptions: NextAuthOptions = {
 
         if (!match) throw new Error("Incorrect credentials. Try again");
 
-        return user;
+        const { password: pw, ...rest } = user;
+
+        return {
+          admin: user.admin,
+          username: user.username,
+          id: user.id,
+          image: user.image,
+          email: user.email,
+          name: user.name,
+        };
       },
     }),
   ],
