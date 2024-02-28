@@ -23,6 +23,7 @@ export const recordContract = c.router({
     responses: {
       201: recordDetailSchema,
       400: z.object({ message: z.string() }),
+      403: z.object({ message: z.string() }),
     },
     body: createRecordSchema,
     summary: "Create a record for an item",
