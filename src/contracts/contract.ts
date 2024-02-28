@@ -6,6 +6,7 @@ import { recordContract } from "./contract-record";
 import { storeContract } from "./contract-store";
 import { unitFamiliesContract } from "./contract-unitFamily";
 import { unitTypesContract } from "./contract-unitType";
+import { searchContract } from "./contract-search";
 
 const c = initContract();
 
@@ -17,6 +18,7 @@ export const contract = c.router(
     stores: storeContract,
     unitTypes: unitTypesContract,
     unitFamilies: unitFamiliesContract,
+    search: searchContract,
   },
   {
     strictStatusCodes: true,
