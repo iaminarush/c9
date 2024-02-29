@@ -18,11 +18,6 @@ export const useGlobalSearch = (keyword: string, router: AppRouterInstance) => {
     ...query,
     data: useMemo(() => {
       if (query.data) {
-        // const categories = query.data?.body.categories.map((c) => ({
-        //   ...c,
-        //   id: `${c.id}`,
-        //   onClick: () => router.push(`/categories/${c.id}`),
-        // }));
         const categories = query.data.body.categories.map((c) => {
           router.prefetch(`/categories/${c.id}`);
 
