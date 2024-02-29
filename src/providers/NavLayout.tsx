@@ -4,21 +4,24 @@ import {
   AppShellHeader,
   AppShellMain,
   AppShellNavbar,
+  AppShellSection,
   Burger,
   Container,
   Group,
+  ScrollArea,
+  Space,
   UnstyledButton,
   useComputedColorScheme,
   useMantineColorScheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconMoon, IconSun } from "@tabler/icons-react";
-import cx from "clsx";
+import { default as clsx, default as cx } from "clsx";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { ReactNode } from "react";
 import classes from "./NavLayout.module.css";
-import clsx from "clsx";
-import { signOut } from "next-auth/react";
+import GlobalSearch from "@/components/globalSearch";
 
 export default function NavLayout({ children }: { children: ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
@@ -37,6 +40,7 @@ export default function NavLayout({ children }: { children: ReactNode }) {
         <Group h="100%" px="md">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
           <Group justify="flex-end" style={{ flex: 1 }}>
+            {/* Desktop */}
             <Group ml="xl" gap={0} visibleFrom="sm">
               <UnstyledButton
                 className={classes.control}
@@ -55,33 +59,40 @@ export default function NavLayout({ children }: { children: ReactNode }) {
               </UnstyledButton>
 
               <LogoutButton />
+              <Space w="xs" />
+              <ColorSchemToggle />
             </Group>
-
-            <ColorSchemToggle />
+            <GlobalSearch />
           </Group>
         </Group>
       </AppShellHeader>
 
+      {/* Mobile */}
       <AppShellNavbar py="md" px={4}>
-        <UnstyledButton
-          className={classes.control}
-          component={Link}
-          href="/categories"
-          onClick={toggle}
-        >
-          Category
-        </UnstyledButton>
+        <AppShellSection grow component={ScrollArea}>
+          <UnstyledButton
+            className={classes.control}
+            component={Link}
+            href="/categories"
+            onClick={toggle}
+          >
+            Category
+          </UnstyledButton>
 
-        <UnstyledButton
-          className={classes.control}
-          component={Link}
-          href="/comparison"
-          onClick={toggle}
-        >
-          Comparison
-        </UnstyledButton>
+          <UnstyledButton
+            className={classes.control}
+            component={Link}
+            href="/comparison"
+            onClick={toggle}
+          >
+            Comparison
+          </UnstyledButton>
+        </AppShellSection>
 
-        <LogoutButton />
+        <Group justify="space-between" px="sm">
+          <LogoutButton />
+          <ColorSchemToggle />
+        </Group>
       </AppShellNavbar>
 
       <AppShellMain>
