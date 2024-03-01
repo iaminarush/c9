@@ -49,6 +49,8 @@
     "react-dom": "18.2.0",
     "react-hook-form": "^7.46.1",
     "react-hot-toast": "^2.4.1",
+    "react-media-devices": "^1.1.5",
+    "react-zxing": "^2.0.0",
     "swagger-ui-react": "^5.7.2",
     "typescript": "5.1.6",
     "uploadthing": "^6.4.1",
