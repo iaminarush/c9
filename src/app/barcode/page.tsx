@@ -12,11 +12,13 @@ export default function Barcode() {
   return (
     <>
       <Button onClick={handlers.open}>Scan</Button>
-      <BarcodeScanner
-        opened={opened}
-        onClose={handlers.close}
-        handleScan={setBarcode}
-      />
+      {opened && (
+        <BarcodeScanner
+          opened={opened}
+          onClose={handlers.close}
+          handleScan={setBarcode}
+        />
+      )}
       {!!barcode && <Text>Result: {barcode}</Text>}
     </>
   );

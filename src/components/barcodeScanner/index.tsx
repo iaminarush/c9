@@ -2,6 +2,12 @@ import { Loader, Modal, Select, Stack } from "@mantine/core";
 import { useState } from "react";
 import { useMediaDevices } from "react-media-devices";
 import { useZxing } from "react-zxing";
+import { BarcodeFormat, DecodeHintType } from "@zxing/library";
+
+const hints = new Map();
+const formats = [BarcodeFormat.CODABAR];
+
+hints.set(DecodeHintType.POSSIBLE_FORMATS, formats);
 
 export const BarcodeScanner = ({
   opened,
@@ -21,8 +27,10 @@ export const BarcodeScanner = ({
     devices
       ?.filter((d) => d.kind === "videoinput")
       .map((v) => ({ label: v.label, value: v.deviceId })) || [];
-      
-  const noCamera = !loading && videoSources.length === 0
+
+  const noCamera = !loading && videoSources.length === 0;
+
+  console.log(!!selectedDevice);
 
   const { ref } = useZxing({
     paused: !selectedDevice,
@@ -32,10 +40,11 @@ export const BarcodeScanner = ({
       onClose();
     },
     onDecodeError: (error) => {},
+    hints,
   });
 
   return (
-    <Modal opened={opened} onClose={onClose} title='Scan a barcode!'>
+    <Modal opened={opened} onClose={onClose} title="Scan a barcode!">
       <Stack>
         <Select
           data={videoSources}
@@ -43,7 +52,7 @@ export const BarcodeScanner = ({
           value={selectedDevice}
           onChange={setSelectedDevice}
           leftSection={loading ? <Loader size="sm" /> : null}
-          placeholder={noCamera ? 'No cameras found' : undefined}
+          placeholder={noCamera ? "No cameras found" : undefined}
           disabled={noCamera}
         />
         <video ref={ref} />

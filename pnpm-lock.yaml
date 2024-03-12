@@ -65,6 +65,9 @@ dependencies:
   '@uploadthing/react':
     specifier: ^6.2.4
     version: 6.2.4(next@14.1.0)(react@18.2.0)(uploadthing@6.4.1)
+  '@zxing/library':
+    specifier: ^0.20.0
+    version: 0.20.0
   bcrypt:
     specifier: ^5.1.1
     version: 5.1.1
