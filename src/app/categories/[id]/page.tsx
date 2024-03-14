@@ -22,13 +22,16 @@ import {
   Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconPlus } from "@tabler/icons-react";
+import { IconEdit, IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
 import { ComponentPropsWithRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useCategory, useCreateItem, useCreateSubCategory } from "./query";
-import { createSubCategorySchema } from "@/server/db/schema";
+import {
+  categoryDetailsSchema,
+  createSubCategorySchema,
+} from "@/server/db/schema";
 import { useSession } from "next-auth/react";
 
 export default function Category({
@@ -41,7 +44,6 @@ export default function Category({
   const [popoverOpened, popoverHandlers] = useDisclosure(false);
   const [categoryOpened, categoryHandlers] = useDisclosure(false);
   const [itemOpened, itemHandlers] = useDisclosure(false);
-  const [value, setValue] = useState<string | null>(null);
   const session = useSession();
 
   if (!isNumber(id)) {
@@ -60,7 +62,13 @@ export default function Category({
     <>
       <Stack>
         <Group justify="space-between">
-          <Text>Category: {category.data.body.name}</Text>
+          <CategoryTitle id={id} />
+          {/* <Group gap="xs">
+            <Text>Category: {category.data.body.name}</Text>
+            <ActionIcon>
+              <IconEdit />
+            </ActionIcon>
+          </Group> */}
           <Popover opened={popoverOpened} onClose={popoverHandlers.close}>
             <PopoverTarget>
               <ActionIcon
@@ -145,6 +153,20 @@ export default function Category({
     </>
   );
 }
+
+const CategoryTitle = ({ id }: { id: string }) => {
+  const [edit, handlers] = useDisclosure(false);
+  const category = useCategory(id, { enabled: isNumber(id) });
+
+  return (
+    <Group gap="xs">
+      <Text>Category: {category.data?.body.name}</Text>
+      <ActionIcon disabled={!category.isSuccess} onClick={handlers.open}>
+        <IconEdit />
+      </ActionIcon>
+    </Group>
+  );
+};
 
 const DropDownButton = ({
   children,
