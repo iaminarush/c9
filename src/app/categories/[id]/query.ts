@@ -1,6 +1,6 @@
 import { client } from "@/contracts/contract";
 import { categoryContract } from "@/contracts/contract-category";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ServerInferResponses } from "@ts-rest/core";
 import { UseQueryOptions } from "@ts-rest/react-query";
 import { produce } from "immer";
@@ -63,6 +63,16 @@ export const useCreateSubCategory = () => {
           return newData;
         },
       );
+    },
+  });
+};
+
+export const useUpdateCategory = () => {
+  const queryClient = useQueryClient();
+
+  return client.categories.updateCategory.useMutation({
+    onSuccess: ({ body }) => {
+      console.log(body);
     },
   });
 };

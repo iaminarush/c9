@@ -2,9 +2,7 @@
 
 import TextFormField from "@/components/hook-form/TextFormField";
 import { isNumber } from "@/lib/utils";
-import {
-  createSubCategorySchema
-} from "@/server/db/schema";
+import { createSubCategorySchema } from "@/server/db/schema";
 import { createItemSchema } from "@/server/db/schema/items";
 import { DisclosureHandlers } from "@/util/commonTypes";
 import {
@@ -23,15 +21,22 @@ import {
   Skeleton,
   Stack,
   Text,
+  TextInput,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconEdit, IconPlus } from "@tabler/icons-react";
+import {
+  IconCross,
+  IconDeviceFloppy,
+  IconEdit,
+  IconPlus,
+  IconX,
+} from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { ComponentPropsWithRef } from "react";
+import { ComponentPropsWithRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
-import { useCategory, useCreateItem, useCreateSubCategory } from "./query";
+import { useCategory, useCreateItem, useCreateSubCategory, useUpdateCategory } from "./query";
 
 export default function Category({
   params: { id },
@@ -156,15 +161,41 @@ export default function Category({
 const CategoryTitle = ({ id }: { id: string }) => {
   const [edit, handlers] = useDisclosure(false);
   const category = useCategory(id, { enabled: isNumber(id) });
+  const [value, setValue] = useState(category.data?.body.name || "");
+  const mutation = useUpdateCategory()
+  
+  //TODO
+  // const handleUpdate = () => {
+  //   mutation.mutate({body: {name: value, id: Number(id)}})
+  // }
 
-  return (
-    <Group gap="xs">
-      <Text>Category: {category.data?.body.name}</Text>
-      <ActionIcon disabled={!category.isSuccess} onClick={handlers.open}>
-        <IconEdit />
-      </ActionIcon>
-    </Group>
-  );
+  if (!edit)
+    return (
+      <Group gap="xs">
+        <Text>Category: {category.data?.body.name}</Text>
+        <ActionIcon disabled={!category.isSuccess} onClick={handlers.open}>
+          <IconEdit />
+        </ActionIcon>
+      </Group>
+    );
+
+  if (edit)
+    return (
+      <Group gap="xs">
+        <TextInput
+          value={value}
+          onChange={(e) => setValue(e.currentTarget.value)}
+          rightSection={
+            <ActionIcon variant="transparent" color="red">
+              <IconX />
+            </ActionIcon>
+          }
+        />
+        <ActionIcon variant="transparent" color="green">
+          <IconDeviceFloppy />
+        </ActionIcon>
+      </Group>
+    );
 };
 
 const DropDownButton = ({
