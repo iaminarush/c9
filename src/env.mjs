@@ -4,7 +4,7 @@ import { z } from "zod";
 export const env = createEnv({
   server: {
     DATABASE_URL: z.string().url(),
-    UPLOADTHING_SECRET: z.string(),
+    // UPLOADTHING_SECRET: z.string(),
   },
   client: {},
   experimental__runtimeEnv: {},

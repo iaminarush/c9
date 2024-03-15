@@ -2,6 +2,9 @@
 
 import TextFormField from "@/components/hook-form/TextFormField";
 import { isNumber } from "@/lib/utils";
+import {
+  createSubCategorySchema
+} from "@/server/db/schema";
 import { createItemSchema } from "@/server/db/schema/items";
 import { DisclosureHandlers } from "@/util/commonTypes";
 import {
@@ -23,16 +26,12 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconEdit, IconPlus } from "@tabler/icons-react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { ComponentPropsWithRef, useState } from "react";
+import { ComponentPropsWithRef } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useCategory, useCreateItem, useCreateSubCategory } from "./query";
-import {
-  categoryDetailsSchema,
-  createSubCategorySchema,
-} from "@/server/db/schema";
-import { useSession } from "next-auth/react";
 
 export default function Category({
   params: { id },
