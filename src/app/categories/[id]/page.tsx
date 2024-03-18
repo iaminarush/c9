@@ -25,7 +25,6 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
-  IconCross,
   IconDeviceFloppy,
   IconEdit,
   IconPlus,
@@ -36,7 +35,12 @@ import Link from "next/link";
 import { ComponentPropsWithRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
-import { useCategory, useCreateItem, useCreateSubCategory, useUpdateCategory } from "./query";
+import {
+  useCategory,
+  useCreateItem,
+  useCreateSubCategory,
+  useUpdateCategory,
+} from "./query";
 
 export default function Category({
   params: { id },
@@ -162,12 +166,22 @@ const CategoryTitle = ({ id }: { id: string }) => {
   const [edit, handlers] = useDisclosure(false);
   const category = useCategory(id, { enabled: isNumber(id) });
   const [value, setValue] = useState(category.data?.body.name || "");
-  const mutation = useUpdateCategory()
-  
+  const { mutate, isLoading } = useUpdateCategory();
+
   //TODO
-  // const handleUpdate = () => {
-  //   mutation.mutate({body: {name: value, id: Number(id)}})
-  // }
+  const handleUpdate = () => {
+    mutate(
+      {
+        body: { name: value },
+        params: { id },
+      },
+      {
+        onSuccess: () => {
+          handlers.close();
+        },
+      },
+    );
+  };
 
   if (!edit)
     return (
@@ -186,12 +200,23 @@ const CategoryTitle = ({ id }: { id: string }) => {
           value={value}
           onChange={(e) => setValue(e.currentTarget.value)}
           rightSection={
-            <ActionIcon variant="transparent" color="red">
+            <ActionIcon
+              variant="transparent"
+              color="red"
+              onClick={handlers.close}
+              disabled={isLoading}
+            >
               <IconX />
             </ActionIcon>
           }
+          disabled={isLoading}
         />
-        <ActionIcon variant="transparent" color="green">
+        <ActionIcon
+          variant="transparent"
+          color="green"
+          onClick={handleUpdate}
+          loading={isLoading}
+        >
           <IconDeviceFloppy />
         </ActionIcon>
       </Group>

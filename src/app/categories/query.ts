@@ -8,7 +8,7 @@ const keys = {
   all: ["categories"],
 };
 
-type CategoriesResponse = ServerInferResponses<
+export type CategoriesResponse = ServerInferResponses<
   typeof categoryContract.getCategories,
   200
 >;

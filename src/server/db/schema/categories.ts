@@ -7,9 +7,9 @@ import {
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
-import { itemSchema, items } from "./items";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
+import { itemSchema, items } from "./items";
 
 export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),
@@ -33,7 +33,7 @@ export const categoryDetailsSchema = categorySchema.extend({
 
 export const createCategorySchema = createInsertSchema(categories);
 
-export const updateCategorySchema = createSelectSchema(categories);
+export const updateCategorySchema = createSelectSchema(categories).partial();
 
 export const subCategorySchema = categorySchema.merge(
   z.object({ parentId: z.number() }),

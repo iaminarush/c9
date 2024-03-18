@@ -31,7 +31,7 @@ export const categoriesRouter = createNextRoute(contract.categories, {
     if (isNumber(args.params.id) && token?.admin) {
       const [updatedCategory] = await db
         .update(categories)
-        .set({ name: args.body.name })
+        .set(args.body)
         .where(eq(categories.id, Number(args.params.id)))
         .returning();
 

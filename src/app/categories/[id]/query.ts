@@ -1,6 +1,6 @@
 import { client } from "@/contracts/contract";
 import { categoryContract } from "@/contracts/contract-category";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { ServerInferResponses } from "@ts-rest/core";
 import { UseQueryOptions } from "@ts-rest/react-query";
 import { produce } from "immer";
@@ -72,7 +72,18 @@ export const useUpdateCategory = () => {
 
   return client.categories.updateCategory.useMutation({
     onSuccess: ({ body }) => {
-      console.log(body);
+      queryClient.setQueryData<CategoryResponse>(
+        keys.category(`${body.id}`),
+        (oldData) => {
+          if (!oldData) return undefined;
+
+          const newData = produce(oldData, (draft) => {
+            draft.body.name = body.name;
+          });
+
+          return newData;
+        },
+      );
     },
   });
 };
