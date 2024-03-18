@@ -18,7 +18,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconMoon, IconSun } from "@tabler/icons-react";
 import { default as clsx, default as cx } from "clsx";
 import { signOut } from "next-auth/react";
-import Link from "next/link";
+import Link, { LinkProps } from "next/link";
 import { ReactNode } from "react";
 import classes from "./NavLayout.module.css";
 import GlobalSearch from "@/components/globalSearch";
@@ -42,21 +42,11 @@ export default function NavLayout({ children }: { children: ReactNode }) {
           <Group justify="flex-end" style={{ flex: 1 }}>
             {/* Desktop */}
             <Group ml="xl" gap={0} visibleFrom="sm">
-              <UnstyledButton
-                className={classes.control}
-                component={Link}
-                href="/categories"
-              >
-                Category
-              </UnstyledButton>
+              <LinkButton href="/categories">Category</LinkButton>
 
-              <UnstyledButton
-                className={classes.control}
-                component={Link}
-                href="/comparison"
-              >
-                Comparison
-              </UnstyledButton>
+              <LinkButton href="/comparison">Comparison</LinkButton>
+              
+              <LinkButton href='/stores'>Stores</LinkButton>
 
               <LogoutButton />
               <Space w="xs" />
@@ -70,23 +60,17 @@ export default function NavLayout({ children }: { children: ReactNode }) {
       {/* Mobile */}
       <AppShellNavbar py="md" px={4}>
         <AppShellSection grow component={ScrollArea}>
-          <UnstyledButton
-            className={classes.control}
-            component={Link}
-            href="/categories"
-            onClick={toggle}
-          >
+          <LinkButton href="/categories" onClick={toggle}>
             Category
-          </UnstyledButton>
+          </LinkButton>
 
-          <UnstyledButton
-            className={classes.control}
-            component={Link}
-            href="/comparison"
-            onClick={toggle}
-          >
+          <LinkButton href="/comparison" onClick={toggle}>
             Comparison
-          </UnstyledButton>
+          </LinkButton>
+
+          <LinkButton href="/stores" onClick={toggle}>
+            Stores
+          </LinkButton>
         </AppShellSection>
 
         <Group justify="space-between" px="sm">
@@ -131,5 +115,26 @@ const ColorSchemToggle = () => {
       <IconSun className={cx(classes.icon, classes.light)} stroke={1.5} />
       <IconMoon className={cx(classes.icon, classes.dark)} stroke={1.5} />
     </ActionIcon>
+  );
+};
+
+const LinkButton = ({
+  href,
+  children,
+  onClick,
+}: {
+  href: LinkProps["href"];
+  children: ReactNode;
+  onClick?: React.MouseEventHandler<HTMLAnchorElement>;
+}) => {
+  return (
+    <UnstyledButton
+      className={classes.control}
+      component={Link}
+      href={href}
+      onClick={onClick}
+    >
+      {children}
+    </UnstyledButton>
   );
 };
