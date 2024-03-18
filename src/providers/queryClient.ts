@@ -5,9 +5,10 @@ export const queryClientOptions: QueryClientConfig = {
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      refetchOnMount: false,
+      // refetchOnMount: false,
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
       retry: 2,
+      staleTime: 20000,
     },
   },
   queryCache: new QueryCache({
