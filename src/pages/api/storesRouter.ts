@@ -4,6 +4,7 @@ import { db } from "@/server/db/db";
 import { stores } from "@/server/db/schema";
 import { createNextRoute } from "@ts-rest/next";
 import { eq } from "drizzle-orm";
+import { getToken } from "next-auth/jwt";
 
 export const storesRouter = createNextRoute(contract.stores, {
   getStores: async () => {
@@ -42,5 +43,25 @@ export const storesRouter = createNextRoute(contract.stores, {
     }
 
     return { status: 404, body: null };
+  },
+  updateStore: async (args) => {
+    const token = await getToken({ req: args.req });
+
+    if (!token?.admin)
+      return { status: 403, body: { message: "No Permission" } };
+
+    if (isNumber(args.params.id)) {
+      const [updateStore] = await db
+        .update(stores)
+        .set(args.body)
+        .where(eq(stores.id, Number(args.params.id)))
+        .returning();
+
+      if (updateStore) {
+        return { status: 200, body: updateStore };
+      }
+    }
+
+    return { status: 404, body: { message: "Store not found" } };
   },
 });

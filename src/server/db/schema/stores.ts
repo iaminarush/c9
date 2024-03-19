@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
 import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { records } from "./records";
 
 export const stores = pgTable("stores", {
@@ -9,7 +9,7 @@ export const stores = pgTable("stores", {
   remark: text("remark"),
   updatedAt: timestamp("updated_at"),
   createdAt: timestamp("created_at").defaultNow(),
-  image: text("image")
+  image: text("image"),
 });
 
 export const storesRelations = relations(stores, ({ many }) => ({
@@ -17,3 +17,7 @@ export const storesRelations = relations(stores, ({ many }) => ({
 }));
 
 export const storeSchema = createSelectSchema(stores);
+
+export const createStoreSchema = createInsertSchema(stores);
+
+export const updateStoreSchema = createStoreSchema.partial();

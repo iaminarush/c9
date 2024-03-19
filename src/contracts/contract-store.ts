@@ -1,5 +1,5 @@
 import { selectSchema } from "@/lib/zodScehmas";
-import { storeSchema } from "@/server/db/schema";
+import { storeSchema, updateStoreSchema } from "@/server/db/schema";
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 
@@ -29,5 +29,16 @@ export const storeContract = c.router({
       200: storeSchema,
       404: null,
     },
+  },
+  updateStore: {
+    method: "PATCH",
+    path: "/stores/:id",
+    responses: {
+      200: storeSchema,
+      403: z.object({ message: z.string() }),
+      404: z.object({ message: z.string() }),
+    },
+    body: updateStoreSchema,
+    summary: "Update a store",
   },
 });

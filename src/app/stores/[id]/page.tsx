@@ -1,13 +1,14 @@
 "use client";
 
-import { Image, Skeleton, Stack, Text } from "@mantine/core";
-import { Store, useStore } from "../query";
+import { Button, Center, Image, Skeleton, Stack, Text } from "@mantine/core";
+import { Store, useStore, useUpdateStore } from "../query";
 import { isNumber } from "@/lib/utils";
-import { useForm, useWatch } from "react-hook-form";
+import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import TextFormField from "@/components/hook-form/TextFormField";
 import { UploadButton } from "@/components/util/uploadthing";
 import { toast } from "react-hot-toast";
-import NextImage from "next/image";
+import { z } from "zod";
+import { createStoreSchema } from "@/server/db/schema";
 
 export default function Store({ params: { id } }: { params: { id: string } }) {
   const store = useStore(id);
@@ -23,19 +24,29 @@ export default function Store({ params: { id } }: { params: { id: string } }) {
   if (store.isError) {
     return <div>Error</div>;
   }
-  return <StoreForm store={store.data.body} />;
+  return <StoreForm store={store.data.body} id={id} />;
 }
 
-const StoreForm = ({ store }: { store: Store }) => {
-  const { control, setValue } = useForm({
+type FormData = z.infer<typeof createStoreSchema>;
+
+const StoreForm = ({ store, id }: { store: Store; id: string }) => {
+  const { control, setValue, handleSubmit } = useForm<FormData>({
     defaultValues: {
       name: store.name,
       remark: store.remark,
       image: store.image,
     },
   });
+  const { mutate, isLoading } = useUpdateStore();
 
   const image = useWatch({ control, name: "image" });
+
+  const onSubmit: SubmitHandler<FormData> = (data) => {
+    mutate(
+      { params: { id }, body: data },
+      { onSuccess: () => toast.success("Updated") },
+    );
+  };
 
   return (
     <Stack>
@@ -44,17 +55,26 @@ const StoreForm = ({ store }: { store: Store }) => {
         name="name"
         rules={{ required: "Required" }}
         label="Name"
+        required
       />
 
-      <Image
-        src={image}
-        alt="Logo"
-        h={200}
-        mah={200}
-        radius="sm"
-        fallbackSrc="https://placehold.co/600x400?text=No%20Image"
-        fit="cover"
-      />
+      <TextFormField control={control} name="remark" label="Remarks" />
+
+      <Center>
+        <Stack>
+          <Text>Logo</Text>
+          <Image
+            src={image}
+            alt="Logo"
+            h={200}
+            mah={200}
+            maw={200}
+            radius="sm"
+            fallbackSrc="https://placehold.co/600x400?text=No%20Image"
+            fit="contain"
+          />
+        </Stack>
+      </Center>
 
       <UploadButton
         endpoint="imageUploader"
@@ -70,6 +90,10 @@ const StoreForm = ({ store }: { store: Store }) => {
           toast.error(`Error: ${error.message}`);
         }}
       />
+
+      <Button onClick={handleSubmit(onSubmit)} loading={isLoading}>
+        Save
+      </Button>
     </Stack>
   );
 };
