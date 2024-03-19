@@ -9,6 +9,7 @@ export const stores = pgTable("stores", {
   remark: text("remark"),
   updatedAt: timestamp("updated_at"),
   createdAt: timestamp("created_at").defaultNow(),
+  image: text("image")
 });
 
 export const storesRelations = relations(stores, ({ many }) => ({
