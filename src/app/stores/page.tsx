@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Card,
-  Group,
-  Skeleton,
-  Stack,
-  Text,
-  UnstyledButton,
-} from "@mantine/core";
+import { Card, Group, Skeleton, Stack, Text } from "@mantine/core";
 import { Store, useStores } from "./query";
 import { IconPhotoOff } from "@tabler/icons-react";
 import classes from "./Stores.module.css";

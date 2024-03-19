@@ -22,4 +22,12 @@ export const storeContract = c.router({
       404: null,
     },
   },
+  getStore: {
+    method: "GET",
+    path: "/stores/:id",
+    responses: {
+      200: storeSchema,
+      404: null,
+    },
+  },
 });
