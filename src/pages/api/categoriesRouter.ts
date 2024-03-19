@@ -28,7 +28,7 @@ export const categoriesRouter = createNextRoute(contract.categories, {
     if (!token?.admin)
       return { status: 403, body: { message: "No Permission" } };
 
-    if (isNumber(args.params.id) && token?.admin) {
+    if (isNumber(args.params.id)) {
       const [updatedCategory] = await db
         .update(categories)
         .set(args.body)
