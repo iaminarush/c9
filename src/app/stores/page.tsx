@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  Button,
-  Image,
-  Skeleton,
-  Stack,
-  Text
-} from "@mantine/core";
+import { Button, Image, Skeleton, Stack, Text } from "@mantine/core";
 import { IconPhotoOff } from "@tabler/icons-react";
 import Link from "next/link";
 import { Store, useStores } from "./query";
@@ -32,7 +26,6 @@ export default function Stores() {
 }
 
 const StoreLink = ({ store }: { store: Store }) => {
-  console.log(store);
   return (
     <Button
       component={Link}

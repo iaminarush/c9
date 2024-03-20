@@ -18,7 +18,7 @@ export const storeContract = c.router({
     method: "GET",
     path: "/stores-formatted",
     responses: {
-      200: selectSchema.array(),
+      200: selectSchema.extend({ image: z.string().nullable() }).array(),
       404: null,
     },
   },

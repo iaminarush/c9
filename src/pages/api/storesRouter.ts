@@ -25,7 +25,7 @@ export const storesRouter = createNextRoute(contract.stores, {
     if (result) {
       return {
         status: 200,
-        body: result.map((s) => ({ value: `${s.id}`, label: s.name })),
+        body: result.map((s) => ({ value: `${s.id}`, label: s.name, image: s.image })),
       };
     } else {
       return { status: 404, body: null };

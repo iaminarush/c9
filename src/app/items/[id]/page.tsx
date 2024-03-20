@@ -12,22 +12,31 @@ import {
   ActionIcon,
   Button,
   Card,
+  ComboboxItem,
+  ComboboxLikeRenderOptionInput,
   Group,
+  Image,
   Modal,
   NumberFormatter,
+  SelectProps,
   Skeleton,
   Stack,
   Text,
   Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconPhoto, IconPlus } from "@tabler/icons-react";
+import {
+  IconCheck,
+  IconPhoto,
+  IconPhotoOff,
+  IconPlus,
+} from "@tabler/icons-react";
 import { produce } from "immer";
+import { useSession } from "next-auth/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
 import { useCreateRecord, useItem } from "./query";
-import { useSession } from "next-auth/react";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -66,7 +75,6 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
       createRecord.mutate({ body: result.data }, { onSuccess: () => close() });
     } else {
       toast.error("Error, view console");
-      console.log(result.error.issues);
     }
   };
 
@@ -94,6 +102,9 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
             rules={{ required: "Required" }}
             searchable
             withAsterisk
+            //eslint-disable-next-line
+            //@ts-expect-error Mantine types doesn't pass additional object propertis to item
+            renderOption={renderStoreSelectOption}
           />
 
           <NumberFormField
@@ -178,14 +189,60 @@ const RecordList = ({ recordId }: { recordId: string }) => {
   return <Text>Error loading records</Text>;
 };
 
+const renderStoreSelectOption = ({
+  option,
+  checked,
+}: ComboboxLikeRenderOptionInput<{
+  value: string;
+  label: string;
+  image: string | null;
+}>) => {
+  return (
+    <Group flex="1" gap="xs">
+      {option.image ? (
+        <Image
+          h={24}
+          w={24}
+          src={option.image}
+          fallbackSrc="https://placehold.co/600x400?text=No%20Image"
+          alt="Logo"
+          fit="contain"
+        />
+      ) : (
+        <IconPhotoOff size={24} />
+      )}
+      {option.label}
+      {checked && (
+        <IconCheck
+          style={{ marginInlineStart: "auto" }}
+          stroke={1.5}
+          color="currentColor"
+          opacity={0.6}
+          size={18}
+        />
+      )}
+    </Group>
+  );
+};
+
 type Record = z.infer<typeof recordDetailSchema>;
 
 const RecordCard = (record: Record) => {
-  // console.log(Number(record.amount));
   return (
     <Card>
       <Group>
-        <IconPhoto size={36} />
+        {record.store.image ? (
+          <Image
+            src={record.store.image}
+            h={48}
+            w={48}
+            radius="sm"
+            alt="Logo"
+            fit="contain"
+          />
+        ) : (
+          <IconPhoto size={36} />
+        )}
 
         <Stack gap="xs" style={{ flexGrow: 1 }}>
           <Group gap={0}>
