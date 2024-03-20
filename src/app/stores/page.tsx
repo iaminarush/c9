@@ -1,10 +1,15 @@
 "use client";
 
-import { Card, Group, Image, Skeleton, Stack, Text } from "@mantine/core";
-import { Store, useStores } from "./query";
+import {
+  Button,
+  Image,
+  Skeleton,
+  Stack,
+  Text
+} from "@mantine/core";
 import { IconPhotoOff } from "@tabler/icons-react";
-import classes from "./Stores.module.css";
 import Link from "next/link";
+import { Store, useStores } from "./query";
 
 export default function Stores() {
   const stores = useStores();
@@ -29,15 +34,21 @@ export default function Stores() {
 const StoreLink = ({ store }: { store: Store }) => {
   console.log(store);
   return (
-    <Card component={Link} href={`/stores/${store.id}`}>
-      <Group>
-        {store.image ? (
+    <Button
+      component={Link}
+      href={`/stores/${store.id}`}
+      size="xl"
+      justify="space-between"
+      leftSection={
+        store.image ? (
           <Image src={store.image} alt="Logo" h={48} w={48} fit="contain" />
         ) : (
           <IconPhotoOff />
-        )}
-        <Text>{store.name}</Text>
-      </Group>
-    </Card>
+        )
+      }
+      rightSection={<span />}
+    >
+      {store.name}
+    </Button>
   );
 };
