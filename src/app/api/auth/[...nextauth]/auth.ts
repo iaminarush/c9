@@ -121,7 +121,7 @@ export const authOptions: NextAuthOptions = {
 
         if (!match) throw new Error("Incorrect credentials. Try again");
 
-        const { password: pw, ...rest } = user;
+        // const { password: pw, ...rest } = user;
 
         return {
           admin: user.admin,
