@@ -1,6 +1,5 @@
 "use client";
 
-import { BarcodeScanner } from "@/components/barcodeScanner";
 import { Button, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
@@ -11,7 +10,7 @@ export default function Barcode() {
 
   return (
     <>
-      <Button onClick={handlers.open}>Scan</Button>
+      {/* <Button onClick={handlers.open}>Scan</Button>
       {opened && (
         <BarcodeScanner
           opened={opened}
@@ -19,7 +18,7 @@ export default function Barcode() {
           handleScan={setBarcode}
         />
       )}
-      {!!barcode && <Text>Result: {barcode}</Text>}
+      {!!barcode && <Text>Result: {barcode}</Text>} */}
     </>
   );
 }
