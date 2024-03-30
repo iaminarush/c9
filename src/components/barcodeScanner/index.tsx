@@ -37,7 +37,7 @@ export const BarcodeScanner = ({
     deviceId: selectedDevice || "",
     onDecodeResult: (result) => {
       handleScan(result.getText());
-      onClose();
+      // onClose();
     },
     // onDecodeError: (error) => {},
     hints,
