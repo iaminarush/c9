@@ -1,16 +1,16 @@
 import { relations } from "drizzle-orm";
 import { integer, pgTable, serial, varchar } from "drizzle-orm/pg-core";
-import { records } from "./records";
+import { items } from "./items";
 
 export const barcodes = pgTable("barcodes", {
   id: serial("id").primaryKey(),
   barcode: varchar("barcode", { length: 13 }),
-  recordId: integer("record_id"),
+  itemId: integer("item_id"),
 });
 
 export const barcodesRelations = relations(barcodes, ({ one }) => ({
-  record: one(records, {
+  item: one(items, {
     fields: [barcodes.id],
-    references: [records.id],
+    references: [items.id],
   }),
 }));

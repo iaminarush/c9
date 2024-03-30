@@ -25,7 +25,6 @@ export const records = pgTable("records", {
   storeId: integer("store_id").notNull(),
   // unitId: integer("unit_id"),
   unitTypeId: integer("unit_type_id").notNull(),
-  barcodeId: integer("barcode_id"),
 });
 
 export const recordsRelations = relations(records, ({ one, many }) => ({
@@ -45,7 +44,6 @@ export const recordsRelations = relations(records, ({ one, many }) => ({
     fields: [records.itemId],
     references: [items.id],
   }),
-  barcodes: many(barcodes),
 }));
 
 export const recordSchema = createSelectSchema(records);

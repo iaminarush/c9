@@ -4,6 +4,7 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { categories } from "./categories";
 import { prices } from "./prices";
 import { records } from "./records";
+import { barcodes } from "./barcodes";
 
 export const items = pgTable("items", {
   id: serial("id").primaryKey(),
@@ -23,6 +24,7 @@ export const itemsRelations = relations(items, ({ one, many }) => ({
   }),
   prices: many(prices),
   records: many(records),
+  barcodes: many(barcodes),
 }));
 
 export const itemSchema = createSelectSchema(items);
