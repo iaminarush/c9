@@ -11,6 +11,7 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { items } from "./items";
 import { stores } from "./stores";
 import { unitTypes } from "./unitTypes";
+import { barcodes } from "./barcodes";
 
 export const records = pgTable("records", {
   id: serial("id").primaryKey(),
@@ -24,9 +25,10 @@ export const records = pgTable("records", {
   storeId: integer("store_id").notNull(),
   // unitId: integer("unit_id"),
   unitTypeId: integer("unit_type_id").notNull(),
+  barcodeId: integer("barcode_id"),
 });
 
-export const recordsRelations = relations(records, ({ one }) => ({
+export const recordsRelations = relations(records, ({ one, many }) => ({
   // unit: one(units, {
   //   fields: [records.unitId],
   //   references: [units.id],
@@ -43,6 +45,7 @@ export const recordsRelations = relations(records, ({ one }) => ({
     fields: [records.itemId],
     references: [items.id],
   }),
+  barcodes: many(barcodes),
 }));
 
 export const recordSchema = createSelectSchema(records);
