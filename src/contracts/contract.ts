@@ -7,6 +7,7 @@ import { storeContract } from "./contract-store";
 import { unitFamiliesContract } from "./contract-unitFamily";
 import { unitTypesContract } from "./contract-unitType";
 import { searchContract } from "./contract-search";
+import { barcodeContract } from "./contract-barcode";
 
 const c = initContract();
 
@@ -19,6 +20,7 @@ export const contract = c.router(
     unitTypes: unitTypesContract,
     unitFamilies: unitFamiliesContract,
     search: searchContract,
+    barcodes: barcodeContract,
   },
   {
     strictStatusCodes: true,
