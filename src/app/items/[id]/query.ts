@@ -44,3 +44,7 @@ export const useCreateRecord = (id: string) => {
     },
   });
 };
+
+export const useCreateBarcode = () => {
+  return client.barcodes.createBarcode.useMutation();
+};
