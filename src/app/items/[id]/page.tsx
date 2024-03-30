@@ -20,10 +20,12 @@ import {
   Skeleton,
   Stack,
   Text,
-  Title
+  Title,
+  Tooltip,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
+  IconBarcode,
   IconCheck,
   IconPhoto,
   IconPhotoOff,
@@ -34,13 +36,15 @@ import { useSession } from "next-auth/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
-import { useCreateRecord, useItem } from "./query";
+import { useCreateBarcode, useCreateRecord, useItem } from "./query";
+import { BarcodeScanner } from "@/components/barcodeScanner";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
 export default function Item({ params: { id } }: { params: { id: string } }) {
   const { isLoading, isError, data } = useItem(id, { enabled: isNumber(id) });
   const [opened, { open, close }] = useDisclosure(false);
+  const [scanner, scannerHandlers] = useDisclosure(false);
   const { control, handleSubmit } = useForm<FormData>({
     defaultValues: {
       itemId: Number(id),
@@ -51,6 +55,7 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
   const stores = useStoresData({ queryOptions: { enabled: opened } });
   const unitTypes = useUnitTypesData({ queryOptions: { enabled: opened } });
   const createRecord = useCreateRecord(id);
+  const createBarcode = useCreateBarcode();
   const session = useSession();
 
   if (!isNumber(id)) {
@@ -81,13 +86,39 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
       <Stack>
         <Group justify="space-between">
           <Title>{data.body.name}</Title>
-          <ActionIcon onClick={open} disabled={!session.data?.user.admin}>
-            <IconPlus />
-          </ActionIcon>
+          <Group>
+            <Tooltip label="Add barcode">
+              <ActionIcon onClick={scannerHandlers.open}>
+                <IconBarcode />
+              </ActionIcon>
+            </Tooltip>
+
+            <Tooltip label="Add record">
+              <ActionIcon onClick={open} disabled={!session.data?.user.admin}>
+                <IconPlus />
+              </ActionIcon>
+            </Tooltip>
+          </Group>
         </Group>
 
         <RecordList recordId={id} />
       </Stack>
+
+      <BarcodeScanner
+        opened={scanner}
+        handleScan={(r) => {
+          createBarcode.mutate(
+            { body: { barcode: r, itemId: Number(id) } },
+            {
+              onSuccess: () => {
+                toast.success("Barcode added");
+                scannerHandlers.close();
+              },
+            },
+          );
+        }}
+        onClose={scannerHandlers.close}
+      />
 
       <Modal opened={opened} onClose={close} title="Add Price" centered>
         <Stack>
