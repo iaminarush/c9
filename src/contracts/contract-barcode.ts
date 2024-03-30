@@ -11,6 +11,7 @@ export const barcodeContract = c.router({
     responses: {
       201: barcodeSchema,
       400: z.object({ message: z.string() }),
+      403: z.object({ message: z.string() }),
     },
     body: createBarcodeSchema,
     summary: "Create a barcode",
