@@ -8,6 +8,7 @@ import { storesRouter } from "./storesRouter";
 import { unitTypesRouter } from "./unitTypesRouter";
 import { unitFamiliesRouter } from "./unitFamiliesRouter";
 import { searchRouter } from "./searchRouter";
+import { barcodeRouter } from "./barcodesRouter";
 
 const router = createNextRoute(contract, {
   categories: categoriesRouter,
@@ -17,6 +18,7 @@ const router = createNextRoute(contract, {
   unitTypes: unitTypesRouter,
   unitFamilies: unitFamiliesRouter,
   search: searchRouter,
+  barcodes: barcodeRouter,
 });
 
 export default createNextRouter(contract, router, {
