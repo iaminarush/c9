@@ -67,7 +67,6 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
   if (isError) return <Text>Error</Text>;
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    console.log(data);
     const submitData = produce(data, (draft) => {
       draft.storeId = Number(draft.storeId);
       draft.unitTypeId = Number(draft.unitTypeId);
