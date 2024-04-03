@@ -67,10 +67,12 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
   if (isError) return <Text>Error</Text>;
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
+    console.log(data);
     const submitData = produce(data, (draft) => {
       draft.storeId = Number(draft.storeId);
       draft.unitTypeId = Number(draft.unitTypeId);
       draft.price = `${draft.price}`;
+      draft.amount = `${draft.amount}`;
     });
 
     const result = createRecordSchema.safeParse(submitData);
@@ -78,6 +80,7 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
       createRecord.mutate({ body: result.data }, { onSuccess: () => close() });
     } else {
       toast.error("Error, view console");
+      console.log(result.error);
     }
   };
 
