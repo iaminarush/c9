@@ -6,19 +6,26 @@ import {
   serial,
   text,
   timestamp,
+  unique,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 import { itemSchema, items } from "./items";
 
-export const categories = pgTable("categories", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull().unique(),
-  remark: text("remark"),
-  updatedAt: timestamp("updated_at"),
-  createdAt: timestamp("created_at").defaultNow(),
-  parentId: integer("parent_id").references((): AnyPgColumn => categories.id),
-});
+export const categories = pgTable(
+  "categories",
+  {
+    id: serial("id").primaryKey(),
+    name: text("name").notNull(),
+    remark: text("remark"),
+    updatedAt: timestamp("updated_at"),
+    createdAt: timestamp("created_at").defaultNow(),
+    parentId: integer("parent_id").references((): AnyPgColumn => categories.id),
+  },
+  (t) => ({
+    unq: unique().on(t.name, t.parentId),
+  }),
+);
 
 export const categoriesRelations = relations(categories, ({ many }) => ({
   items: many(items),
