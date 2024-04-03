@@ -39,6 +39,7 @@ import { z } from "zod";
 import { useCreateBarcode, useCreateRecord, useItem } from "./query";
 import { BarcodeScanner } from "@/components/barcodeScanner";
 
+//TODO Change to actual client side data types
 type FormData = z.infer<typeof createRecordSchema>;
 
 export default function Item({ params: { id } }: { params: { id: string } }) {
