@@ -74,7 +74,7 @@ export const categoryContract = c.router({
   deleteCategory: {
     method: "DELETE",
     path: "/categories/:id",
-    body: null,
+    body: z.any(),
     responses: { 200: categorySchema, 404: z.object({ message: z.string() }) },
     summary: "Delete a category",
   },
