@@ -71,4 +71,11 @@ export const categoryContract = c.router({
     body: createSubCategorySchema,
     summary: "Create a Sub Category",
   },
+  deleteCategory: {
+    method: "DELETE",
+    path: "/categories/:id",
+    body: null,
+    responses: { 200: categorySchema, 404: z.object({ message: z.string() }) },
+    summary: "Delete a category",
+  },
 });

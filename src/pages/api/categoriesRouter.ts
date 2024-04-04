@@ -97,4 +97,19 @@ export const categoriesRouter = createNextRoute(contract.categories, {
       ? { status: 201, body: newCategory }
       : { status: 400, body: { message: "Error" } };
   },
+  deleteCategory: async (args) => {
+    const token = await getToken({ req: args.req });
+
+    if (!token?.admin)
+      return { status: 404, body: { message: "No Permission" } };
+
+    const [deletedCategory] = await db
+      .delete(categories)
+      .where(eq(categories.id, Number(args.params.id)))
+      .returning();
+
+    return deletedCategory
+      ? { status: 200, body: deletedCategory }
+      : { status: 404, body: { message: "Error" } };
+  },
 });

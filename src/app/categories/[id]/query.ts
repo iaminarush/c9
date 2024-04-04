@@ -87,3 +87,11 @@ export const useUpdateCategory = () => {
     },
   });
 };
+
+export const useDeleteCategory = () => {
+  const queryClient = useQueryClient();
+
+  return client.categories.deleteCategory.useMutation({
+    onSuccess: () => queryClient.invalidateQueries(keys.all),
+  });
+};

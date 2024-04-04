@@ -28,6 +28,7 @@ import {
   IconDeviceFloppy,
   IconEdit,
   IconPlus,
+  IconTrash,
   IconX,
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
@@ -39,8 +40,10 @@ import {
   useCategory,
   useCreateItem,
   useCreateSubCategory,
+  useDeleteCategory,
   useUpdateCategory,
 } from "./query";
+import { useRouter } from "next/navigation";
 
 export default function Category({
   params: { id },
@@ -71,12 +74,6 @@ export default function Category({
       <Stack>
         <Group justify="space-between">
           <CategoryTitle id={id} />
-          {/* <Group gap="xs">
-            <Text>Category: {category.data.body.name}</Text>
-            <ActionIcon>
-              <IconEdit />
-            </ActionIcon>
-          </Group> */}
           <Popover opened={popoverOpened} onClose={popoverHandlers.close}>
             <PopoverTarget>
               <ActionIcon
@@ -185,12 +182,16 @@ const CategoryTitle = ({ id }: { id: string }) => {
 
   if (!edit)
     return (
-      <Group gap="xs">
-        <Text>Category: {category.data?.body.name}</Text>
-        <ActionIcon disabled={!category.isSuccess} onClick={handlers.open}>
-          <IconEdit />
-        </ActionIcon>
-      </Group>
+      <>
+        <Group gap="xs">
+          <Text>Category: {category.data?.body.name}</Text>
+          <ActionIcon disabled={!category.isSuccess} onClick={handlers.open}>
+            <IconEdit />
+          </ActionIcon>
+
+          <DeleteModal id={id} />
+        </Group>
+      </>
     );
 
   if (edit)
@@ -221,6 +222,49 @@ const CategoryTitle = ({ id }: { id: string }) => {
         </ActionIcon>
       </Group>
     );
+};
+
+const DeleteModal = ({ id }: { id: string }) => {
+  const [opened, handlers] = useDisclosure(false);
+  const [value, setValue] = useState("");
+  const { mutate, isLoading } = useDeleteCategory();
+  const router = useRouter();
+
+  const handleClick = () => {
+    mutate({ params: { id } }, { onSuccess: () => router.push("/categories") });
+  };
+
+  return (
+    <>
+      <ActionIcon color="red" variant="filled" onClick={handlers.open}>
+        <IconTrash />
+      </ActionIcon>
+
+      <Modal
+        opened={opened}
+        onClose={handlers.close}
+        title="Delete this category?"
+        centered
+      >
+        <Stack>
+          <TextInput
+            label="Please type delete to confirm"
+            value={value}
+            onChange={(e) => setValue(e.currentTarget.value)}
+          />
+          <Button
+            color="red"
+            variant="filled"
+            disabled={value !== "delete"}
+            onClick={handleClick}
+            loading={isLoading}
+          >
+            Delete
+          </Button>
+        </Stack>
+      </Modal>
+    </>
+  );
 };
 
 const DropDownButton = ({
