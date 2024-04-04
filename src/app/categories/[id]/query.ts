@@ -92,6 +92,9 @@ export const useDeleteCategory = () => {
   const queryClient = useQueryClient();
 
   return client.categories.deleteCategory.useMutation({
-    onSuccess: () => queryClient.invalidateQueries(keys.all),
+    onSuccess: ({ body }) => {
+      queryClient.removeQueries(keys.category(`${body.id}`));
+      queryClient.invalidateQueries(keys.all);
+    },
   });
 };
