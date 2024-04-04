@@ -231,7 +231,10 @@ const DeleteModal = ({ id }: { id: string }) => {
   const router = useRouter();
 
   const handleClick = () => {
-    mutate({ params: { id } }, { onSuccess: () => router.push("/categories") });
+    mutate(
+      { params: { id }, body: null },
+      { onSuccess: () => router.push("/categories") },
+    );
   };
 
   return (
