@@ -233,7 +233,12 @@ const DeleteModal = ({ id }: { id: string }) => {
   const handleClick = () => {
     mutate(
       { params: { id }, body: null },
-      { onSuccess: () => router.push("/categories") },
+      {
+        onSuccess: ({ body }) =>
+          router.push(
+            body.parentId ? `/categories/${body.parentId}` : "/categories",
+          ),
+      },
     );
   };
 
