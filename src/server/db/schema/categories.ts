@@ -20,7 +20,10 @@ export const categories = pgTable(
     remark: text("remark"),
     updatedAt: timestamp("updated_at"),
     createdAt: timestamp("created_at").defaultNow(),
-    parentId: integer("parent_id").references((): AnyPgColumn => categories.id),
+    parentId: integer("parent_id").references(
+      (): AnyPgColumn => categories.id,
+      { onDelete: "cascade" },
+    ),
   },
   (t) => ({
     unq: unique().on(t.name, t.parentId),

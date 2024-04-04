@@ -12,9 +12,9 @@ export const items = pgTable("items", {
   remark: text("remark"),
   updatedAt: timestamp("updated_at"),
   createdAt: timestamp("created_at").defaultNow(),
-  category: integer("category_id")
-    .references(() => categories.id)
-    .notNull(),
+  category: integer("category_id").references(() => categories.id, {
+    onDelete: "set null",
+  }),
 });
 
 export const itemsRelations = relations(items, ({ one, many }) => ({
