@@ -18,6 +18,17 @@ export const useUnitTypesData = ({
   >;
 }) => client.unitTypes.getUnitTypesFormatted.useQuery([""], {}, queryOptions);
 
+export const useUnitFamilies = ({
+  queryOptions,
+}: {
+  queryOptions: UseQueryOptions<typeof unitFamiliesContract.getUnitFamilies>;
+}) =>
+  client.unitFamilies.getUnitFamilies.useQuery(
+    ["unit families"],
+    {},
+    queryOptions,
+  );
+
 export const useUnitFamiliesData = ({
   queryOptions,
 }: {

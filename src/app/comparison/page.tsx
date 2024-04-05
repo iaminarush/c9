@@ -4,7 +4,11 @@ import NumberFormField from "@/components/hook-form/NumberFormField";
 import SelectFormField from "@/components/hook-form/SelectFormField";
 import SwitchFormField from "@/components/hook-form/SwitchFormField";
 import { UnitTypes } from "@/contracts/contract-unitType";
-import { useUnitFamiliesData, useUnitTypesData } from "@/lib/commonQueries";
+import {
+  useUnitFamilies,
+  useUnitFamiliesData,
+  useUnitTypesData,
+} from "@/lib/commonQueries";
 import { isNumber } from "@/lib/utils";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import {
@@ -48,6 +52,13 @@ export default function Comparison() {
 
   const unitTypes = useUnitTypesData({});
   const unitFamilies = useUnitFamiliesData({});
+  //TODO
+  // const kek = useUnitFamilies({
+  //   queryOptions: {
+  //     select: ({ body }) =>
+  //       body.map((b) => ({ value: `${b.id}`, label: b.name })),
+  //   },
+  // });
 
   const form = useForm<FormData>({
     defaultValues: {
