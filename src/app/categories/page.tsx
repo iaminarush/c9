@@ -44,6 +44,9 @@ export default function Home() {
           {c.name}
         </Button>
       ))}
+      <Button href={"/categories/uncategorized"} component={Link}>
+        Uncategorized
+      </Button>
     </Stack>
   );
 }

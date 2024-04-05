@@ -3,7 +3,7 @@ import { isNumber } from "@/lib/utils";
 import { db } from "@/server/db/db";
 import { items } from "@/server/db/schema/items";
 import { createNextRoute } from "@ts-rest/next";
-import { eq } from "drizzle-orm";
+import { eq, isNull } from "drizzle-orm";
 import { getToken } from "next-auth/jwt";
 
 export const itemsRouter = createNextRoute(contract.items, {
@@ -31,5 +31,12 @@ export const itemsRouter = createNextRoute(contract.items, {
     }
 
     return { status: 404, body: { message: "Item not found" } };
+  },
+  getUncategorizedItems: async (args) => {
+    const uncategorizedItems = await db.query.items.findMany({
+      where: isNull(items.category),
+    });
+
+    return { status: 200, body: uncategorizedItems };
   },
 });

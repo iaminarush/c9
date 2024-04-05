@@ -25,4 +25,13 @@ export const itemContract = c.router({
     },
     summary: "Get a item by id",
   },
+  getUncategorizedItems: {
+    method: "GET",
+    path: "/uncategorized-items",
+    responses: {
+      200: itemSchema.array(),
+      404: z.object({ message: z.string() }),
+    },
+    summary: "Get items with no category",
+  },
 });
