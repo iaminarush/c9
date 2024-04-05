@@ -36,7 +36,7 @@ const StoreLink = ({ store }: { store: Store }) => {
         store.image ? (
           <Image src={store.image} alt="Logo" h={48} w={48} fit="contain" />
         ) : (
-          <IconPhotoOff />
+          <IconPhotoOff width={48} />
         )
       }
       rightSection={<span />}
