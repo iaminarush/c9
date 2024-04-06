@@ -39,4 +39,19 @@ export const itemsRouter = createNextRoute(contract.items, {
 
     return { status: 200, body: uncategorizedItems };
   },
+  deleteItem: async (args) => {
+    const token = await getToken({ req: args.req });
+
+    if (!token?.admin)
+      return { status: 404, body: { message: "No Permission" } };
+
+    const [deletedItem] = await db
+      .delete(items)
+      .where(eq(items.id, Number(args.params.id)))
+      .returning();
+
+    return deletedItem
+      ? { status: 200, body: deletedItem }
+      : { status: 404, body: { message: "Error" } };
+  },
 });

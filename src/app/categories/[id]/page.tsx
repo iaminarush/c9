@@ -44,6 +44,7 @@ import {
   useUpdateCategory,
 } from "./query";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function Category({
   params: { id },
@@ -189,7 +190,7 @@ const CategoryTitle = ({ id }: { id: string }) => {
             <IconEdit />
           </ActionIcon>
 
-          <DeleteModal id={id} />
+          <DeleteComponent id={id} />
         </Group>
       </>
     );
@@ -224,7 +225,7 @@ const CategoryTitle = ({ id }: { id: string }) => {
     );
 };
 
-const DeleteModal = ({ id }: { id: string }) => {
+const DeleteComponent = ({ id }: { id: string }) => {
   const [opened, handlers] = useDisclosure(false);
   const [value, setValue] = useState("");
   const { mutate, isLoading } = useDeleteCategory();
@@ -234,10 +235,12 @@ const DeleteModal = ({ id }: { id: string }) => {
     mutate(
       { params: { id }, body: null },
       {
-        onSuccess: ({ body }) =>
+        onSuccess: ({ body }) => {
           router.push(
             body.parentId ? `/categories/${body.parentId}` : "/categories",
-          ),
+          );
+          toast.success(`Category ${body.name} deleted`);
+        },
       },
     );
   };

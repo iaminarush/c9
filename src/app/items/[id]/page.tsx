@@ -20,6 +20,7 @@ import {
   Skeleton,
   Stack,
   Text,
+  TextInput,
   Title,
   Tooltip,
 } from "@mantine/core";
@@ -30,14 +31,22 @@ import {
   IconPhoto,
   IconPhotoOff,
   IconPlus,
+  IconTrash,
 } from "@tabler/icons-react";
 import { produce } from "immer";
 import { useSession } from "next-auth/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
-import { useCreateBarcode, useCreateRecord, useItem } from "./query";
+import {
+  useCreateBarcode,
+  useCreateRecord,
+  useDeleteItem,
+  useItem,
+} from "./query";
 import { BarcodeScanner } from "@/components/barcodeScanner";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 //TODO Change to actual client side data types
 type FormData = z.infer<typeof createRecordSchema>;
@@ -88,7 +97,10 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
     <>
       <Stack>
         <Group justify="space-between">
-          <Title>{data.body.name}</Title>
+          <Group align="center">
+            <Title>{data.body.name}</Title>
+            <DeleteComponent id={id} />
+          </Group>
           <Group>
             <Tooltip label="Add barcode">
               <ActionIcon onClick={scannerHandlers.open}>
@@ -192,6 +204,61 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
     </>
   );
 }
+
+const DeleteComponent = ({ id }: { id: string }) => {
+  const [opened, handlers] = useDisclosure(false);
+  const [value, setValue] = useState("");
+  const { mutate, isLoading } = useDeleteItem();
+  const router = useRouter();
+
+  const handleClick = () => {
+    mutate(
+      { params: { id }, body: null },
+      {
+        onSuccess: ({ body }) => {
+          router.push(
+            body.category
+              ? `/categories/${body.category}`
+              : "/categories/uncategorized",
+          );
+          toast.success(`Item ${body.name} deleted`);
+        },
+      },
+    );
+  };
+
+  return (
+    <>
+      <ActionIcon variant="filled" color="red" onClick={handlers.open}>
+        <IconTrash />
+      </ActionIcon>
+
+      <Modal
+        opened={opened}
+        onClose={handlers.close}
+        title="Delete this item?"
+        centered
+      >
+        <Stack>
+          <TextInput
+            label="Please type delete to confirm"
+            value={value}
+            onChange={(e) => setValue(e.currentTarget.value)}
+          />
+          <Button
+            color="red"
+            variant="filled"
+            disabled={value !== "delete"}
+            onClick={handleClick}
+            loading={isLoading}
+          >
+            Delete
+          </Button>
+        </Stack>
+      </Modal>
+    </>
+  );
+};
 
 const RecordList = ({ recordId }: { recordId: string }) => {
   const records = client.records.getRecords.useQuery(["record", recordId], {

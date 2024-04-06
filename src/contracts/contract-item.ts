@@ -34,4 +34,11 @@ export const itemContract = c.router({
     },
     summary: "Get items with no category",
   },
+  deleteItem: {
+    method: "DELETE",
+    path: "/items/:id",
+    body: z.any(),
+    responses: { 200: itemSchema, 404: z.object({ message: z.string() }) },
+    summary: "Delete an item",
+  },
 });

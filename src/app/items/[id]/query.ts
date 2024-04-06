@@ -48,3 +48,14 @@ export const useCreateRecord = (id: string) => {
 export const useCreateBarcode = () => {
   return client.barcodes.createBarcode.useMutation();
 };
+
+export const useDeleteItem = () => {
+  const queryClient = useQueryClient();
+
+  return client.items.deleteItem.useMutation({
+    onSuccess: ({ body }) => {
+      queryClient.removeQueries(keys.item(`${body.id}`));
+      queryClient.invalidateQueries(["category"]);
+    },
+  });
+};
