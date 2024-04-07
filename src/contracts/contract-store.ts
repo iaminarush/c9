@@ -1,5 +1,9 @@
 import { selectSchema } from "@/lib/zodScehmas";
-import { storeSchema, updateStoreSchema } from "@/server/db/schema";
+import {
+  createStoreSchema,
+  storeSchema,
+  updateStoreSchema,
+} from "@/server/db/schema";
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 
@@ -40,5 +44,16 @@ export const storeContract = c.router({
     },
     body: updateStoreSchema,
     summary: "Update a store",
+  },
+  addStore: {
+    method: "POST",
+    path: "/stores",
+    responses: {
+      201: storeSchema,
+      400: z.object({ message: z.string() }),
+      403: z.object({ message: z.string() }),
+    },
+    body: createStoreSchema,
+    summary: "Add a store",
   },
 });

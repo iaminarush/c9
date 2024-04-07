@@ -1,7 +1,7 @@
 import { client } from "@/contracts/contract";
 import { storeContract } from "@/contracts/contract-store";
 import { isNumber } from "@/lib/utils";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ServerInferResponseBody, ServerInferResponses } from "@ts-rest/core";
 import { produce } from "immer";
 
@@ -45,6 +45,24 @@ export const useUpdateStore = () => {
         }
 
         return oldData;
+      });
+    },
+  });
+};
+
+export const useAddStore = () => {
+  const queryClient = useQueryClient();
+
+  return client.stores.addStore.useMutation({
+    onSuccess: ({ body }) => {
+      queryClient.setQueryData<StoresResponse>(keys.all, (oldData) => {
+        if (!oldData) return undefined;
+
+        const newData = produce(oldData, (draft) => {
+          draft.body.push(body);
+        });
+
+        return newData;
       });
     },
   });

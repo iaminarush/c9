@@ -25,7 +25,11 @@ export const storesRouter = createNextRoute(contract.stores, {
     if (result) {
       return {
         status: 200,
-        body: result.map((s) => ({ value: `${s.id}`, label: s.name, image: s.image })),
+        body: result.map((s) => ({
+          value: `${s.id}`,
+          label: s.name,
+          image: s.image,
+        })),
       };
     } else {
       return { status: 404, body: null };
@@ -63,5 +67,17 @@ export const storesRouter = createNextRoute(contract.stores, {
     }
 
     return { status: 404, body: { message: "Store not found" } };
+  },
+  addStore: async (args) => {
+    const token = await getToken({ req: args.req });
+
+    if (!token?.admin)
+      return { status: 403, body: { message: "No Permission" } };
+
+    const [newStore] = await db.insert(stores).values(args.body).returning();
+
+    return newStore
+      ? { status: 201, body: newStore }
+      : { status: 400, body: { message: "Error" } };
   },
 });
