@@ -1,6 +1,7 @@
 import { contract } from "@/contracts/contract";
 import { isNumber } from "@/lib/utils";
 import { db } from "@/server/db/db";
+import { barcodes } from "@/server/db/schema";
 import { items } from "@/server/db/schema/items";
 import { createNextRoute } from "@ts-rest/next";
 import { eq, isNull } from "drizzle-orm";
@@ -53,5 +54,20 @@ export const itemsRouter = createNextRoute(contract.items, {
     return deletedItem
       ? { status: 200, body: deletedItem }
       : { status: 404, body: { message: "Error" } };
+  },
+  searchItemByBarcode: async (args) => {
+    const barcodeRecord = await db.query.barcodes.findFirst({
+      where: eq(barcodes.barcode, args.params.barcode),
+      with: {
+        item: true,
+      },
+    });
+
+    return barcodeRecord
+      ? {
+          status: 200,
+          body: barcodeRecord.item,
+        }
+      : { status: 404, body: { message: "Couldn't find Item" } };
   },
 });

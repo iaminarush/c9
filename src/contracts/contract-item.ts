@@ -41,4 +41,10 @@ export const itemContract = c.router({
     responses: { 200: itemSchema, 404: z.object({ message: z.string() }) },
     summary: "Delete an item",
   },
+  searchItemByBarcode: {
+    method: "GET",
+    path: "/items-by-barcode/:barcode",
+    responses: { 200: itemSchema, 404: z.object({ message: z.string() }) },
+    summary: "Find item by barcode",
+  },
 });
