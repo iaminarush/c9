@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ActionIcon,
   AppShell,
@@ -22,9 +24,14 @@ import Link, { LinkProps } from "next/link";
 import { ReactNode } from "react";
 import classes from "./NavLayout.module.css";
 import GlobalSearch from "@/components/globalSearch";
+import { SearchByBarcode } from "@/components/searchByBarcode";
+import { usePathname } from "next/navigation";
 
 export default function NavLayout({ children }: { children: ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
+  const pathname = usePathname();
+
+  const initialPath = pathname?.split("/")?.[1];
 
   return (
     <AppShell
@@ -42,16 +49,29 @@ export default function NavLayout({ children }: { children: ReactNode }) {
           <Group justify="flex-end" style={{ flex: 1 }}>
             {/* Desktop */}
             <Group ml="xl" gap={0} visibleFrom="sm">
-              <LinkButton href="/categories">Category</LinkButton>
+              <LinkButton
+                href="/categories"
+                selected={initialPath === "categories"}
+              >
+                Category
+              </LinkButton>
 
-              <LinkButton href="/comparison">Comparison</LinkButton>
-              
-              <LinkButton href='/stores'>Stores</LinkButton>
+              <LinkButton
+                href="/comparison"
+                selected={initialPath === "comparison"}
+              >
+                Comparison
+              </LinkButton>
+
+              <LinkButton href="/stores" selected={initialPath === "stores"}>
+                Stores
+              </LinkButton>
 
               <LogoutButton />
               <Space w="xs" />
               <ColorSchemToggle />
             </Group>
+            <SearchByBarcode />
             <GlobalSearch />
           </Group>
         </Group>
@@ -60,15 +80,27 @@ export default function NavLayout({ children }: { children: ReactNode }) {
       {/* Mobile */}
       <AppShellNavbar py="md" px={4}>
         <AppShellSection grow component={ScrollArea}>
-          <LinkButton href="/categories" onClick={toggle}>
+          <LinkButton
+            href="/categories"
+            onClick={toggle}
+            selected={initialPath === "categories"}
+          >
             Category
           </LinkButton>
 
-          <LinkButton href="/comparison" onClick={toggle}>
+          <LinkButton
+            href="/comparison"
+            onClick={toggle}
+            selected={initialPath === "comparison"}
+          >
             Comparison
           </LinkButton>
 
-          <LinkButton href="/stores" onClick={toggle}>
+          <LinkButton
+            href="/stores"
+            onClick={toggle}
+            selected={initialPath === "stores"}
+          >
             Stores
           </LinkButton>
         </AppShellSection>
@@ -122,14 +154,17 @@ const LinkButton = ({
   href,
   children,
   onClick,
+  selected,
 }: {
   href: LinkProps["href"];
   children: ReactNode;
   onClick?: React.MouseEventHandler<HTMLAnchorElement>;
+  selected: boolean;
 }) => {
   return (
     <UnstyledButton
       className={classes.control}
+      data-active={selected || undefined}
       component={Link}
       href={href}
       onClick={onClick}
