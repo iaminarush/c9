@@ -222,7 +222,14 @@ const StoreButton = ({
       justify="space-between"
       leftSection={
         store.image ? (
-          <Image src={store.image} alt="Logo" h={40} w={40} fit="contain" />
+          <Image
+            src={store.image}
+            alt="Logo"
+            h={40}
+            w={40}
+            fit="contain"
+            radius="sm"
+          />
         ) : (
           <IconPhotoOff width={40} />
         )
