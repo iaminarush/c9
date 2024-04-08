@@ -52,6 +52,7 @@ export const SearchByBarcode = () => {
           setBarcode(null);
           handlers.close();
         }}
+        title="Search item with barcode"
       >
         <>
           <LoadingOverlay
