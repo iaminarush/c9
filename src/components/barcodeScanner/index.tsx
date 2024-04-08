@@ -33,7 +33,7 @@ export const BarcodeScanner = ({
       handleScan(result.getText());
     },
     onDecodeError: (error) => {
-      console.log(error);
+      // console.log(error);
     },
     // hints,
   });
