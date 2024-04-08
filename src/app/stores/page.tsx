@@ -1,5 +1,8 @@
 "use client";
 
+import TextFormField from "@/components/hook-form/TextFormField";
+import { UploadButton } from "@/components/util/uploadthing";
+import { createStoreSchema } from "@/server/db/schema";
 import {
   ActionIcon,
   Button,
@@ -11,10 +14,10 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { IconPhotoOff, IconPlus } from "@tabler/icons-react";
-import Link from "next/link";
-import { Store, useAddStore, useStores, useUpdateStore } from "./query";
 import { useDisclosure } from "@mantine/hooks";
+import { IconPhotoOff, IconPlus } from "@tabler/icons-react";
+import { useSession } from "next-auth/react";
+import { ReactNode, useState } from "react";
 import {
   Control,
   SubmitHandler,
@@ -23,17 +26,12 @@ import {
   useForm,
   useWatch,
 } from "react-hook-form";
-import { useSession } from "next-auth/react";
-import TextFormField from "@/components/hook-form/TextFormField";
-import { createStoreSchema } from "@/server/db/schema";
-import { z } from "zod";
-import { UploadButton } from "@/components/util/uploadthing";
 import toast from "react-hot-toast";
-import { ReactNode, useState } from "react";
+import { z } from "zod";
+import { Store, useAddStore, useStores, useUpdateStore } from "./query";
 
 export default function Stores() {
   const stores = useStores();
-  const [opened, handlers] = useDisclosure(false);
   const { control, setValue, reset, handleSubmit } = useForm<FormSchema>({
     defaultValues: {
       name: "",
@@ -219,23 +217,6 @@ const StoreButton = ({
   reset: UseFormReset<FormSchema>;
 }) => {
   return (
-    // <Button
-    //   component={Link}
-    //   href={`/stores/${store.id}`}
-    //   size="lg"
-    //   justify="space-between"
-    //   leftSection={
-    //     store.image ? (
-    //       <Image src={store.image} alt="Logo" h={40} w={40} fit="contain" />
-    //     ) : (
-    //       <IconPhotoOff width={40} />
-    //     )
-    //   }
-    //   rightSection={<span />}
-    // >
-    //   {store.name}
-    // </Button>
-
     <Button
       size="lg"
       justify="space-between"
