@@ -11,7 +11,6 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { items } from "./items";
 import { stores } from "./stores";
 import { unitTypes } from "./unitTypes";
-import { barcodes } from "./barcodes";
 
 export const records = pgTable("records", {
   id: serial("id").primaryKey(),
