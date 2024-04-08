@@ -78,11 +78,11 @@ dependencies:
     specifier: ^5.0.0
     version: 5.0.0
   drizzle-orm:
-    specifier: ^0.29.3
-    version: 0.29.3(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.6.0)(@types/react@18.2.21)(pg@8.11.3)(postgres@3.3.5)(react@18.2.0)
+    specifier: ^0.30.7
+    version: 0.30.7(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.6.0)(@types/react@18.2.21)(pg@8.11.3)(postgres@3.3.5)(react@18.2.0)
   drizzle-zod:
     specifier: ^0.5.1
-    version: 0.5.1(drizzle-orm@0.29.3)(zod@3.22.4)
+    version: 0.5.1(drizzle-orm@0.30.7)(zod@3.22.4)
   eslint:
     specifier: 8.47.0
     version: 8.47.0
@@ -2864,7 +2864,7 @@ packages:
   /drizzle-dbml-generator@0.5.0(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.6.0)(@types/react@18.2.21)(pg@8.11.3)(postgres@3.3.5)(react@18.2.0):
     resolution: {integrity: sha512-RKgRgrpBusAEd2AM7KyG2JqyOXO5pLb6KmEiwnb6Xp/Y5oB481LOhtqvwvLateiBq2BQkg/mdLqoLI48pTlwHQ==}
     dependencies:
-      drizzle-orm: 0.29.3(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.6.0)(@types/react@18.2.21)(pg@8.11.3)(postgres@3.3.5)(react@18.2.0)
+      drizzle-orm: 0.29.5(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.6.0)(@types/react@18.2.21)(pg@8.11.3)(postgres@3.3.5)(react@18.2.0)
     transitivePeerDependencies:
       - '@aws-sdk/client-rds-data'
       - '@cloudflare/workers-types'
@@ -2912,8 +2912,8 @@ packages:
       - supports-color
     dev: true
 
-  /drizzle-orm@0.29.3(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.6.0)(@types/react@18.2.21)(pg@8.11.3)(postgres@3.3.5)(react@18.2.0):
-    resolution: {integrity: sha512-uSE027csliGSGYD0pqtM+SAQATMREb3eSM/U8s6r+Y0RFwTKwftnwwSkqx3oS65UBgqDOM0gMTl5UGNpt6lW0A==}
+  /drizzle-orm@0.29.5(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.6.0)(@types/react@18.2.21)(pg@8.11.3)(postgres@3.3.5)(react@18.2.0):
+    resolution: {integrity: sha512-jS3+uyzTz4P0Y2CICx8FmRQ1eplURPaIMWDn/yq6k4ShRFj9V7vlJk67lSf2kyYPzQ60GkkNGXcJcwrxZ6QCRw==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'
@@ -2989,14 +2989,103 @@ packages:
       pg: 8.11.3
       postgres: 3.3.5
       react: 18.2.0
+    dev: true
 
-  /drizzle-zod@0.5.1(drizzle-orm@0.29.3)(zod@3.22.4):
+  /drizzle-orm@0.30.7(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.6.0)(@types/react@18.2.21)(pg@8.11.3)(postgres@3.3.5)(react@18.2.0):
+    resolution: {integrity: sha512-9qefSZQlu2fO2qv24piHyWFWcxcOY15//0v4j8qomMqaxzipNoG+fUBrQ7Ftk7PY7APRbRdn/nkEXWxiI4a8mw==}
+    peerDependencies:
+      '@aws-sdk/client-rds-data': '>=3'
+      '@cloudflare/workers-types': '>=3'
+      '@electric-sql/pglite': '>=0.1.1'
+      '@libsql/client': '*'
+      '@neondatabase/serverless': '>=0.1'
+      '@op-engineering/op-sqlite': '>=2'
+      '@opentelemetry/api': ^1.4.1
+      '@planetscale/database': '>=1'
+      '@types/better-sqlite3': '*'
+      '@types/pg': '*'
+      '@types/react': '>=18'
+      '@types/sql.js': '*'
+      '@vercel/postgres': '>=0.8.0'
+      '@xata.io/client': '*'
+      better-sqlite3: '>=7'
+      bun-types: '*'
+      expo-sqlite: '>=13.2.0'
+      knex: '*'
+      kysely: '*'
+      mysql2: '>=2'
+      pg: '>=8'
+      postgres: '>=3'
+      react: '>=18'
+      sql.js: '>=1'
+      sqlite3: '>=5'
+    peerDependenciesMeta:
+      '@aws-sdk/client-rds-data':
+        optional: true
+      '@cloudflare/workers-types':
+        optional: true
+      '@electric-sql/pglite':
+        optional: true
+      '@libsql/client':
+        optional: true
+      '@neondatabase/serverless':
+        optional: true
+      '@op-engineering/op-sqlite':
+        optional: true
+      '@opentelemetry/api':
+        optional: true
+      '@planetscale/database':
+        optional: true
+      '@types/better-sqlite3':
+        optional: true
+      '@types/pg':
+        optional: true
+      '@types/react':
+        optional: true
+      '@types/sql.js':
+        optional: true
+      '@vercel/postgres':
+        optional: true
+      '@xata.io/client':
+        optional: true
+      better-sqlite3:
+        optional: true
+      bun-types:
+        optional: true
+      expo-sqlite:
+        optional: true
+      knex:
+        optional: true
+      kysely:
+        optional: true
+      mysql2:
+        optional: true
+      pg:
+        optional: true
+      postgres:
+        optional: true
+      react:
+        optional: true
+      sql.js:
+        optional: true
+      sqlite3:
+        optional: true
+    dependencies:
+      '@neondatabase/serverless': 0.6.0
+      '@opentelemetry/api': 1.6.0
+      '@types/react': 18.2.21
+      pg: 8.11.3
+      postgres: 3.3.5
+      react: 18.2.0
+    dev: false
+
+  /drizzle-zod@0.5.1(drizzle-orm@0.30.7)(zod@3.22.4):
     resolution: {integrity: sha512-C/8bvzUH/zSnVfwdSibOgFjLhtDtbKYmkbPbUCq46QZyZCH6kODIMSOgZ8R7rVjoI+tCj3k06MRJMDqsIeoS4A==}
     peerDependencies:
       drizzle-orm: '>=0.23.13'
       zod: '*'
     dependencies:
-      drizzle-orm: 0.29.3(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.6.0)(@types/react@18.2.21)(pg@8.11.3)(postgres@3.3.5)(react@18.2.0)
+      drizzle-orm: 0.30.7(@neondatabase/serverless@0.6.0)(@opentelemetry/api@1.6.0)(@types/react@18.2.21)(pg@8.11.3)(postgres@3.3.5)(react@18.2.0)
       zod: 3.22.4
     dev: false
 
