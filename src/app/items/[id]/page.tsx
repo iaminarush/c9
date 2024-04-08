@@ -15,6 +15,7 @@ import {
   ComboboxLikeRenderOptionInput,
   Group,
   Image,
+  LoadingOverlay,
   Modal,
   NumberFormatter,
   Skeleton,
@@ -119,21 +120,30 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
         <RecordList recordId={id} />
       </Stack>
 
-      <BarcodeScanner
-        opened={scanner}
-        handleScan={(r) => {
-          createBarcode.mutate(
-            { body: { barcode: r, itemId: Number(id) } },
-            {
-              onSuccess: () => {
-                toast.success("Barcode added");
-                scannerHandlers.close();
-              },
-            },
-          );
-        }}
-        onClose={scannerHandlers.close}
-      />
+      <Modal opened={scanner} onClose={scannerHandlers.close}>
+        {!!scanner && (
+          <>
+            <LoadingOverlay
+              visible={createBarcode.isLoading}
+              overlayProps={{ blur: 1 }}
+            />
+
+            <BarcodeScanner
+              handleScan={(r) => {
+                createBarcode.mutate(
+                  { body: { barcode: r, itemId: Number(id) } },
+                  {
+                    onSuccess: () => {
+                      toast.success("Barcode added");
+                      scannerHandlers.close();
+                    },
+                  },
+                );
+              }}
+            />
+          </>
+        )}
+      </Modal>
 
       <Modal opened={opened} onClose={close} title="Add Price" centered>
         <Stack>
