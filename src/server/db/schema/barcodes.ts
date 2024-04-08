@@ -11,7 +11,7 @@ export const barcodes = pgTable("barcodes", {
 
 export const barcodesRelations = relations(barcodes, ({ one }) => ({
   item: one(items, {
-    fields: [barcodes.id],
+    fields: [barcodes.itemId],
     references: [items.id],
   }),
 }));
