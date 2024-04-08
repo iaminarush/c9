@@ -1,5 +1,6 @@
 "use client";
 
+import "react-complex-tree/lib/style-modern.css";
 import TextFormField from "@/components/hook-form/TextFormField";
 import {
   ActionIcon,
@@ -18,15 +19,16 @@ import { useCategories, useCreateCategory } from "./query";
 import { createCategorySchema } from "@/server/db/schema";
 import { z } from "zod";
 import { useSession } from "next-auth/react";
+import { CategoryTree } from "./categoryTree";
 
 export default function Home() {
-  const categories = useCategories();
+  const { isLoading, isError, data } = useCategories();
 
-  if (categories.isLoading) {
+  if (isLoading) {
     return <Skeleton h={250} />;
   }
 
-  if (categories.isError) {
+  if (isError) {
     return <div>Error</div>;
   }
 
@@ -36,17 +38,17 @@ export default function Home() {
         <AddCategory />
       </Group>
 
-      {categories.data.body.categories.length === 0 && (
-        <Text>No Categories</Text>
-      )}
-      {categories.data.body.categories.map((c) => (
+      {data.body.categories.length === 0 && <Text>No Categories</Text>}
+      {/* {categories.data.body.categories.map((c) => (
         <Button href={`/categories/${c.id}`} component={Link} key={c.id}>
           {c.name}
         </Button>
       ))}
       <Button href={"/categories/uncategorized"} component={Link}>
         Uncategorized
-      </Button>
+      </Button> */}
+
+      {!!data.body.categories.length && <CategoryTree categories={data.body.categories} />}
     </Stack>
   );
 }

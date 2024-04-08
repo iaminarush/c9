@@ -104,6 +104,9 @@ dependencies:
   react:
     specifier: 18.2.0
     version: 18.2.0
+  react-complex-tree:
+    specifier: ^2.4.2
+    version: 2.4.2(react@18.2.0)
   react-dom:
     specifier: 18.2.0
     version: 18.2.0(react@18.2.0)
@@ -5705,6 +5708,14 @@ packages:
       strip-json-comments: 2.0.1
     dev: false
     optional: true
+
+  /react-complex-tree@2.4.2(react@18.2.0):
+    resolution: {integrity: sha512-uFo27V2sSCko33DKyFJrehIvtVVbB7iu54NjumdWfl9Bfu7TBcAFwuLJRnNod1q15C8OiHRz73SoKEgjIRp83Q==}
+    peerDependencies:
+      react: '>=16.0.0'
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /react-copy-to-clipboard@5.1.0(react@18.2.0):
     resolution: {integrity: sha512-k61RsNgAayIJNoy9yDsYzDe/yAZAzEbEgcz3DZMhF686LEyukcE1hzurxe85JandPUG+yTfGVFzuEw3xt8WP/A==}
