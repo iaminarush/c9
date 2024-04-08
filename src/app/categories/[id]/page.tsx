@@ -166,7 +166,6 @@ const CategoryTitle = ({ id }: { id: string }) => {
   const [value, setValue] = useState(category.data?.body.name || "");
   const { mutate, isLoading } = useUpdateCategory();
 
-  //TODO
   const handleUpdate = () => {
     mutate(
       {
