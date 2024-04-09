@@ -4,7 +4,7 @@ import type { AppProps } from "next/app";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <MantineProvider theme={mantineTheme}>
+    <MantineProvider theme={mantineTheme} defaultColorScheme="dark">
       <Component {...pageProps} />
     </MantineProvider>
   );

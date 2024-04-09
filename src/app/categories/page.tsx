@@ -1,6 +1,5 @@
 "use client";
 
-import "react-complex-tree/lib/style-modern.css";
 import TextFormField from "@/components/hook-form/TextFormField";
 import {
   ActionIcon,
@@ -39,16 +38,16 @@ export default function Home() {
       </Group>
 
       {data.body.categories.length === 0 && <Text>No Categories</Text>}
-      {/* {categories.data.body.categories.map((c) => (
+      {data.body.categories.map((c) => (
         <Button href={`/categories/${c.id}`} component={Link} key={c.id}>
           {c.name}
         </Button>
       ))}
       <Button href={"/categories/uncategorized"} component={Link}>
         Uncategorized
-      </Button> */}
+      </Button>
 
-      {!!data.body.categories.length && <CategoryTree categories={data.body.categories} />}
+      {/* {!!data.body.categories.length && <CategoryTree categories={data.body.categories} />} */}
     </Stack>
   );
 }

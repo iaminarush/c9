@@ -1,10 +1,16 @@
 import { contract } from "@/contracts/contract";
 import { isNumber } from "@/lib/utils";
 import { db } from "@/server/db/db";
-import { categories } from "@/server/db/schema/categories";
+import { itemSchema, items } from "@/server/db/schema";
+import { categories, categorySchema } from "@/server/db/schema/categories";
 import { createNextRoute } from "@ts-rest/next";
-import { eq, isNull } from "drizzle-orm";
+import { eq, isNull, sql } from "drizzle-orm";
 import { getToken } from "next-auth/jwt";
+import { z } from "zod";
+
+const nestedCategories = categorySchema.extend({ item: itemSchema.array() });
+
+type NestedCategory = z.infer<typeof nestedCategories>;
 
 export const categoriesRouter = createNextRoute(contract.categories, {
   createCategory: async (args) => {
@@ -110,6 +116,31 @@ export const categoriesRouter = createNextRoute(contract.categories, {
 
     return deletedCategory
       ? { status: 200, body: deletedCategory }
+      : { status: 404, body: { message: "Error" } };
+  },
+  getNestedCategoriesAndItems: async (args) => {
+    const categories = await db.query.categories.findMany({
+      with: {
+        items: true,
+      },
+    });
+
+    //TODO https://medium.com/@lizhuohang.selina/building-a-hierarchical-tree-from-a-flat-list-an-easy-to-understand-solution-visualisation-19cb24bdfa33
+    const nestedCategories = (() => {
+      var tree = [],
+        mappedArr = {};
+
+      categories.forEach((c) => {
+        const id = c.id;
+        if (!Object.prototype.hasOwnProperty.call(mappedArr, id)) {
+          mappedArr[id] = c;
+          mappedArr[id].categories = [];
+        }
+      });
+    })();
+
+    return categories
+      ? { status: 200, body: nestedCategories }
       : { status: 404, body: { message: "Error" } };
   },
 });

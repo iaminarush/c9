@@ -78,4 +78,10 @@ export const categoryContract = c.router({
     responses: { 200: categorySchema, 404: z.object({ message: z.string() }) },
     summary: "Delete a category",
   },
+  getNestedCategoriesAndItems: {
+    method: "GET",
+    path: "/nested-categories-and-items",
+    responses: { 200: z.any(), 404: z.object({ message: z.string() }) },
+    summary: 'Get nested list of categories and items'
+  },
 });
