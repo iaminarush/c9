@@ -61,6 +61,9 @@ export const CategoryTree = () => {
         getItemTitle={(item) => item.data}
         viewState={{}}
         onSelectItems={(i) => console.log(i)}
+        canDragAndDrop={true}
+        canReorderItems={true}
+        canDropOnFolder={true}
       >
         <div className={clsx(computedColorScheme === "dark" && "rct-dark")}>
           <Tree treeId="tree-1" rootItem="root" treeLabel="Tree Example" />

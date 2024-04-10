@@ -1,4 +1,8 @@
 import {
+  categoriesWithItems,
+  categoryWithItems,
+} from "@/pages/api/categoriesRouter";
+import {
   categoryDetailsSchema,
   categorySchema,
   createCategorySchema,
@@ -81,7 +85,19 @@ export const categoryContract = c.router({
   getNestedCategoriesAndItems: {
     method: "GET",
     path: "/nested-categories-and-items",
-    responses: { 200: z.any(), 404: z.object({ message: z.string() }) },
-    summary: 'Get nested list of categories and items'
+    responses: {
+      200: z.object({ data: z.any() }),
+      404: z.object({ message: z.string() }),
+    },
+    summary: "Get nested list of categories and items",
+  },
+  getAllCategories: {
+    method: "GET",
+    path: "/all-categories",
+    responses: {
+      200: categoriesWithItems,
+      404: z.object({ message: z.string() }),
+    },
+    summary: "Get all categories",
   },
 });

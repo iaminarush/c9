@@ -1,16 +1,13 @@
 import { contract } from "@/contracts/contract";
 import { isNumber } from "@/lib/utils";
 import { db } from "@/server/db/db";
-import { itemSchema, items } from "@/server/db/schema";
+import { itemSchema } from "@/server/db/schema";
 import { categories, categorySchema } from "@/server/db/schema/categories";
 import { createNextRoute } from "@ts-rest/next";
-import { eq, isNull, sql } from "drizzle-orm";
+import { eq, isNull } from "drizzle-orm";
 import { getToken } from "next-auth/jwt";
 import { z } from "zod";
 
-const nestedCategories = categorySchema.extend({ item: itemSchema.array() });
-
-type NestedCategory = z.infer<typeof nestedCategories>;
 
 export const categoriesRouter = createNextRoute(contract.categories, {
   createCategory: async (args) => {
@@ -125,22 +122,37 @@ export const categoriesRouter = createNextRoute(contract.categories, {
       },
     });
 
-    //TODO https://medium.com/@lizhuohang.selina/building-a-hierarchical-tree-from-a-flat-list-an-easy-to-understand-solution-visualisation-19cb24bdfa33
-    const nestedCategories = (() => {
-      var tree = [],
-        mappedArr = {};
+    // const recursiveNest = (
+    //   data: CategoryWithItems[],
+    //   parentId: number | null = null,
+    // ) => {
+    //   return data.reduce((r, e) => {
+    //     if (parentId === e.parentId) {
+    //       const object = { ...e };
+    //       const categories = recursiveNest(data, e.id);
 
-      categories.forEach((c) => {
-        const id = c.id;
-        if (!Object.prototype.hasOwnProperty.call(mappedArr, id)) {
-          mappedArr[id] = c;
-          mappedArr[id].categories = [];
-        }
-      });
-    })();
+    //       if (categories.length) {
+    //         object.categories = categories;
+    //       } else {
+    //         object.categories = []
+    //       }
+    //       r.push(object);
+    //     }
+    //     return r;
+    //   }, [] as CategoryWithItems[]);
+    // };
+
+    // const nestedCategories = (() => recursiveNest(categories))();
 
     return categories
-      ? { status: 200, body: nestedCategories }
+      ? { status: 200, body: { data: categories } }
       : { status: 404, body: { message: "Error" } };
   },
 });
+
+export const categoryWithItems = categorySchema.extend({
+  items: z.lazy(() => itemSchema.array()),
+  // categories: categorySchema.array().optional(),
+});
+  
+export const categoriesWithItems = categoryWithItems.array()
