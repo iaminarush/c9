@@ -1,12 +1,10 @@
 import {
-  categoriesWithItems,
-  categoryWithItems,
-} from "@/pages/api/categoriesRouter";
-import {
   categoryDetailsSchema,
   categorySchema,
+  categoryWithItems,
   createCategorySchema,
   createSubCategorySchema,
+  nestedCategoryWithItem,
   updateCategorySchema,
 } from "@/server/db/schema/categories";
 import { initContract } from "@ts-rest/core";
@@ -82,20 +80,20 @@ export const categoryContract = c.router({
     responses: { 200: categorySchema, 404: z.object({ message: z.string() }) },
     summary: "Delete a category",
   },
-  getNestedCategoriesAndItems: {
-    method: "GET",
-    path: "/nested-categories-and-items",
-    responses: {
-      200: z.object({ data: z.any() }),
-      404: z.object({ message: z.string() }),
-    },
-    summary: "Get nested list of categories and items",
-  },
   getAllCategories: {
     method: "GET",
     path: "/all-categories",
     responses: {
-      200: categoriesWithItems,
+      200: categoryWithItems.array(),
+      404: z.object({ message: z.string() }),
+    },
+    summary: "Get nested list of categories and items",
+  },
+  getNestedCategoriesAndItems: {
+    method: "GET",
+    path: "/nested-categories-items",
+    responses: {
+      200: nestedCategoryWithItem.array(),
       404: z.object({ message: z.string() }),
     },
     summary: "Get all categories",

@@ -2,12 +2,16 @@ import { contract } from "@/contracts/contract";
 import { isNumber } from "@/lib/utils";
 import { db } from "@/server/db/db";
 import { itemSchema } from "@/server/db/schema";
-import { categories, categorySchema } from "@/server/db/schema/categories";
+import {
+  NestedCategories,
+  categories,
+  categorySchema,
+  categoryWithItems,
+} from "@/server/db/schema/categories";
 import { createNextRoute } from "@ts-rest/next";
 import { eq, isNull } from "drizzle-orm";
 import { getToken } from "next-auth/jwt";
 import { z } from "zod";
-
 
 export const categoriesRouter = createNextRoute(contract.categories, {
   createCategory: async (args) => {
@@ -115,6 +119,17 @@ export const categoriesRouter = createNextRoute(contract.categories, {
       ? { status: 200, body: deletedCategory }
       : { status: 404, body: { message: "Error" } };
   },
+  getAllCategories: async (args) => {
+    const categories = await db.query.categories.findMany({
+      with: {
+        items: true,
+      },
+    });
+
+    return categories
+      ? { status: 200, body: categories }
+      : { status: 404, body: { message: "Error" } };
+  },
   getNestedCategoriesAndItems: async (args) => {
     const categories = await db.query.categories.findMany({
       with: {
@@ -122,37 +137,30 @@ export const categoriesRouter = createNextRoute(contract.categories, {
       },
     });
 
-    // const recursiveNest = (
-    //   data: CategoryWithItems[],
-    //   parentId: number | null = null,
-    // ) => {
-    //   return data.reduce((r, e) => {
-    //     if (parentId === e.parentId) {
-    //       const object = { ...e };
-    //       const categories = recursiveNest(data, e.id);
+    const recursiveNest = (
+      data: z.infer<typeof categoryWithItems>[],
+      parentId: number | null = null,
+    ) => {
+      return data.reduce((r, e) => {
+        if (parentId === e.parentId) {
+          const object: NestedCategories = { ...e, categories: [] };
+          const categories = recursiveNest(data, e.id);
 
-    //       if (categories.length) {
-    //         object.categories = categories;
-    //       } else {
-    //         object.categories = []
-    //       }
-    //       r.push(object);
-    //     }
-    //     return r;
-    //   }, [] as CategoryWithItems[]);
-    // };
+          if (categories.length) {
+            object.categories = categories;
+          } else {
+            object.categories = [];
+          }
+          r.push(object);
+        }
+        return r;
+      }, [] as NestedCategories[]);
+    };
 
-    // const nestedCategories = (() => recursiveNest(categories))();
+    const nestedCategories = (() => recursiveNest(categories))();
 
-    return categories
-      ? { status: 200, body: { data: categories } }
+    return nestedCategories
+      ? { status: 200, body: nestedCategories }
       : { status: 404, body: { message: "Error" } };
   },
 });
-
-export const categoryWithItems = categorySchema.extend({
-  items: z.lazy(() => itemSchema.array()),
-  // categories: categorySchema.array().optional(),
-});
-  
-export const categoriesWithItems = categoryWithItems.array()
