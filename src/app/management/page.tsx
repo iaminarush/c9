@@ -143,6 +143,8 @@ const CategoryTree = ({ data }: { data: Record<TreeItemIndex, TreeItem> }) => {
             console.log(arrayTreeData);
             const draggedIds = items.map((i) => i.index);
           });
+        } else {
+          console.log("root", items, t);
         }
       }}
     >
