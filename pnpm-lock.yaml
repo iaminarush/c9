@@ -92,6 +92,9 @@ dependencies:
   immer:
     specifier: ^10.0.2
     version: 10.0.2
+  klona:
+    specifier: ^2.0.6
+    version: 2.0.6
   next:
     specifier: ^14.1.0
     version: 14.1.0(@opentelemetry/api@1.6.0)(react-dom@18.2.0)(react@18.2.0)
@@ -4435,6 +4438,11 @@ packages:
     resolution: {integrity: sha512-nIeuVSzdCCs6TDPTqI8w1Yre34sSq7AkZ4B3sfOBbI2CgVSB4Du4aLQijFU2+lhAFCwt9+42Hel6lQNIv6AntQ==}
     dependencies:
       graceful-fs: 4.2.11
+    dev: false
+
+  /klona@2.0.6:
+    resolution: {integrity: sha512-dhG34DXATL5hSxJbIexCft8FChFXtmskoZYnoPWjXQuebWYCNkVeV3KkGegCK9CP1oswI/vQibS2GY7Em/sJJA==}
+    engines: {node: '>= 8'}
     dev: false
 
   /language-subtag-registry@0.3.22:
