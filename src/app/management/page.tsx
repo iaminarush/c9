@@ -1,11 +1,8 @@
 "use client";
 
 import "react-complex-tree/lib/style-modern.css";
-import { Skeleton, useComputedColorScheme } from "@mantine/core";
+import { Button, Skeleton, Stack, useComputedColorScheme } from "@mantine/core";
 import {
-  ControlledTreeEnvironment,
-  DraggingPositionBetweenItems,
-  DraggingPositionItem,
   StaticTreeDataProvider,
   Tree,
   TreeItem,
@@ -14,9 +11,15 @@ import {
 } from "react-complex-tree";
 import clsx from "clsx";
 import { client } from "@/contracts/contract";
-import { NestedCategories, recordsRelations } from "@/server/db/schema";
-import { useState } from "react";
+import {
+  NestedCategories,
+  categorySchema,
+  recordsRelations,
+} from "@/server/db/schema";
+import { useMemo, useState } from "react";
 import { produce } from "immer";
+import { klona } from "klona";
+import { z } from "zod";
 
 export default function Management() {
   const { isLoading, isError, data } =
@@ -62,95 +65,90 @@ export default function Management() {
       },
     );
 
-  if (isLoading) {
+  const flatCategories = client.categories.getAllCategories.useQuery([
+    "categories",
+  ]);
+
+  if (isLoading || flatCategories.isLoading) {
     return <Skeleton h={250} />;
   }
 
-  if (isError) {
+  if (isError || flatCategories.isError) {
     return <div>Error</div>;
   }
 
   return (
     <>
-      <CategoryTree data={data} />
+      <CategoryTree data={data} flatCategories={flatCategories.data.body} />
     </>
   );
 }
-// const items = {
-//   root: {
-//     index: "root",
-//     isFolder: true,
-//     children: ["child1", "child2"],
-//     data: "Root item",
-//   },
-//   child1: {
-//     index: "child1",
-//     children: [],
-//     data: "Child item 1",
-//   },
-//   child2: {
-//     index: "child2",
-//     isFolder: true,
-//     children: ["child3"],
-//     data: "Child item 2",
-//   },
-//   child3: {
-//     index: "child3",
-//     children: [],
-//     data: "Child item 3",
-//   },
-// };
 
-const CategoryTree = ({ data }: { data: Record<TreeItemIndex, TreeItem> }) => {
-  const [treeData, setTreeData] = useState({ ...data });
-
-  console.log(treeData);
+const CategoryTree = ({
+  data,
+  flatCategories,
+}: {
+  data: Record<TreeItemIndex, TreeItem>;
+  flatCategories: z.infer<typeof categorySchema>[];
+}) => {
+  const [treeData, setTreeData] = useState(klona(flatCategories));
+  const items = useMemo(() => klona(data), []);
+  const dataProvider = useMemo(
+    () =>
+      new StaticTreeDataProvider(items, (item, data) => ({ ...item, data })),
+    [items],
+  );
 
   const computedColorScheme = useComputedColorScheme("dark", {
     getInitialValueInEffect: true,
   });
 
   return (
-    <UncontrolledTreeEnvironment
-      dataProvider={
-        new StaticTreeDataProvider(data, (item, data) => ({
-          ...item,
-          data,
-        }))
-      }
-      getItemTitle={(item) => item.data}
-      viewState={{}}
-      canDragAndDrop={true}
-      canReorderItems={true}
-      canDropOnFolder={true}
-      // disableMultiselect={true}
-      onDrop={(items, t) => {
-        // const newTreeData = produce(treeData, draft => {
-        //   t.
-        // })
-        if (t.targetType !== "root") {
-          console.log(items, t);
-          const newTreeData = produce(treeData, (draft) => {
-            // items.forEach(i => {
-            //   draft[i.index]
-            // })
-            const arrayTreeData = [];
+    <Stack>
+      <UncontrolledTreeEnvironment
+        dataProvider={dataProvider}
+        getItemTitle={(item) => item.data}
+        viewState={{}}
+        canDragAndDrop={true}
+        canReorderItems={true}
+        canDropOnFolder={true}
+        disableMultiselect={true}
+        onDrop={(items, t) => {
+          const movedCategory = treeData.find((c) => c.id === items[0]?.index);
 
-            for (const property in treeData) {
-              arrayTreeData.push(treeData[property]);
+          if (movedCategory) {
+            if (t.targetType !== "root") {
+              console.log("non root", items, t, movedCategory);
+              const newTreeData = produce(treeData, (draft) => {
+                if (t.targetType === "between-items") {
+                  const target = draft.find((c) => c.id === items[0]?.index);
+                  if (target) {
+                    if (t.parentItem !== "root") {
+                      target.parentId = t.parentItem as number;
+                    } else {
+                      target.parentId = null;
+                    }
+                  }
+                } else if (t.targetType === "item") {
+                  const target = draft.find((c) => c.id === items[0]?.index);
+                  if (target) {
+                    target.parentId = t.targetItem as number;
+                  }
+                }
+                return draft;
+              });
+              setTreeData(newTreeData);
+            } else {
+              console.log("root", items, t);
             }
-
-            console.log(arrayTreeData);
-            const draggedIds = items.map((i) => i.index);
-          });
-        } else {
-          console.log("root", items, t);
-        }
-      }}
-    >
-      <div className={clsx(computedColorScheme === "dark" && "rct-dark")}>
-        <Tree treeId="tree-1" rootItem="root" treeLabel="Tree Example" />
-      </div>
-    </UncontrolledTreeEnvironment>
+          }
+        }}
+      >
+        <div className={clsx(computedColorScheme === "dark" && "rct-dark")}>
+          <Tree treeId="tree-1" rootItem="root" treeLabel="Tree Example" />
+        </div>
+      </UncontrolledTreeEnvironment>
+      <Button onClick={() => console.log(treeData)}>Update</Button>
+    </Stack>
   );
 };

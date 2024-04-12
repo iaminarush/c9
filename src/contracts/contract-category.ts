@@ -84,7 +84,7 @@ export const categoryContract = c.router({
     method: "GET",
     path: "/all-categories",
     responses: {
-      200: categoryWithItems.array(),
+      200: categorySchema.array(),
       404: z.object({ message: z.string() }),
     },
     summary: "Get nested list of categories and items",
@@ -98,4 +98,11 @@ export const categoryContract = c.router({
     },
     summary: "Get all categories",
   },
+  // updateAllCategories: {
+  //   method: 'POST',
+  //   path: "/all-categories",
+  //   responses: {
+
+  //   }
+  // }
 });

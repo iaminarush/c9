@@ -121,9 +121,9 @@ export const categoriesRouter = createNextRoute(contract.categories, {
   },
   getAllCategories: async (args) => {
     const categories = await db.query.categories.findMany({
-      with: {
-        items: true,
-      },
+      // with: {
+      //   items: true,
+      // },
     });
 
     return categories
