@@ -1,7 +1,12 @@
 "use client";
 
-import "react-complex-tree/lib/style-modern.css";
+import { client } from "@/contracts/contract";
+import { NestedCategories } from "@/server/db/schema";
 import { Button, Skeleton, Stack, useComputedColorScheme } from "@mantine/core";
+import clsx from "clsx";
+import { produce } from "immer";
+import { klona } from "klona";
+import { useMemo, useState } from "react";
 import {
   StaticTreeDataProvider,
   Tree,
@@ -9,17 +14,8 @@ import {
   TreeItemIndex,
   UncontrolledTreeEnvironment,
 } from "react-complex-tree";
-import clsx from "clsx";
-import { client } from "@/contracts/contract";
-import {
-  NestedCategories,
-  categorySchema,
-  recordsRelations,
-} from "@/server/db/schema";
-import { useMemo, useState } from "react";
-import { produce } from "immer";
-import { klona } from "klona";
-import { z } from "zod";
+import "react-complex-tree/lib/style-modern.css";
+import { useUpdateCategories } from "./query";
 
 export default function Management() {
   const { isLoading, isError, data } =
@@ -65,9 +61,14 @@ export default function Management() {
       },
     );
 
-  const flatCategories = client.categories.getAllCategories.useQuery([
-    "categories",
-  ]);
+  const flatCategories = client.categories.getAllCategories.useQuery(
+    ["categories"],
+    {},
+    {
+      select: ({ body }) =>
+        body.map((c) => ({ id: c.id, name: c.name, parentId: c.parentId })),
+    },
+  );
 
   if (isLoading || flatCategories.isLoading) {
     return <Skeleton h={250} />;
@@ -79,7 +80,7 @@ export default function Management() {
 
   return (
     <>
-      <CategoryTree data={data} flatCategories={flatCategories.data.body} />
+      <CategoryTree data={data} flatCategories={flatCategories.data} />
     </>
   );
 }
@@ -89,7 +90,7 @@ const CategoryTree = ({
   flatCategories,
 }: {
   data: Record<TreeItemIndex, TreeItem>;
-  flatCategories: z.infer<typeof categorySchema>[];
+  flatCategories: { id: number; name: string; parentId: number | null }[];
 }) => {
   const [treeData, setTreeData] = useState(klona(flatCategories));
   const items = useMemo(() => klona(data), []);
@@ -102,6 +103,12 @@ const CategoryTree = ({
   const computedColorScheme = useComputedColorScheme("dark", {
     getInitialValueInEffect: true,
   });
+
+  const { mutate, isLoading } = useUpdateCategories();
+
+  const handleClick = () => {
+    mutate({ body: treeData });
+  };
 
   return (
     <Stack>
@@ -148,7 +155,9 @@ const CategoryTree = ({
           <Tree treeId="tree-1" rootItem="root" treeLabel="Tree Example" />
         </div>
       </UncontrolledTreeEnvironment>
-      <Button onClick={() => console.log(treeData)}>Update</Button>
+      <Button onClick={handleClick} loading={isLoading}>
+        Update
+      </Button>
     </Stack>
   );
 };

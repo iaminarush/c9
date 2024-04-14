@@ -1,7 +1,6 @@
 import {
   categoryDetailsSchema,
   categorySchema,
-  categoryWithItems,
   createCategorySchema,
   createSubCategorySchema,
   nestedCategoryWithItem,
@@ -98,11 +97,20 @@ export const categoryContract = c.router({
     },
     summary: "Get all categories",
   },
-  // updateAllCategories: {
-  //   method: 'POST',
-  //   path: "/all-categories",
-  //   responses: {
-
-  //   }
-  // }
+  updateAllCategories: {
+    method: "POST",
+    path: "/all-categories",
+    body: z
+      .object({
+        id: z.number(),
+        name: z.string(),
+        parentId: z.number().nullable(),
+      })
+      .array(),
+    responses: {
+      201: categorySchema.array(),
+      400: z.object({ message: z.string() }),
+      403: z.object({ message: z.string() }),
+    },
+  },
 });

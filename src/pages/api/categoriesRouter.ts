@@ -1,15 +1,13 @@
 import { contract } from "@/contracts/contract";
 import { isNumber } from "@/lib/utils";
 import { db } from "@/server/db/db";
-import { itemSchema } from "@/server/db/schema";
 import {
   NestedCategories,
   categories,
-  categorySchema,
   categoryWithItems,
 } from "@/server/db/schema/categories";
 import { createNextRoute } from "@ts-rest/next";
-import { eq, isNull } from "drizzle-orm";
+import { eq, isNull, sql } from "drizzle-orm";
 import { getToken } from "next-auth/jwt";
 import { z } from "zod";
 
@@ -119,7 +117,7 @@ export const categoriesRouter = createNextRoute(contract.categories, {
       ? { status: 200, body: deletedCategory }
       : { status: 404, body: { message: "Error" } };
   },
-  getAllCategories: async (args) => {
+  getAllCategories: async () => {
     const categories = await db.query.categories.findMany({
       // with: {
       //   items: true,
@@ -130,7 +128,7 @@ export const categoriesRouter = createNextRoute(contract.categories, {
       ? { status: 200, body: categories }
       : { status: 404, body: { message: "Error" } };
   },
-  getNestedCategoriesAndItems: async (args) => {
+  getNestedCategoriesAndItems: async () => {
     const categories = await db.query.categories.findMany({
       with: {
         items: true,
@@ -162,5 +160,24 @@ export const categoriesRouter = createNextRoute(contract.categories, {
     return nestedCategories
       ? { status: 200, body: nestedCategories }
       : { status: 404, body: { message: "Error" } };
+  },
+  updateAllCategories: async (args) => {
+    const token = await getToken({ req: args.req });
+
+    if (!token?.admin)
+      return { status: 403, body: { message: "No Permission" } };
+
+    const result = await db
+      .insert(categories)
+      .values(args.body)
+      .onConflictDoUpdate({
+        target: categories.id,
+        set: { parentId: sql.raw(`excluded.${categories.parentId.name}`) },
+      })
+      .returning();
+
+    return result
+      ? { status: 201, body: result }
+      : { status: 400, body: { message: "Error" } };
   },
 });
