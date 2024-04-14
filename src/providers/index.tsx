@@ -16,7 +16,7 @@ export default function Providers({ children }: { children: ReactNode }) {
 
   return (
     <SessionProvider>
-      <MantineProvider theme={mantineTheme}>
+      <MantineProvider theme={mantineTheme} defaultColorScheme="dark">
         <QueryClientProvider client={queryClient}>
           <RouterTransition />
           <NavLayout>{children}</NavLayout>

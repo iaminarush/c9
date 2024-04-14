@@ -92,6 +92,9 @@ dependencies:
   immer:
     specifier: ^10.0.2
     version: 10.0.2
+  klona:
+    specifier: ^2.0.6
+    version: 2.0.6
   next:
     specifier: ^14.1.0
     version: 14.1.0(@opentelemetry/api@1.6.0)(react-dom@18.2.0)(react@18.2.0)
@@ -104,6 +107,9 @@ dependencies:
   react:
     specifier: 18.2.0
     version: 18.2.0
+  react-complex-tree:
+    specifier: ^2.4.2
+    version: 2.4.2(react@18.2.0)
   react-dom:
     specifier: 18.2.0
     version: 18.2.0(react@18.2.0)
@@ -4434,6 +4440,11 @@ packages:
       graceful-fs: 4.2.11
     dev: false
 
+  /klona@2.0.6:
+    resolution: {integrity: sha512-dhG34DXATL5hSxJbIexCft8FChFXtmskoZYnoPWjXQuebWYCNkVeV3KkGegCK9CP1oswI/vQibS2GY7Em/sJJA==}
+    engines: {node: '>= 8'}
+    dev: false
+
   /language-subtag-registry@0.3.22:
     resolution: {integrity: sha512-tN0MCzyWnoz/4nHS6uxdlFWoUZT7ABptwKPQ52Ea7URk6vll88bWBVhodtnlfEuCcKWNGoc+uGbw1cwa9IKh/w==}
     dev: false
@@ -5705,6 +5716,14 @@ packages:
       strip-json-comments: 2.0.1
     dev: false
     optional: true
+
+  /react-complex-tree@2.4.2(react@18.2.0):
+    resolution: {integrity: sha512-uFo27V2sSCko33DKyFJrehIvtVVbB7iu54NjumdWfl9Bfu7TBcAFwuLJRnNod1q15C8OiHRz73SoKEgjIRp83Q==}
+    peerDependencies:
+      react: '>=16.0.0'
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /react-copy-to-clipboard@5.1.0(react@18.2.0):
     resolution: {integrity: sha512-k61RsNgAayIJNoy9yDsYzDe/yAZAzEbEgcz3DZMhF686LEyukcE1hzurxe85JandPUG+yTfGVFzuEw3xt8WP/A==}

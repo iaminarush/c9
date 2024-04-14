@@ -3,6 +3,7 @@ import {
   categorySchema,
   createCategorySchema,
   createSubCategorySchema,
+  nestedCategoryWithItem,
   updateCategorySchema,
 } from "@/server/db/schema/categories";
 import { initContract } from "@ts-rest/core";
@@ -77,5 +78,39 @@ export const categoryContract = c.router({
     body: z.any(),
     responses: { 200: categorySchema, 404: z.object({ message: z.string() }) },
     summary: "Delete a category",
+  },
+  getAllCategories: {
+    method: "GET",
+    path: "/all-categories",
+    responses: {
+      200: categorySchema.array(),
+      404: z.object({ message: z.string() }),
+    },
+    summary: "Get nested list of categories and items",
+  },
+  getNestedCategoriesAndItems: {
+    method: "GET",
+    path: "/nested-categories-items",
+    responses: {
+      200: nestedCategoryWithItem.array(),
+      404: z.object({ message: z.string() }),
+    },
+    summary: "Get all categories",
+  },
+  updateAllCategories: {
+    method: "POST",
+    path: "/all-categories",
+    body: z
+      .object({
+        id: z.number(),
+        name: z.string(),
+        parentId: z.number().nullable(),
+      })
+      .array(),
+    responses: {
+      201: categorySchema.array(),
+      400: z.object({ message: z.string() }),
+      403: z.object({ message: z.string() }),
+    },
   },
 });

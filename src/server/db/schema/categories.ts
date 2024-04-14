@@ -52,3 +52,18 @@ export const subCategorySchema = categorySchema.merge(
 export const createSubCategorySchema = createCategorySchema.merge(
   z.object({ parentId: z.number() }),
 );
+
+export const categoryWithItems = categorySchema.extend({
+  items: z.lazy(() => itemSchema.array()),
+});
+
+export type NestedCategories = z.infer<typeof categorySchema> & {
+  categories: NestedCategories[];
+  items: z.infer<typeof itemSchema>[];
+};
+
+export const nestedCategoryWithItem: z.ZodType<NestedCategories> =
+  categorySchema.extend({
+    items: z.lazy(() => itemSchema.array()),
+    categories: z.lazy(() => nestedCategoryWithItem.array()),
+  });
