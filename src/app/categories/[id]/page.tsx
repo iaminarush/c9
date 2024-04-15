@@ -164,7 +164,7 @@ export default function Category({
             height: "100%",
           }}
         >
-          <Panel maxSize={100}>
+          <Panel maxSize={75}>
             <Box style={{ height: "100%", overflow: "auto" }} py="xs">
               <Stack>
                 {category.data.body.subCategories.length ? (
@@ -190,7 +190,7 @@ export default function Category({
               </Center>
             </Card>
           </PanelResizeHandle>
-          <Panel maxSize={100}>
+          <Panel maxSize={75}>
             <Box style={{ height: "100%", overflow: "auto" }} py="xs">
               <Stack>
                 {category.data.body.items.length ? (
