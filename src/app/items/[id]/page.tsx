@@ -1,5 +1,6 @@
 "use client";
 
+import { BarcodeScanner } from "@/components/barcodeScanner";
 import NumberFormField from "@/components/hook-form/NumberFormField";
 import SelectFormField from "@/components/hook-form/SelectFormField";
 import TextFormField from "@/components/hook-form/TextFormField";
@@ -34,8 +35,9 @@ import {
   IconPlus,
   IconTrash,
 } from "@tabler/icons-react";
-import { produce } from "immer";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
@@ -45,18 +47,26 @@ import {
   useDeleteItem,
   useItem,
 } from "./query";
-import { BarcodeScanner } from "@/components/barcodeScanner";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 //TODO Change to actual client side data types
 type FormData = z.infer<typeof createRecordSchema>;
+
+const formSchema = createRecordSchema.merge(
+  z.object({
+    storeId: z.string(),
+    unitTypeId: z.string(),
+    price: z.number(),
+    amount: z.number(),
+  }),
+);
+
+type FormSchema = z.infer<typeof formSchema>;
 
 export default function Item({ params: { id } }: { params: { id: string } }) {
   const { isLoading, isError, data } = useItem(id, { enabled: isNumber(id) });
   const [opened, { open, close }] = useDisclosure(false);
   const [scanner, scannerHandlers] = useDisclosure(false);
-  const { control, handleSubmit } = useForm<FormData>({
+  const { control, handleSubmit } = useForm<FormSchema>({
     defaultValues: {
       itemId: Number(id),
       description: "",
@@ -77,13 +87,14 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
 
   if (isError) return <Text>Error</Text>;
 
-  const onSubmit: SubmitHandler<FormData> = (data) => {
-    const submitData = produce(data, (draft) => {
-      draft.storeId = Number(draft.storeId);
-      draft.unitTypeId = Number(draft.unitTypeId);
-      draft.price = `${draft.price}`;
-      draft.amount = `${draft.amount}`;
-    });
+  const onSubmit: SubmitHandler<FormSchema> = (data) => {
+    const submitData: FormData = {
+      ...data,
+      storeId: Number(data.storeId),
+      unitTypeId: Number(data.unitTypeId),
+      price: `${data.price}`,
+      amount: `${data.amount}`,
+    };
 
     const result = createRecordSchema.safeParse(submitData);
     if (result.success) {
