@@ -1,6 +1,7 @@
 "use client";
 
 import TextFormField from "@/components/hook-form/TextFormField";
+import { createCategorySchema } from "@/server/db/schema";
 import {
   ActionIcon,
   Button,
@@ -12,13 +13,11 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useCategories, useCreateCategory } from "./query";
-import { createCategorySchema } from "@/server/db/schema";
 import { z } from "zod";
-import { useSession } from "next-auth/react";
-import { CategoryTree } from "./categoryTree";
+import { useCategories, useCreateCategory } from "./query";
 
 export default function Home() {
   const { isLoading, isError, data } = useCategories();
