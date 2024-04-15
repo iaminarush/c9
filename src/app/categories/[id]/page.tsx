@@ -11,8 +11,12 @@ import {
   AccordionItem,
   AccordionPanel,
   ActionIcon,
+  Box,
   Button,
   ButtonProps,
+  Card,
+  Center,
+  Divider,
   Group,
   Modal,
   Popover,
@@ -25,8 +29,10 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
+  IconArrowsUpDown,
   IconDeviceFloppy,
   IconEdit,
+  IconGripHorizontal,
   IconPlus,
   IconTrash,
   IconX,
@@ -45,6 +51,7 @@ import {
 } from "./query";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 export default function Category({
   params: { id },
@@ -72,8 +79,11 @@ export default function Category({
 
   return (
     <>
-      <Stack>
-        <Group justify="space-between">
+      <Stack
+        h="calc(100vh - var(--app-shell-header-height, 0px) - var(--app-shell-padding) * 2 - var(--app-shell-footer-height, 0px))"
+        // mb="xs"
+      >
+        <Group justify="space-between" gap="xs">
           <CategoryTitle id={id} />
           <Popover opened={popoverOpened} onClose={popoverHandlers.close}>
             <PopoverTarget>
@@ -108,7 +118,7 @@ export default function Category({
           </Popover>
         </Group>
 
-        <Accordion>
+        {/* <Accordion>
           <AccordionItem value="categories">
             <AccordionControl>Categories</AccordionControl>
             <AccordionPanel>
@@ -146,7 +156,56 @@ export default function Category({
               </Stack>
             </AccordionPanel>
           </AccordionItem>
-        </Accordion>
+        </Accordion> */}
+
+        <PanelGroup
+          direction="vertical"
+          style={{
+            height: "100%",
+          }}
+        >
+          <Panel maxSize={100}>
+            <Box style={{ height: "100%", overflow: "auto" }} py="xs">
+              <Stack>
+                {category.data.body.subCategories.length ? (
+                  category.data.body.subCategories.map((sc, i) => (
+                    <Button
+                      key={i}
+                      component={Link}
+                      href={`/categories/${sc.id}`}
+                    >
+                      {sc.name}
+                    </Button>
+                  ))
+                ) : (
+                  <Text>No Categories</Text>
+                )}
+              </Stack>
+            </Box>
+          </Panel>
+          <PanelResizeHandle>
+            <Card p={0} withBorder>
+              <Center>
+                <IconGripHorizontal size={16} />
+              </Center>
+            </Card>
+          </PanelResizeHandle>
+          <Panel maxSize={100}>
+            <Box style={{ height: "100%", overflow: "auto" }} py="xs">
+              <Stack>
+                {category.data.body.items.length ? (
+                  category.data.body.items.map((item, i) => (
+                    <Button key={i} component={Link} href={`/items/${item.id}`}>
+                      {item.name}
+                    </Button>
+                  ))
+                ) : (
+                  <Text>No Items </Text>
+                )}
+              </Stack>
+            </Box>
+          </Panel>
+        </PanelGroup>
       </Stack>
 
       <CategoryModal
