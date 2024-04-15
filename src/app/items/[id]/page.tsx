@@ -48,7 +48,6 @@ import {
   useItem,
 } from "./query";
 
-//TODO Change to actual client side data types
 type FormData = z.infer<typeof createRecordSchema>;
 
 const formSchema = createRecordSchema.merge(
