@@ -6,17 +6,12 @@ import { createSubCategorySchema } from "@/server/db/schema";
 import { createItemSchema } from "@/server/db/schema/items";
 import { DisclosureHandlers } from "@/util/commonTypes";
 import {
-  Accordion,
-  AccordionControl,
-  AccordionItem,
-  AccordionPanel,
   ActionIcon,
   Box,
   Button,
   ButtonProps,
   Card,
   Center,
-  Divider,
   Group,
   Modal,
   Popover,
@@ -29,7 +24,6 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
-  IconArrowsUpDown,
   IconDeviceFloppy,
   IconEdit,
   IconGripHorizontal,
@@ -39,8 +33,11 @@ import {
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ComponentPropsWithRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { z } from "zod";
 import {
   useCategory,
@@ -49,9 +46,6 @@ import {
   useDeleteCategory,
   useUpdateCategory,
 } from "./query";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
-import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 export default function Category({
   params: { id },
@@ -79,10 +73,7 @@ export default function Category({
 
   return (
     <>
-      <Stack
-        h="calc(100vh - var(--app-shell-header-height, 0px) - var(--app-shell-padding) * 2 - var(--app-shell-footer-height, 0px))"
-        // mb="xs"
-      >
+      <Stack h="calc(100vh - var(--app-shell-header-height, 0px) - var(--app-shell-padding) * 2 - var(--app-shell-footer-height, 0px))">
         <Group justify="space-between" gap="xs">
           <CategoryTitle id={id} />
           <Popover opened={popoverOpened} onClose={popoverHandlers.close}>
@@ -117,46 +108,6 @@ export default function Category({
             </PopoverDropdown>
           </Popover>
         </Group>
-
-        {/* <Accordion>
-          <AccordionItem value="categories">
-            <AccordionControl>Categories</AccordionControl>
-            <AccordionPanel>
-              <Stack mt="11">
-                {category.data.body.subCategories.length ? (
-                  category.data.body.subCategories.map((sc, i) => (
-                    <Button
-                      key={i}
-                      component={Link}
-                      href={`/categories/${sc.id}`}
-                    >
-                      {sc.name}
-                    </Button>
-                  ))
-                ) : (
-                  <Text>No Categories</Text>
-                )}
-              </Stack>
-            </AccordionPanel>
-          </AccordionItem>
-
-          <AccordionItem value="items">
-            <AccordionControl>Items</AccordionControl>
-            <AccordionPanel>
-              <Stack mt="11">
-                {category.data.body.items.length ? (
-                  category.data.body.items.map((item, i) => (
-                    <Button key={i} component={Link} href={`/items/${item.id}`}>
-                      {item.name}
-                    </Button>
-                  ))
-                ) : (
-                  <Text>No Items </Text>
-                )}
-              </Stack>
-            </AccordionPanel>
-          </AccordionItem>
-        </Accordion> */}
 
         <PanelGroup
           direction="vertical"

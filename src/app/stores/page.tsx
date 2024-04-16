@@ -5,6 +5,7 @@ import { UploadButton } from "@/components/util/uploadthing";
 import { createStoreSchema } from "@/server/db/schema";
 import {
   ActionIcon,
+  Box,
   Button,
   Center,
   Group,
@@ -29,6 +30,7 @@ import {
 import toast from "react-hot-toast";
 import { z } from "zod";
 import { Store, useAddStore, useStores, useUpdateStore } from "./query";
+import NextImage from "next/image";
 
 export default function Stores() {
   const stores = useStores();
@@ -175,14 +177,14 @@ const FormLayout = ({
         <Stack>
           <Text>Logo</Text>
           <Image
+            component={NextImage}
+            style={{ objectFit: "contain" }}
+            height={200}
+            width={200}
             src={image}
-            alt="Logo"
-            h={200}
-            mah={200}
-            maw={200}
-            radius="sm"
             fallbackSrc="https://placehold.co/600x400?text=No%20Image"
-            fit="contain"
+            radius="sm"
+            alt="Logo"
           />
         </Stack>
       </Center>
@@ -222,14 +224,17 @@ const StoreButton = ({
       justify="space-between"
       leftSection={
         store.image ? (
-          <Image
-            src={store.image}
-            alt="Logo"
-            h={40}
-            w={40}
-            fit="contain"
-            radius="sm"
-          />
+          <Box h={40} w={40}>
+            <Image
+              component={NextImage}
+              src={store.image}
+              alt={store.name}
+              height={40}
+              width={40}
+              style={{ objectFit: "contain" }}
+              radius="sm"
+            />
+          </Box>
         ) : (
           <IconPhotoOff width={40} />
         )
