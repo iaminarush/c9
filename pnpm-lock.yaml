@@ -17,9 +17,6 @@ dependencies:
   '@mantine/hooks':
     specifier: 7.6.1
     version: 7.6.1(react@18.2.0)
-  '@mantine/nprogress':
-    specifier: ^7.6.1
-    version: 7.6.1(@mantine/core@7.6.1)(@mantine/hooks@7.6.1)(react-dom@18.2.0)(react@18.2.0)
   '@mantine/spotlight':
     specifier: ^7.6.1
     version: 7.6.1(@mantine/core@7.6.1)(@mantine/hooks@7.6.1)(react-dom@18.2.0)(react@18.2.0)
@@ -1196,21 +1193,6 @@ packages:
       react: ^18.2.0
     dependencies:
       react: 18.2.0
-    dev: false
-
-  /@mantine/nprogress@7.6.1(@mantine/core@7.6.1)(@mantine/hooks@7.6.1)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-uSD9CJIQfDHRwjKvlgEsdP/dMhEcpKq3YNmnVfsvpcd8v2SY4lWCkT/x/gxyLZQ26UZbSL3peBc9yYozXBV+5w==}
-    peerDependencies:
-      '@mantine/core': 7.6.1
-      '@mantine/hooks': 7.6.1
-      react: ^18.2.0
-      react-dom: ^18.2.0
-    dependencies:
-      '@mantine/core': 7.6.1(@mantine/hooks@7.6.1)(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': 7.6.1(react@18.2.0)
-      '@mantine/store': 7.6.1(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /@mantine/spotlight@7.6.1(@mantine/core@7.6.1)(@mantine/hooks@7.6.1)(react-dom@18.2.0)(react@18.2.0):
