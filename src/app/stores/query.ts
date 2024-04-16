@@ -1,7 +1,7 @@
 import { client } from "@/contracts/contract";
 import { storeContract } from "@/contracts/contract-store";
 import { isNumber } from "@/lib/utils";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { ServerInferResponseBody, ServerInferResponses } from "@ts-rest/core";
 import { produce } from "immer";
 

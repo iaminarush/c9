@@ -32,9 +32,9 @@ export const BarcodeScanner = ({
     onDecodeResult: (result) => {
       handleScan(result.getText());
     },
-    onDecodeError: (error) => {
-      // console.log(error);
-    },
+    // onDecodeError: (error) => {
+    //   console.log(error);
+    // },
     // hints,
   });
 

@@ -5,9 +5,8 @@ import SelectFormField from "@/components/hook-form/SelectFormField";
 import SwitchFormField from "@/components/hook-form/SwitchFormField";
 import { UnitTypes } from "@/contracts/contract-unitType";
 import {
-  useUnitFamilies,
   useUnitFamiliesData,
-  useUnitTypesData,
+  useUnitTypesData
 } from "@/lib/commonQueries";
 import { isNumber } from "@/lib/utils";
 import { useAutoAnimate } from "@formkit/auto-animate/react";

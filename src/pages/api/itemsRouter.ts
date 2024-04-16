@@ -33,7 +33,7 @@ export const itemsRouter = createNextRoute(contract.items, {
 
     return { status: 404, body: { message: "Item not found" } };
   },
-  getUncategorizedItems: async (args) => {
+  getUncategorizedItems: async () => {
     const uncategorizedItems = await db.query.items.findMany({
       where: isNull(items.category),
     });

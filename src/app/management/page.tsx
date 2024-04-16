@@ -93,7 +93,7 @@ const CategoryTree = ({
   flatCategories: { id: number; name: string; parentId: number | null }[];
 }) => {
   const [treeData, setTreeData] = useState(klona(flatCategories));
-  const items = useMemo(() => klona(data), []);
+  const items = useMemo(() => klona(data), [data]);
   const dataProvider = useMemo(
     () =>
       new StaticTreeDataProvider(items, (item, data) => ({ ...item, data })),
