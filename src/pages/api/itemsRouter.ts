@@ -44,7 +44,7 @@ export const itemsRouter = createNextRoute(contract.items, {
     const token = await getToken({ req: args.req });
 
     if (!token?.admin)
-      return { status: 404, body: { message: "No Permission" } };
+      return { status: 403, body: { message: "No Permission" } };
 
     const [deletedItem] = await db
       .delete(items)
@@ -69,5 +69,21 @@ export const itemsRouter = createNextRoute(contract.items, {
           body: barcodeRecord.item,
         }
       : { status: 404, body: { message: "Couldn't find Item" } };
+  },
+  updateItem: async (args) => {
+    const token = await getToken({ req: args.req });
+
+    if (!token?.admin)
+      return { status: 403, body: { message: "No Permission" } };
+
+    const [updatedItem] = await db
+      .update(items)
+      .set(args.body)
+      .where(eq(items.id, Number(args.params.id)))
+      .returning();
+
+    return updatedItem
+      ? { status: 201, body: updatedItem }
+      : { status: 400, body: { message: "Error" } };
   },
 });

@@ -38,7 +38,11 @@ export const itemContract = c.router({
     method: "DELETE",
     path: "/items/:id",
     body: z.any(),
-    responses: { 200: itemSchema, 404: z.object({ message: z.string() }) },
+    responses: {
+      200: itemSchema,
+      403: z.object({ message: z.string() }),
+      404: z.object({ message: z.string() }),
+    },
     summary: "Delete an item",
   },
   searchItemByBarcode: {
@@ -46,5 +50,16 @@ export const itemContract = c.router({
     path: "/items-by-barcode/:barcode",
     responses: { 200: itemSchema, 404: z.object({ message: z.string() }) },
     summary: "Find item by barcode",
+  },
+  updateItem: {
+    method: "PATCH",
+    path: "/items/:id",
+    body: itemSchema,
+    responses: {
+      201: itemSchema,
+      400: z.object({ message: z.string() }),
+      403: z.object({ message: z.string() }),
+    },
+    summary: "Update item",
   },
 });
