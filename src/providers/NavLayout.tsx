@@ -67,6 +67,13 @@ export default function NavLayout({ children }: { children: ReactNode }) {
                 Stores
               </LinkButton>
 
+              <LinkButton
+                href="/management"
+                selected={initialPath === "management"}
+              >
+                Stores
+              </LinkButton>
+
               <LogoutButton />
               <Space w="xs" />
               <ColorSchemToggle />
@@ -102,6 +109,14 @@ export default function NavLayout({ children }: { children: ReactNode }) {
             selected={initialPath === "stores"}
           >
             Stores
+          </LinkButton>
+
+          <LinkButton
+            href="/management"
+            onClick={toggle}
+            selected={initialPath === "management"}
+          >
+            Management
           </LinkButton>
         </AppShellSection>
 
