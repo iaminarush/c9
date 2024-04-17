@@ -73,7 +73,7 @@ export default function Category({
 
   return (
     <>
-      <Stack h="calc(100vh - var(--app-shell-header-height, 0px) - var(--app-shell-padding) * 2 - var(--app-shell-footer-height, 0px))">
+      <Stack h="calc(100dvh - var(--app-shell-header-height, 0px) - var(--app-shell-padding) * 2 - var(--app-shell-footer-height, 0px))">
         <Group justify="space-between" gap="xs">
           <CategoryTitle id={id} />
           <Popover opened={popoverOpened} onClose={popoverHandlers.close}>
