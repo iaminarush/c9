@@ -26,7 +26,7 @@ export const records = pgTable("records", {
   unitTypeId: integer("unit_type_id").notNull(),
 });
 
-export const recordsRelations = relations(records, ({ one, many }) => ({
+export const recordsRelations = relations(records, ({ one }) => ({
   // unit: one(units, {
   //   fields: [records.unitId],
   //   references: [units.id],
