@@ -2,7 +2,16 @@
 
 import { client } from "@/contracts/contract";
 import { NestedCategories } from "@/server/db/schema";
-import { Button, Skeleton, Stack, useComputedColorScheme } from "@mantine/core";
+import {
+  Button,
+  Skeleton,
+  Stack,
+  Tabs,
+  TabsList,
+  TabsPanel,
+  TabsTab,
+  useComputedColorScheme,
+} from "@mantine/core";
 import clsx from "clsx";
 import { produce } from "immer";
 import { klona } from "klona";
@@ -18,6 +27,25 @@ import "react-complex-tree/lib/style-modern.css";
 import { useUpdateCategories } from "./query";
 
 export default function Management() {
+  return (
+    <Tabs defaultValue="category">
+      <TabsList>
+        <TabsTab value="category">Category</TabsTab>
+        <TabsTab value="items">Items</TabsTab>
+      </TabsList>
+
+      <TabsPanel value="category">
+        <CategoryManagement />
+      </TabsPanel>
+
+      <TabsPanel value="items">
+        <ItemManagement />
+      </TabsPanel>
+    </Tabs>
+  );
+}
+
+const CategoryManagement = () => {
   const { isLoading, isError, data } =
     client.categories.getNestedCategoriesAndItems.useQuery(
       ["nested categories"],
@@ -83,7 +111,7 @@ export default function Management() {
       <CategoryTree data={data} flatCategories={flatCategories.data} />
     </>
   );
-}
+};
 
 const CategoryTree = ({
   data,
@@ -159,5 +187,13 @@ const CategoryTree = ({
         Update
       </Button>
     </Stack>
+  );
+};
+
+const ItemManagement = () => {
+  return (
+    <>
+      <></>
+    </>
   );
 };
