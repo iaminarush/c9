@@ -11,6 +11,7 @@ import {
   Container,
   Group,
   ScrollArea,
+  Skeleton,
   Space,
   UnstyledButton,
   useComputedColorScheme,
@@ -19,7 +20,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { IconMoon, IconSun } from "@tabler/icons-react";
 import { default as clsx, default as cx } from "clsx";
-import { signOut } from "next-auth/react";
+import { signOut, useSession, signIn } from "next-auth/react";
 import Link, { LinkProps } from "next/link";
 import { ReactNode } from "react";
 import classes from "./NavLayout.module.css";
@@ -134,6 +135,23 @@ export default function NavLayout({ children }: { children: ReactNode }) {
 }
 
 const LogoutButton = () => {
+  const { status } = useSession();
+
+  if (status === "loading") {
+    return <Skeleton h={24} w={50} />;
+  }
+
+  if (status === "unauthenticated") {
+    return (
+      <UnstyledButton
+        className={clsx(classes.control, classes.login)}
+        onClick={() => signIn()}
+      >
+        Login
+      </UnstyledButton>
+    );
+  }
+
   return (
     <UnstyledButton
       className={clsx(classes.control, classes.logout)}
