@@ -53,7 +53,24 @@ export const useCreateRecord = (id: string) => {
 };
 
 export const useCreateBarcode = () => {
-  return client.barcodes.createBarcode.useMutation();
+  const queryClient = useQueryClient();
+
+  return client.barcodes.createBarcode.useMutation({
+    onSuccess: ({ body }) => {
+      queryClient.setQueryData<BarcodesResponse>(
+        keys.barcodes(body.itemId),
+        (oldData) => {
+          if (!oldData) return undefined;
+
+          const newData = produce(oldData, (draft) => {
+            draft.body.push(body);
+          });
+
+          return newData;
+        },
+      );
+    },
+  });
 };
 
 export const useDeleteItem = () => {
