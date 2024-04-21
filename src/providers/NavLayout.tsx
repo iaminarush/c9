@@ -71,7 +71,7 @@ export default function NavLayout({ children }: { children: ReactNode }) {
                 href="/management"
                 selected={initialPath === "management"}
               >
-                Stores
+                Management
               </LinkButton>
 
               <LogoutButton />
