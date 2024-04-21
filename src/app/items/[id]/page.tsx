@@ -286,7 +286,12 @@ const BarcodeComponent = ({ id }: { id: string }) => {
                 ) : barcodes.data.body.length ? (
                   barcodes.data.body.map((b) => (
                     <Group key={b.id}>
-                      <Barcode key={b.id} value={b.barcode} height={75} />
+                      <Barcode
+                        key={b.id}
+                        value={b.barcode}
+                        height={75}
+                        width={1.5}
+                      />
                       <ActionIcon
                         color="red"
                         variant="filled"
