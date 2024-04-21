@@ -25,11 +25,12 @@ import {
 } from "react-complex-tree";
 import "react-complex-tree/lib/style-modern.css";
 import { useUpdateCategories } from "./query";
+import { useSession } from "next-auth/react";
 
 export default function Management() {
   return (
     <Tabs defaultValue="category">
-      <TabsList>
+      <TabsList mb="xs">
         <TabsTab value="category">Category</TabsTab>
         <TabsTab value="items">Items</TabsTab>
       </TabsList>
@@ -122,6 +123,7 @@ const CategoryTree = ({
 }) => {
   const [treeData, setTreeData] = useState(klona(flatCategories));
   const items = useMemo(() => klona(data), [data]);
+  const { data: userData } = useSession();
   const dataProvider = useMemo(
     () =>
       new StaticTreeDataProvider(items, (item, data) => ({ ...item, data })),
@@ -183,7 +185,11 @@ const CategoryTree = ({
           <Tree treeId="tree-1" rootItem="root" treeLabel="Tree Example" />
         </div>
       </UncontrolledTreeEnvironment>
-      <Button onClick={handleClick} loading={isLoading}>
+      <Button
+        onClick={handleClick}
+        loading={isLoading}
+        disabled={!userData?.user.admin}
+      >
         Update
       </Button>
     </Stack>
