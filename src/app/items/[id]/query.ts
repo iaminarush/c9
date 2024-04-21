@@ -1,4 +1,5 @@
 import { client } from "@/contracts/contract";
+import { barcodeContract } from "@/contracts/contract-barcode";
 import { itemContract } from "@/contracts/contract-item";
 import { recordContract } from "@/contracts/contract-record";
 import { useQueryClient } from "@tanstack/react-query";
@@ -9,11 +10,17 @@ import { produce } from "immer";
 const keys = {
   all: ["item"],
   item: (id: string) => [...keys.all, id] as const,
-  record: (id: string) => ["record", id],
+  record: (id: string) => ["record", id] as const,
+  barcodes: (id: number) => [...keys.all, "barcodes", id],
 };
 
 type RecordsResponse = ServerInferResponses<
   typeof recordContract.getRecords,
+  200
+>;
+
+type BarcodesResponse = ServerInferResponses<
+  typeof barcodeContract.getAllBarcodesByItem,
   200
 >;
 
@@ -56,6 +63,38 @@ export const useDeleteItem = () => {
     onSuccess: ({ body }) => {
       queryClient.removeQueries(keys.item(`${body.id}`));
       queryClient.invalidateQueries(["category"]);
+    },
+  });
+};
+
+export const useBarcodes = (itemId: number) =>
+  client.barcodes.getAllBarcodesByItem.useQuery(keys.barcodes(itemId), {
+    query: { itemId },
+  });
+
+export const useDeleteBarcode = () => {
+  const queryClient = useQueryClient();
+
+  return client.barcodes.deleteBarcode.useMutation({
+    onSuccess: ({ body }) => {
+      queryClient.setQueryData<BarcodesResponse>(
+        keys.barcodes(body.itemId),
+        (oldData) => {
+          if (!oldData) return undefined;
+
+          const index = oldData.body.findIndex((b) => b.id === body.id);
+
+          if (index !== -1) {
+            const newData = produce(oldData, (draft) => {
+              draft.body.splice(index, 1);
+            });
+
+            return newData;
+          }
+
+          return oldData;
+        },
+      );
     },
   });
 };

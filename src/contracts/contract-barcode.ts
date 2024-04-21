@@ -16,4 +16,25 @@ export const barcodeContract = c.router({
     body: createBarcodeSchema,
     summary: "Create a barcode",
   },
+  getAllBarcodesByItem: {
+    method: "GET",
+    path: "/barcodes-by-item",
+    query: z.object({ itemId: z.number() }),
+    responses: {
+      200: barcodeSchema.array(),
+      404: z.object({ message: z.string() }),
+    },
+    summary: "Get all barcodes by item id",
+  },
+  deleteBarcode: {
+    method: "DELETE",
+    path: "/barcodes/:id",
+    body: z.any(),
+    responses: {
+      200: barcodeSchema,
+      403: z.object({ message: z.string() }),
+      404: z.object({ message: z.string() }),
+    },
+    summary: "Delete a barcode",
+  },
 });

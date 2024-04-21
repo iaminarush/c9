@@ -21,6 +21,10 @@ import {
   NumberFormatter,
   Skeleton,
   Stack,
+  Tabs,
+  TabsList,
+  TabsPanel,
+  TabsTab,
   Text,
   TextInput,
   Title,
@@ -42,11 +46,14 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
 import {
+  useBarcodes,
   useCreateBarcode,
   useCreateRecord,
+  useDeleteBarcode,
   useDeleteItem,
   useItem,
 } from "./query";
+import Barcode from "react-barcode";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -64,7 +71,6 @@ type FormSchema = z.infer<typeof formSchema>;
 export default function Item({ params: { id } }: { params: { id: string } }) {
   const { isLoading, isError, data } = useItem(id, { enabled: isNumber(id) });
   const [opened, { open, close }] = useDisclosure(false);
-  const [scanner, scannerHandlers] = useDisclosure(false);
   const { control, handleSubmit } = useForm<FormSchema>({
     defaultValues: {
       itemId: Number(id),
@@ -75,7 +81,6 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
   const stores = useStoresData({ queryOptions: { enabled: opened } });
   const unitTypes = useUnitTypesData({ queryOptions: { enabled: opened } });
   const createRecord = useCreateRecord(id);
-  const createBarcode = useCreateBarcode();
   const session = useSession();
 
   if (!isNumber(id)) {
@@ -113,11 +118,13 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
             <DeleteComponent id={id} />
           </Group>
           <Group>
-            <Tooltip label="Add barcode">
+            {/* <Tooltip label="Add barcode">
               <ActionIcon onClick={scannerHandlers.open}>
                 <IconBarcode />
               </ActionIcon>
-            </Tooltip>
+            </Tooltip> */}
+
+            <BarcodeComponent id={id} />
 
             <Tooltip label="Add record">
               <ActionIcon onClick={open} disabled={!session.data?.user.admin}>
@@ -129,31 +136,6 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
 
         <RecordList recordId={id} />
       </Stack>
-
-      <Modal opened={scanner} onClose={scannerHandlers.close}>
-        {!!scanner && (
-          <>
-            <LoadingOverlay
-              visible={createBarcode.isLoading}
-              overlayProps={{ blur: 1 }}
-            />
-
-            <BarcodeScanner
-              handleScan={(r) => {
-                createBarcode.mutate(
-                  { body: { barcode: r, itemId: Number(id) } },
-                  {
-                    onSuccess: () => {
-                      toast.success("Barcode added");
-                      scannerHandlers.close();
-                    },
-                  },
-                );
-              }}
-            />
-          </>
-        )}
-      </Modal>
 
       <Modal opened={opened} onClose={close} title="Add Price" centered>
         <Stack>
@@ -224,6 +206,87 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
     </>
   );
 }
+
+const BarcodeComponent = ({ id }: { id: string }) => {
+  const [opened, handlers] = useDisclosure(false);
+  const createBarcode = useCreateBarcode();
+  const barcodes = useBarcodes(Number(id));
+  const { data } = useSession();
+  const { mutate, isLoading } = useDeleteBarcode();
+
+  return (
+    <>
+      <Tooltip label="Add/View barcode">
+        <ActionIcon onClick={handlers.open}>
+          <IconBarcode />
+        </ActionIcon>
+      </Tooltip>
+
+      <Modal opened={opened} onClose={handlers.close} title="Barcodes">
+        {!!opened && (
+          <Tabs defaultValue="scanner">
+            <TabsList mb="xs">
+              <TabsTab value="scanner">Scanner</TabsTab>
+
+              <TabsTab value="list">List</TabsTab>
+            </TabsList>
+
+            <TabsPanel value="scanner">
+              <LoadingOverlay
+                visible={createBarcode.isLoading}
+                overlayProps={{ blur: 1 }}
+              />
+
+              <BarcodeScanner
+                handleScan={(r) => {
+                  createBarcode.mutate(
+                    { body: { barcode: r, itemId: Number(id) } },
+                    {
+                      onSuccess: () => {
+                        toast.success("Barcode added");
+                        handlers.close();
+                      },
+                    },
+                  );
+                }}
+              />
+            </TabsPanel>
+
+            <TabsPanel value="list">
+              <Stack align="center">
+                {barcodes.isLoading ? (
+                  <Skeleton h={250} />
+                ) : barcodes.isError ? (
+                  <div>Error</div>
+                ) : barcodes.data.body.length ? (
+                  barcodes.data.body.map((b) => (
+                    <Group key={b.id}>
+                      <Barcode key={b.id} value={b.barcode} height={75} />
+                      <ActionIcon
+                        color="red"
+                        variant="filled"
+                        size="lg"
+                        disabled={!data?.user.admin}
+                        onClick={() =>
+                          mutate({ params: { id: `${b.id}` }, body: null })
+                        }
+                        loading={isLoading}
+                      >
+                        <IconTrash />
+                      </ActionIcon>
+                    </Group>
+                  ))
+                ) : (
+                  <div>No Barcodes</div>
+                )}
+              </Stack>
+            </TabsPanel>
+          </Tabs>
+        )}
+      </Modal>
+    </>
+  );
+};
 
 const DeleteComponent = ({ id }: { id: string }) => {
   const [opened, handlers] = useDisclosure(false);
