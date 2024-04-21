@@ -19,6 +19,7 @@ import {
   LoadingOverlay,
   Modal,
   NumberFormatter,
+  NumberInput,
   Skeleton,
   Stack,
   Tabs,
@@ -30,7 +31,7 @@ import {
   Title,
   Tooltip,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useInputState } from "@mantine/hooks";
 import {
   IconBarcode,
   IconCheck,
@@ -118,12 +119,6 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
             <DeleteComponent id={id} />
           </Group>
           <Group>
-            {/* <Tooltip label="Add barcode">
-              <ActionIcon onClick={scannerHandlers.open}>
-                <IconBarcode />
-              </ActionIcon>
-            </Tooltip> */}
-
             <BarcodeComponent id={id} />
 
             <Tooltip label="Add record">
@@ -213,6 +208,9 @@ const BarcodeComponent = ({ id }: { id: string }) => {
   const barcodes = useBarcodes(Number(id));
   const { data } = useSession();
   const { mutate, isLoading } = useDeleteBarcode();
+  const [scannedBarcode, setScannedBarocde] = useInputState<string | number>(
+    "",
+  );
 
   return (
     <>
@@ -236,20 +234,47 @@ const BarcodeComponent = ({ id }: { id: string }) => {
                 visible={createBarcode.isLoading}
                 overlayProps={{ blur: 1 }}
               />
-
-              <BarcodeScanner
-                handleScan={(r) => {
-                  createBarcode.mutate(
-                    { body: { barcode: r, itemId: Number(id) } },
-                    {
-                      onSuccess: () => {
-                        toast.success("Barcode added");
-                        handlers.close();
-                      },
-                    },
-                  );
-                }}
-              />
+              {scannedBarcode ? (
+                <Stack>
+                  <NumberInput
+                    value={scannedBarcode}
+                    onChange={setScannedBarocde}
+                    decimalScale={0}
+                    label="Barcode"
+                  />
+                  <Button
+                    disabled={
+                      !data?.user.admin ||
+                      scannedBarcode.toString().length !== 13
+                    }
+                    onClick={() => {
+                      createBarcode.mutate(
+                        {
+                          body: {
+                            barcode: `${scannedBarcode}`,
+                            itemId: Number(id),
+                          },
+                        },
+                        {
+                          onSuccess: () => {
+                            toast.success("Barcode added");
+                            handlers.close();
+                            setScannedBarocde("");
+                          },
+                        },
+                      );
+                    }}
+                  >
+                    Add Barcode
+                  </Button>
+                </Stack>
+              ) : (
+                <BarcodeScanner
+                  handleScan={(r) => {
+                    setScannedBarocde(r);
+                  }}
+                />
+              )}
             </TabsPanel>
 
             <TabsPanel value="list">
