@@ -90,7 +90,7 @@ const CategoryManagement = () => {
     );
 
   const flatCategories = client.categories.getAllCategories.useQuery(
-    ["categories"],
+    ["all categories"],
     {},
     {
       select: ({ body }) =>
@@ -193,7 +193,7 @@ const CategoryTree = ({
 const ItemManagement = () => {
   return (
     <>
-      <></>
+      <div>WIP</div>
     </>
   );
 };
