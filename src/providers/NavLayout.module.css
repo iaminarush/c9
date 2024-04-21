@@ -47,3 +47,9 @@
     color: var(--mantine-color-red-6);
   }
 }
+
+.login {
+  @mixin hover {
+    color: var(--mantine-color-blue-6);
+  }
+}
