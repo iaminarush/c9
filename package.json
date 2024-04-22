@@ -20,6 +20,7 @@
     "@mantine/hooks": "7.6.1",
     "@mantine/spotlight": "^7.6.1",
     "@neondatabase/serverless": "^0.6.0",
+    "@next/bundle-analyzer": "^14.2.2",
     "@paralleldrive/cuid2": "^2.2.2",
     "@t3-oss/env-nextjs": "^0.6.1",
     "@tabler/icons-react": "^2.34.0",
