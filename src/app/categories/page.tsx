@@ -44,7 +44,9 @@ export default function Home() {
             <Link href={`/categories/${c.id}`} {...props} />
           )}
           key={c.id}
-        />
+        >
+          {c.name}
+        </Button>
       ))}
       <Button href={"/categories/uncategorized"} component={Link}>
         Uncategorized
@@ -59,7 +61,7 @@ const AddCategory = () => {
   const [opened, handlers] = useDisclosure(false);
   const { control, handleSubmit } = useForm<FormData>();
   const createCategory = useCreateCategory();
-  const session = useSession();
+  const { data } = useSession();
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
     const result = createCategorySchema.safeParse(data);
@@ -73,7 +75,7 @@ const AddCategory = () => {
 
   return (
     <>
-      <ActionIcon onClick={handlers.open} disabled={!session.data?.user.admin}>
+      <ActionIcon onClick={handlers.open} disabled={!data?.user.admin}>
         <IconPlus />
       </ActionIcon>
 
