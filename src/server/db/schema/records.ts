@@ -22,15 +22,11 @@ export const records = pgTable("records", {
   createdAt: timestamp("created_at").defaultNow(),
   itemId: integer("item_id").notNull(),
   storeId: integer("store_id").notNull(),
-  // unitId: integer("unit_id"),
   unitTypeId: integer("unit_type_id").notNull(),
+  customUnit: text("custom_unit"),
 });
 
 export const recordsRelations = relations(records, ({ one }) => ({
-  // unit: one(units, {
-  //   fields: [records.unitId],
-  //   references: [units.id],
-  // }),
   unitType: one(unitTypes, {
     fields: [records.unitTypeId],
     references: [unitTypes.id],
