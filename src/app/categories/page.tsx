@@ -18,6 +18,7 @@ import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useCategories, useCreateCategory } from "./query";
+import { Route } from "next";
 
 export default function Home() {
   const { isLoading, isError, data } = useCategories();
@@ -38,15 +39,16 @@ export default function Home() {
 
       {data.body.categories.length === 0 && <Text>No Categories</Text>}
       {data.body.categories.map((c) => (
-        <Button href={`/categories/${c.id}`} component={Link} key={c.id}>
-          {c.name}
-        </Button>
+        <Button
+          renderRoot={(props) => (
+            <Link href={`/categories/${c.id}`} {...props} />
+          )}
+          key={c.id}
+        />
       ))}
       <Button href={"/categories/uncategorized"} component={Link}>
         Uncategorized
       </Button>
-
-      {/* {!!data.body.categories.length && <CategoryTree categories={data.body.categories} />} */}
     </Stack>
   );
 }

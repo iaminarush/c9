@@ -19,7 +19,10 @@ export default function Uncategorized() {
     <>
       <Stack>
         {uncategorizedItems.data?.body.map((i) => (
-          <Button key={i.id} component={Link} href={`/items/${i.id}`}>
+          <Button
+            renderRoot={(props) => <Link href={`/items/${i.id}`} {...props} />}
+            key={i.id}
+          >
             {i.name}
           </Button>
         ))}

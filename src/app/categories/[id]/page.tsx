@@ -120,10 +120,18 @@ export default function Category({
               <Stack>
                 {category.data.body.subCategories.length ? (
                   category.data.body.subCategories.map((sc, i) => (
+                    // <Button
+                    //   key={i}
+                    //   component={Link}
+                    //   href={`/categories/${sc.id}`}
+                    // >
+                    //   {sc.name}
+                    // </Button>
                     <Button
-                      key={i}
-                      component={Link}
-                      href={`/categories/${sc.id}`}
+                      renderRoot={(props) => (
+                        <Link href={`/categories/${sc.id}`} {...props} />
+                      )}
+                      key={sc.id}
                     >
                       {sc.name}
                     </Button>
@@ -146,7 +154,12 @@ export default function Category({
               <Stack>
                 {category.data.body.items.length ? (
                   category.data.body.items.map((item, i) => (
-                    <Button key={i} component={Link} href={`/items/${item.id}`}>
+                    <Button
+                      renderRoot={(props) => (
+                        <Link href={`/items/${item.id}`} {...props} />
+                      )}
+                      key={item.id}
+                    >
                       {item.name}
                     </Button>
                   ))

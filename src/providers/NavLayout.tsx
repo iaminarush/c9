@@ -27,6 +27,7 @@ import classes from "./NavLayout.module.css";
 import GlobalSearch from "@/components/globalSearch";
 import { SearchByBarcode } from "@/components/searchByBarcode";
 import { usePathname } from "next/navigation";
+import { RouteType } from "next/dist/lib/load-custom-routes";
 
 export default function NavLayout({ children }: { children: ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
@@ -189,7 +190,7 @@ const LinkButton = ({
   onClick,
   selected,
 }: {
-  href: LinkProps["href"];
+  href: LinkProps<RouteType>["href"];
   children: ReactNode;
   onClick?: React.MouseEventHandler<HTMLAnchorElement>;
   selected: boolean;
