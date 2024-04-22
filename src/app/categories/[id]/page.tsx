@@ -120,13 +120,6 @@ export default function Category({
               <Stack>
                 {category.data.body.subCategories.length ? (
                   category.data.body.subCategories.map((sc, i) => (
-                    // <Button
-                    //   key={i}
-                    //   component={Link}
-                    //   href={`/categories/${sc.id}`}
-                    // >
-                    //   {sc.name}
-                    // </Button>
                     <Button
                       renderRoot={(props) => (
                         <Link href={`/categories/${sc.id}`} {...props} />
@@ -188,6 +181,7 @@ const CategoryTitle = ({ id }: { id: string }) => {
   const category = useCategory(id, { enabled: isNumber(id) });
   const [value, setValue] = useState(category.data?.body.name || "");
   const { mutate, isLoading } = useUpdateCategory();
+  const { data } = useSession();
 
   const handleUpdate = () => {
     mutate(
@@ -208,7 +202,10 @@ const CategoryTitle = ({ id }: { id: string }) => {
       <>
         <Group gap="xs">
           <Text>Category: {category.data?.body.name}</Text>
-          <ActionIcon disabled={!category.isSuccess} onClick={handlers.open}>
+          <ActionIcon
+            disabled={!category.isSuccess || !data?.user.admin}
+            onClick={handlers.open}
+          >
             <IconEdit />
           </ActionIcon>
 
@@ -252,6 +249,7 @@ const DeleteComponent = ({ id }: { id: string }) => {
   const [value, setValue] = useState("");
   const { mutate, isLoading } = useDeleteCategory();
   const router = useRouter();
+  const { data } = useSession();
 
   const handleClick = () => {
     mutate(
@@ -269,7 +267,12 @@ const DeleteComponent = ({ id }: { id: string }) => {
 
   return (
     <>
-      <ActionIcon color="red" variant="filled" onClick={handlers.open}>
+      <ActionIcon
+        color="red"
+        variant="filled"
+        onClick={handlers.open}
+        disabled={!data?.user.admin}
+      >
         <IconTrash />
       </ActionIcon>
 
@@ -333,6 +336,7 @@ const CategoryModal = ({
     defaultValues: { parentId: Number(id), name: "" },
   });
   const createSubCategory = useCreateSubCategory();
+  const { data } = useSession();
 
   const onSubmit: SubmitHandler<CategoryFormData> = (data) => {
     const result = createSubCategorySchema.safeParse(data);
@@ -353,6 +357,7 @@ const CategoryModal = ({
         <Button
           onClick={() => void handleSubmit(onSubmit)()}
           loading={createSubCategory.isLoading}
+          disabled={!data?.user.admin}
         >
           Create
         </Button>

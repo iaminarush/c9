@@ -42,6 +42,7 @@ export default function Stores() {
   });
   const [storeId, setStoreId] = useState<number | null>(null);
   const { mutate, isLoading } = useUpdateStore();
+  const { data } = useSession();
 
   const onSubmit: SubmitHandler<FormSchema> = (data) => {
     if (storeId) {
@@ -87,13 +88,17 @@ export default function Stores() {
         opened={!!storeId}
         onClose={() => setStoreId(null)}
         centered
-        title=""
+        title="Update Store"
       >
         <FormLayout
           control={control}
           setValue={setValue}
           submitButton={
-            <Button loading={isLoading} onClick={handleSubmit(onSubmit)}>
+            <Button
+              loading={isLoading}
+              onClick={handleSubmit(onSubmit)}
+              disabled={!data?.user.admin}
+            >
               Update
             </Button>
           }
@@ -108,7 +113,7 @@ type FormSchema = z.infer<typeof createStoreSchema>;
 const AddStore = () => {
   const [opened, handlers] = useDisclosure(false);
   const { control, handleSubmit, setValue, reset } = useForm<FormSchema>();
-  const session = useSession();
+  const { data } = useSession();
   const { mutate, isLoading } = useAddStore();
 
   const onSubmit: SubmitHandler<FormSchema> = (data) => {
@@ -126,7 +131,7 @@ const AddStore = () => {
 
   return (
     <>
-      <ActionIcon disabled={!session.data?.user.admin} onClick={handlers.open}>
+      <ActionIcon disabled={!data?.user.admin} onClick={handlers.open}>
         <IconPlus />
       </ActionIcon>
 
@@ -140,7 +145,11 @@ const AddStore = () => {
           control={control}
           setValue={setValue}
           submitButton={
-            <Button onClick={handleSubmit(onSubmit)} loading={isLoading}>
+            <Button
+              onClick={handleSubmit(onSubmit)}
+              loading={isLoading}
+              disabled={!data?.user.admin}
+            >
               Add
             </Button>
           }
@@ -160,6 +169,7 @@ const FormLayout = ({
   submitButton: ReactNode;
 }) => {
   const image = useWatch({ control, name: "image" });
+  const { data } = useSession();
 
   return (
     <Stack>
@@ -188,21 +198,22 @@ const FormLayout = ({
           />
         </Stack>
       </Center>
-
-      <UploadButton
-        endpoint="imageUploader"
-        onClientUploadComplete={(res) => {
-          if (res[0]?.url) {
-            toast.success("Upload Completed");
-            setValue("image", res[0].url);
-          } else {
-            toast.error("Unknown error");
-          }
-        }}
-        onUploadError={(error) => {
-          toast.error(`Error: ${error.message}`);
-        }}
-      />
+      {!!data?.user.admin && (
+        <UploadButton
+          endpoint="imageUploader"
+          onClientUploadComplete={(res) => {
+            if (res[0]?.url) {
+              toast.success("Upload Completed");
+              setValue("image", res[0].url);
+            } else {
+              toast.error("Unknown error");
+            }
+          }}
+          onUploadError={(error) => {
+            toast.error(`Error: ${error.message}`);
+          }}
+        />
+      )}
 
       {submitButton}
     </Stack>

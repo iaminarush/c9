@@ -222,7 +222,7 @@ const BarcodeComponent = ({ id }: { id: string }) => {
 
       <Modal opened={opened} onClose={handlers.close} title="Barcodes">
         {!!opened && (
-          <Tabs defaultValue="scanner">
+          <Tabs defaultValue={data?.user.admin ? "scanner" : "list"}>
             <TabsList mb="xs">
               <TabsTab value="scanner">Scanner</TabsTab>
 
@@ -234,46 +234,52 @@ const BarcodeComponent = ({ id }: { id: string }) => {
                 visible={createBarcode.isLoading}
                 overlayProps={{ blur: 1 }}
               />
-              {scannedBarcode ? (
-                <Stack>
-                  <NumberInput
-                    value={scannedBarcode}
-                    onChange={setScannedBarocde}
-                    decimalScale={0}
-                    label="Barcode"
-                  />
-                  <Button
-                    disabled={
-                      !data?.user.admin ||
-                      scannedBarcode.toString().length !== 13
-                    }
-                    onClick={() => {
-                      createBarcode.mutate(
-                        {
-                          body: {
-                            barcode: `${scannedBarcode}`,
-                            itemId: Number(id),
-                          },
-                        },
-                        {
-                          onSuccess: () => {
-                            toast.success("Barcode added");
-                            handlers.close();
-                            setScannedBarocde("");
-                          },
-                        },
-                      );
-                    }}
-                  >
-                    Add Barcode
-                  </Button>
-                </Stack>
+              {data?.user.admin ? (
+                <>
+                  {scannedBarcode ? (
+                    <Stack>
+                      <NumberInput
+                        value={scannedBarcode}
+                        onChange={setScannedBarocde}
+                        decimalScale={0}
+                        label="Barcode"
+                      />
+                      <Button
+                        disabled={
+                          !data?.user.admin ||
+                          scannedBarcode.toString().length !== 13
+                        }
+                        onClick={() => {
+                          createBarcode.mutate(
+                            {
+                              body: {
+                                barcode: `${scannedBarcode}`,
+                                itemId: Number(id),
+                              },
+                            },
+                            {
+                              onSuccess: () => {
+                                toast.success("Barcode added");
+                                handlers.close();
+                                setScannedBarocde("");
+                              },
+                            },
+                          );
+                        }}
+                      >
+                        Add Barcode
+                      </Button>
+                    </Stack>
+                  ) : (
+                    <BarcodeScanner
+                      handleScan={(r) => {
+                        setScannedBarocde(r);
+                      }}
+                    />
+                  )}
+                </>
               ) : (
-                <BarcodeScanner
-                  handleScan={(r) => {
-                    setScannedBarocde(r);
-                  }}
-                />
+                <div>No permission to add barcodes</div>
               )}
             </TabsPanel>
 
@@ -323,6 +329,7 @@ const DeleteComponent = ({ id }: { id: string }) => {
   const [value, setValue] = useState("");
   const { mutate, isLoading } = useDeleteItem();
   const router = useRouter();
+  const { data } = useSession();
 
   const handleClick = () => {
     mutate(
@@ -342,7 +349,12 @@ const DeleteComponent = ({ id }: { id: string }) => {
 
   return (
     <>
-      <ActionIcon variant="filled" color="red" onClick={handlers.open}>
+      <ActionIcon
+        variant="filled"
+        color="red"
+        onClick={handlers.open}
+        disabled={!data?.user.admin}
+      >
         <IconTrash />
       </ActionIcon>
 
