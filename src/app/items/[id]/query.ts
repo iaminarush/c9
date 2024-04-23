@@ -40,7 +40,6 @@ export const useCreateRecord = (id: string) => {
   return client.records.createRecord.useMutation({
     onSuccess: ({ body }) => {
       queryClient.setQueryData<RecordsResponse>(keys.record(id), (oldData) => {
-        console.log(oldData, id, keys.record(id));
         if (!oldData) return undefined;
 
         const newData = produce(oldData, (draft) => {
