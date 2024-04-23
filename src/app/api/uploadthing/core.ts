@@ -1,3 +1,4 @@
+import { getToken } from "next-auth/jwt";
 import { createUploadthing } from "uploadthing/next";
 import { UploadThingError, type FileRouter } from "uploadthing/server";
 import { auth } from "../auth/[...nextauth]/auth";
@@ -8,14 +9,14 @@ const f = createUploadthing();
 
 export const ourFileRouter = {
   imageUploader: f({ image: {} })
-    .middleware(async () => {
-      // const user = await auth();
+    .middleware(async ({ req }) => {
+      const token = await getToken({ req });
 
-      // if (!user) throw new UploadThingError("Unauthorized");
-
-      // return { userId: user.id };
+      // if (!token?.admin) throw new UploadThingError("Unauthorized");
 
       const session = await auth();
+
+      console.log(session, token);
 
       if (!session) throw new UploadThingError("Unauthorized");
 
