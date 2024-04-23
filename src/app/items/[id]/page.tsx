@@ -35,6 +35,7 @@ import { useDisclosure, useInputState } from "@mantine/hooks";
 import {
   IconBarcode,
   IconCheck,
+  IconEdit,
   IconPhoto,
   IconPhotoOff,
   IconPlus,
@@ -42,8 +43,8 @@ import {
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { ReactNode, useState } from "react";
+import { SubmitHandler, UseFormReturn, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
 import {
@@ -71,18 +72,6 @@ type FormSchema = z.infer<typeof formSchema>;
 
 export default function Item({ params: { id } }: { params: { id: string } }) {
   const { isLoading, isError, data } = useItem(id, { enabled: isNumber(id) });
-  const [opened, { open, close }] = useDisclosure(false);
-  const { control, handleSubmit } = useForm<FormSchema>({
-    defaultValues: {
-      itemId: Number(id),
-      description: "",
-      remark: "",
-    },
-  });
-  const stores = useStoresData({ queryOptions: { enabled: opened } });
-  const unitTypes = useUnitTypesData({ queryOptions: { enabled: opened } });
-  const createRecord = useCreateRecord(id);
-  const session = useSession();
 
   if (!isNumber(id)) {
     return <Text>Item Id must be a number</Text>;
@@ -91,6 +80,115 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
   if (isLoading) return <Skeleton />;
 
   if (isError) return <Text>Error</Text>;
+
+  //TODO edit records
+  return (
+    <>
+      <Stack>
+        <Group justify="space-between">
+          <Group align="center">
+            <Title>{data.body.name}</Title>
+            <DeleteComponent id={id} />
+          </Group>
+          <Group>
+            <BarcodeComponent id={id} />
+
+            <AddComponent id={id} />
+          </Group>
+        </Group>
+
+        <RecordList recordId={id} />
+      </Stack>
+    </>
+  );
+}
+
+const FormLayout = ({
+  form,
+  enableQueries,
+  submitButton,
+}: {
+  form: UseFormReturn<FormSchema>;
+  enableQueries: boolean;
+  submitButton: ReactNode;
+}) => {
+  const { control } = form;
+  const unitTypes = useUnitTypesData({
+    queryOptions: { enabled: enableQueries },
+  });
+  const stores = useStoresData({ queryOptions: { enabled: enableQueries } });
+
+  return (
+    <Stack>
+      <SelectFormField
+        control={control}
+        name="storeId"
+        data={stores.data?.body}
+        loading={stores.isLoading}
+        label="Store"
+        rules={{ required: "Required" }}
+        searchable
+        withAsterisk
+        //eslint-disable-next-line
+        //@ts-expect-error Mantine types doesn't pass additional object propertis to item
+        renderOption={renderStoreSelectOption}
+      />
+
+      <NumberFormField
+        control={control}
+        name="price"
+        rules={{ required: "Required" }}
+        label="Price"
+        withAsterisk
+        min={0}
+        prefix="$"
+        decimalScale={2}
+        thousandSeparator=","
+      />
+
+      <SelectFormField
+        control={control}
+        name="unitTypeId"
+        data={unitTypes.data?.body}
+        loading={unitTypes.isLoading}
+        label="Unit Type"
+        rules={{ required: "Required" }}
+        searchable
+        withAsterisk
+      />
+
+      <NumberFormField
+        control={control}
+        name="amount"
+        rules={{ required: "Required" }}
+        label="Amount"
+        withAsterisk
+        min={0.01}
+        decimalScale={2}
+        thousandSeparator=","
+      />
+
+      <TextFormField control={control} name="description" label="Description" />
+
+      {submitButton}
+    </Stack>
+  );
+};
+
+const AddComponent = ({ id }: { id: string }) => {
+  const { data } = useSession();
+  const [opened, { open, close }] = useDisclosure(false);
+
+  const unitTypes = useUnitTypesData({ queryOptions: { enabled: opened } });
+  const stores = useStoresData({ queryOptions: { enabled: opened } });
+  const createRecord = useCreateRecord(id);
+  const form = useForm<FormSchema>({
+    defaultValues: {
+      itemId: Number(id),
+      description: "",
+      remark: "",
+    },
+  });
 
   const onSubmit: SubmitHandler<FormSchema> = (data) => {
     const submitData: FormData = {
@@ -110,98 +208,31 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
     }
   };
 
-  //TODO edit records
   return (
     <>
-      <Stack>
-        <Group justify="space-between">
-          <Group align="center">
-            <Title>{data.body.name}</Title>
-            <DeleteComponent id={id} />
-          </Group>
-          <Group>
-            <BarcodeComponent id={id} />
-
-            <Tooltip label="Add record">
-              <ActionIcon onClick={open} disabled={!session.data?.user.admin}>
-                <IconPlus />
-              </ActionIcon>
-            </Tooltip>
-          </Group>
-        </Group>
-
-        <RecordList recordId={id} />
-      </Stack>
+      <Tooltip label="Add record">
+        <ActionIcon onClick={open} disabled={!data?.user.admin}>
+          <IconPlus />
+        </ActionIcon>
+      </Tooltip>
 
       <Modal opened={opened} onClose={close} title="Add Price" centered>
-        <Stack>
-          <SelectFormField
-            control={control}
-            name="storeId"
-            data={stores.data?.body}
-            loading={stores.isLoading}
-            label="Store"
-            rules={{ required: "Required" }}
-            searchable
-            withAsterisk
-            //eslint-disable-next-line
-            //@ts-expect-error Mantine types doesn't pass additional object propertis to item
-            renderOption={renderStoreSelectOption}
-          />
-
-          <NumberFormField
-            control={control}
-            name="price"
-            rules={{ required: "Required" }}
-            label="Price"
-            withAsterisk
-            min={0}
-            prefix="$"
-            decimalScale={2}
-            thousandSeparator=","
-          />
-
-          <SelectFormField
-            control={control}
-            name="unitTypeId"
-            data={unitTypes.data?.body}
-            loading={unitTypes.isLoading}
-            label="Unit Type"
-            rules={{ required: "Required" }}
-            searchable
-            withAsterisk
-          />
-
-          <NumberFormField
-            control={control}
-            name="amount"
-            rules={{ required: "Required" }}
-            label="Amount"
-            withAsterisk
-            min={0.01}
-            decimalScale={0}
-            thousandSeparator=","
-          />
-
-          <TextFormField
-            control={control}
-            name="description"
-            label="Description"
-          />
-
-          {/* <TextFormField control={control} name="remark" label="Remark" /> */}
-
-          <Button
-            onClick={() => void handleSubmit(onSubmit)()}
-            loading={createRecord.isLoading}
-          >
-            Submit
-          </Button>
-        </Stack>
+        <FormLayout
+          form={form}
+          enableQueries={opened}
+          submitButton={
+            <Button
+              onClick={form.handleSubmit(onSubmit)}
+              loading={createRecord.isLoading}
+            >
+              Create Record
+            </Button>
+          }
+        />
       </Modal>
     </>
   );
-}
+};
 
 const BarcodeComponent = ({ id }: { id: string }) => {
   const [opened, handlers] = useDisclosure(false);
@@ -454,23 +485,22 @@ type Record = z.infer<typeof recordDetailSchema>;
 
 const RecordCard = (record: Record) => {
   return (
-    <Card>
-      <Group>
-        {record.store.image ? (
-          <Image
-            src={record.store.image}
-            h={48}
-            w={48}
-            radius="sm"
-            alt="Logo"
-            fit="contain"
-          />
-        ) : (
-          <IconPhoto size={36} />
-        )}
-
-        <Stack gap="xs" style={{ flexGrow: 1 }}>
-          <Group gap={0}>
+    <Card p="xs">
+      <Group style={{ flexGrow: 1 }} justify="space-between" wrap="nowrap">
+        <Stack gap="xs">
+          <Group gap="md">
+            {record.store.image ? (
+              <Image
+                src={record.store.image}
+                h={48}
+                w={48}
+                radius="sm"
+                alt="Logo"
+                fit="contain"
+              />
+            ) : (
+              <IconPhoto size={48} />
+            )}
             <Text>{record.store.name}</Text>
             {!!record.description && (
               <>
@@ -500,7 +530,60 @@ const RecordCard = (record: Record) => {
             />
           </Group>
         </Stack>
+
+        <Stack>
+          <EditRecordComponent record={record} />
+
+          <DeleteRecordComponent />
+        </Stack>
       </Group>
     </Card>
+  );
+};
+
+const EditRecordComponent = ({ record }: { record: Record }) => {
+  const [opened, handlers] = useDisclosure(false);
+
+  return (
+    <>
+      <Tooltip label="Edit Record">
+        <ActionIcon onClick={handlers.open}>
+          <IconEdit />
+        </ActionIcon>
+      </Tooltip>
+
+      <Modal opened={opened} onClose={handlers.close}>
+        {!!opened && <EditForm record={record} />}
+      </Modal>
+    </>
+  );
+};
+
+const EditForm = ({ record }: { record: Record }) => {
+  const form = useForm<FormSchema>({
+    defaultValues: {
+      storeId: `${record.storeId}`,
+      price: Number(record.price),
+      unitTypeId: `${record.unitTypeId}`,
+      amount: Number(record.amount),
+    },
+  });
+
+  return <FormLayout form={form} enableQueries={true} submitButton={<></>} />;
+};
+
+const DeleteRecordComponent = () => {
+  const [opened, handlers] = useDisclosure(false);
+
+  return (
+    <>
+      <Tooltip label="Delete Record">
+        <ActionIcon color="red" variant="filled">
+          <IconTrash />
+        </ActionIcon>
+      </Tooltip>
+
+      <Modal opened={opened} onClose={handlers.close}></Modal>
+    </>
   );
 };
