@@ -44,3 +44,5 @@ export const recordsRelations = relations(records, ({ one }) => ({
 export const recordSchema = createSelectSchema(records);
 
 export const createRecordSchema = createInsertSchema(records);
+
+export const updateRecordSchema = recordSchema.partial()

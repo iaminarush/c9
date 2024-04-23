@@ -3,6 +3,7 @@ import {
   recordSchema,
   storeSchema,
   unitTypesSchema,
+  updateRecordSchema,
 } from "@/server/db/schema";
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
@@ -38,5 +39,16 @@ export const recordContract = c.router({
     query: z.object({
       item: z.number(),
     }),
+  },
+  editRecord: {
+    method: "PATCH",
+    path: "/records/:id",
+    responses: {
+      200: recordDetailSchema,
+      400: z.object({ message: z.string() }),
+      403: z.object({ message: z.string() }),
+    },
+    body: updateRecordSchema,
+    summary: "Update record",
   },
 });
