@@ -51,4 +51,15 @@ export const recordContract = c.router({
     body: updateRecordSchema,
     summary: "Update record",
   },
+  deleteRecord: {
+    method: "DELETE",
+    path: "/records/:id",
+    body: z.any(),
+    responses: {
+      200: recordSchema,
+      403: z.object({ message: z.string() }),
+      404: z.object({ message: z.string() }),
+    },
+    summary: "Delete a record",
+  },
 });

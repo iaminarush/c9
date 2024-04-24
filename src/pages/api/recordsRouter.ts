@@ -68,4 +68,19 @@ export const recordsRouter = createNextRoute(contract.records, {
       ? { status: 200, body: updatedRecord }
       : { status: 400, body: { message: "Error" } };
   },
+  deleteRecord: async (args) => {
+    const token = await getToken({ req: args.req });
+
+    if (!token?.admin)
+      return { status: 403, body: { message: "No Permission" } };
+
+    const [deletedRecord] = await db
+      .delete(records)
+      .where(eq(records.id, Number(args.params.id)))
+      .returning();
+
+    return deletedRecord
+      ? { status: 200, body: deletedRecord }
+      : { status: 404, body: { message: "Error" } };
+  },
 });

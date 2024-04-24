@@ -42,8 +42,10 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
+import NextImage from "next/image";
 import { useRouter } from "next/navigation";
 import { ReactNode, useState } from "react";
+import Barcode from "react-barcode";
 import { SubmitHandler, UseFormReturn, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
@@ -53,10 +55,11 @@ import {
   useCreateRecord,
   useDeleteBarcode,
   useDeleteItem,
+  useDeleteRecord,
   useEditRecord,
   useItem,
+  useRecords,
 } from "./query";
-import Barcode from "react-barcode";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -97,7 +100,7 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
           </Group>
         </Group>
 
-        <RecordList recordId={id} />
+        <RecordList itemId={id} />
       </Stack>
     </>
   );
@@ -415,10 +418,8 @@ const DeleteComponent = ({ id }: { id: string }) => {
   );
 };
 
-const RecordList = ({ recordId }: { recordId: string }) => {
-  const records = client.records.getRecords.useQuery(["record", recordId], {
-    query: { item: Number(recordId) },
-  });
+const RecordList = ({ itemId }: { itemId: string }) => {
+  const records = useRecords(itemId);
 
   if (records.isFetching) {
     return <Skeleton />;
@@ -455,10 +456,11 @@ const renderStoreSelectOption = ({
     <Group flex="1" gap="xs">
       {option.image ? (
         <Image
-          h={24}
-          w={24}
+          component={NextImage}
+          height={24}
+          width={24}
           src={option.image}
-          fallbackSrc="https://placehold.co/600x400?text=No%20Image"
+          fallbackSrc="/noImage.svg"
           alt="Logo"
           fit="contain"
         />
@@ -489,12 +491,13 @@ const RecordCard = (record: Record) => {
           <Group gap="md">
             {record.store.image ? (
               <Image
+                component={NextImage}
                 src={record.store.image}
-                h={48}
-                w={48}
+                height={48}
+                width={48}
                 radius="sm"
                 alt="Logo"
-                fit="contain"
+                style={{ objectFit: "contain", maxWidth: 48 }}
               />
             ) : (
               <IconPhoto size={48} />
@@ -533,7 +536,7 @@ const RecordCard = (record: Record) => {
         <Stack>
           <EditRecordComponent record={record} />
 
-          <DeleteRecordComponent />
+          <DeleteRecordComponent itemId={record.itemId} recordId={record.id} />
         </Stack>
       </Group>
     </Card>
@@ -610,18 +613,53 @@ const EditForm = ({ record }: { record: Record }) => {
   );
 };
 
-const DeleteRecordComponent = () => {
+const DeleteRecordComponent = ({
+  itemId,
+  recordId,
+}: {
+  itemId: number;
+  recordId: number;
+}) => {
   const [opened, handlers] = useDisclosure(false);
+  const { mutate, isLoading } = useDeleteRecord(`${itemId}`);
+
+  const handleClick = () => {
+    mutate(
+      { params: { id: `${recordId}` }, body: null },
+      {
+        onSuccess: () => {
+          handlers.close();
+          toast.success("Record deleted", { icon: <IconTrash /> });
+        },
+      },
+    );
+  };
 
   return (
     <>
       <Tooltip label="Delete Record">
-        <ActionIcon color="red" variant="filled">
+        <ActionIcon color="red" variant="filled" onClick={handlers.open}>
           <IconTrash />
         </ActionIcon>
       </Tooltip>
 
-      <Modal opened={opened} onClose={handlers.close}></Modal>
+      <Modal
+        opened={opened}
+        onClose={handlers.close}
+        centered
+        title="Do you want to delete this record"
+      >
+        <Stack>
+          <Button
+            variant="filled"
+            color="red"
+            onClick={handleClick}
+            loading={isLoading}
+          >
+            Delete
+          </Button>
+        </Stack>
+      </Modal>
     </>
   );
 };
