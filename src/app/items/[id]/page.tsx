@@ -82,7 +82,6 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
 
   if (isError) return <Text>Error</Text>;
 
-  //TODO edit records
   return (
     <>
       <Stack>
