@@ -2,7 +2,7 @@ import { client } from "@/contracts/contract";
 import { barcodeContract } from "@/contracts/contract-barcode";
 import { itemContract } from "@/contracts/contract-item";
 import { recordContract } from "@/contracts/contract-record";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ServerInferResponses } from "@ts-rest/core";
 import { UseQueryOptions } from "@ts-rest/react-query";
 import { produce } from "immer";
@@ -10,7 +10,7 @@ import { produce } from "immer";
 const keys = {
   all: ["item"],
   item: (id: string) => [...keys.all, id] as const,
-  record: (id: string) => ["record", id] as const,
+  record: (itemId: string) => ["record", itemId] as const,
   barcodes: (id: number) => [...keys.all, "barcodes", id],
 };
 
@@ -33,6 +33,11 @@ export const useItem = (
     { params: { id } },
     queryOptions,
   );
+
+export const useRecords = (id: string) =>
+  client.records.getRecords.useQuery(keys.record(id), {
+    query: { item: Number(id) },
+  });
 
 export const useCreateRecord = (id: string) => {
   const queryClient = useQueryClient();
@@ -130,6 +135,35 @@ export const useEditRecord = () => {
           if (index !== -1) {
             const newData = produce(oldData, (draft) => {
               draft.body[index] = body;
+            });
+
+            return newData;
+          }
+
+          return oldData;
+        },
+      );
+    },
+  });
+};
+
+export const useDeleteRecord = (itemId: string) => {
+  const queryClient = useQueryClient();
+
+  return client.records.deleteRecord.useMutation({
+    onSuccess: ({ body }) => {
+      queryClient.setQueryData<RecordsResponse>(
+        keys.record(itemId),
+        (oldData) => {
+          if (!oldData) return undefined;
+
+          const index = oldData.body.findIndex((r) => r.id === body.id);
+
+          console.log(index);
+
+          if (index !== -1) {
+            const newData = produce(oldData, (draft) => {
+              draft.body.splice(index, 1);
             });
 
             return newData;
