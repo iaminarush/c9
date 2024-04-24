@@ -2,7 +2,7 @@ import { client } from "@/contracts/contract";
 import { barcodeContract } from "@/contracts/contract-barcode";
 import { itemContract } from "@/contracts/contract-item";
 import { recordContract } from "@/contracts/contract-record";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { ServerInferResponses } from "@ts-rest/core";
 import { UseQueryOptions } from "@ts-rest/react-query";
 import { produce } from "immer";

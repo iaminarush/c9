@@ -4,7 +4,6 @@ import { BarcodeScanner } from "@/components/barcodeScanner";
 import NumberFormField from "@/components/hook-form/NumberFormField";
 import SelectFormField from "@/components/hook-form/SelectFormField";
 import TextFormField from "@/components/hook-form/TextFormField";
-import { client } from "@/contracts/contract";
 import { recordDetailSchema } from "@/contracts/contract-record";
 import { useStoresData, useUnitTypesData } from "@/lib/commonQueries";
 import { isNumber } from "@/lib/utils";
