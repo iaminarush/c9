@@ -186,16 +186,26 @@ const FormLayout = ({
       <Center>
         <Stack>
           <Text>Logo</Text>
-          <Image
-            component={NextImage}
-            style={{ objectFit: "contain" }}
-            height={200}
-            width={200}
-            src={image}
-            fallbackSrc="https://placehold.co/600x400?text=No%20Image"
-            radius="sm"
-            alt="Logo"
-          />
+          {image ? (
+            <Image
+              component={NextImage}
+              style={{ objectFit: "contain" }}
+              height={200}
+              width={200}
+              src={image}
+              radius="sm"
+              alt="Logo"
+            />
+          ) : (
+            <Image
+              style={{ objectFit: "contain" }}
+              height={200}
+              width={200}
+              src="/noImage.svg"
+              radius="sm"
+              alt="Logo placeholder"
+            />
+          )}
         </Stack>
       </Center>
       {!!data?.user.admin && (
@@ -252,6 +262,7 @@ const StoreButton = ({
       }
       rightSection={<span />}
       onClick={() => {
+        console.log(store.image);
         reset({ name: store.name, image: store.image, remark: store.remark });
         setStoreId(store.id);
       }}
