@@ -53,6 +53,7 @@ import {
   useCreateRecord,
   useDeleteBarcode,
   useDeleteItem,
+  useEditRecord,
   useItem,
 } from "./query";
 import Barcode from "react-barcode";
@@ -179,8 +180,6 @@ const AddComponent = ({ id }: { id: string }) => {
   const { data } = useSession();
   const [opened, { open, close }] = useDisclosure(false);
 
-  const unitTypes = useUnitTypesData({ queryOptions: { enabled: opened } });
-  const stores = useStoresData({ queryOptions: { enabled: opened } });
   const createRecord = useCreateRecord(id);
   const form = useForm<FormSchema>({
     defaultValues: {
@@ -527,6 +526,7 @@ const RecordCard = (record: Record) => {
               prefix="$ "
               suffix={` / ${record.unitType.name}`}
               value={Number(record.price) / Number(record.amount)}
+              decimalScale={2}
             />
           </Group>
         </Stack>
@@ -566,10 +566,49 @@ const EditForm = ({ record }: { record: Record }) => {
       price: Number(record.price),
       unitTypeId: `${record.unitTypeId}`,
       amount: Number(record.amount),
+      itemId: record.itemId,
     },
   });
 
-  return <FormLayout form={form} enableQueries={true} submitButton={<></>} />;
+  const { mutate, isLoading } = useEditRecord();
+
+  const onSubmit: SubmitHandler<FormSchema> = (data) => {
+    const submitData: FormData = {
+      ...data,
+      storeId: Number(data.storeId),
+      unitTypeId: Number(data.unitTypeId),
+      price: `${data.price}`,
+      amount: `${data.amount}`,
+    };
+
+    const result = createRecordSchema.safeParse(submitData);
+    if (result.success) {
+      mutate(
+        { body: result.data, params: { id: `${record.id}` } },
+        {
+          onSuccess: () => {
+            close();
+            toast.success("Record Updated");
+          },
+        },
+      );
+    } else {
+      toast.error("Error, view console");
+      console.log(result.error);
+    }
+  };
+
+  return (
+    <FormLayout
+      form={form}
+      enableQueries={true}
+      submitButton={
+        <Button loading={isLoading} onClick={form.handleSubmit(onSubmit)}>
+          Update record
+        </Button>
+      }
+    />
+  );
 };
 
 const DeleteRecordComponent = () => {
