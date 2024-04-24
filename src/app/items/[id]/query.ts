@@ -114,3 +114,30 @@ export const useDeleteBarcode = () => {
     },
   });
 };
+
+export const useEditRecord = () => {
+  const queryClient = useQueryClient();
+
+  return client.records.editRecord.useMutation({
+    onSuccess: ({ body }) => {
+      queryClient.setQueryData<RecordsResponse>(
+        keys.barcodes(body.itemId),
+        (oldData) => {
+          if (!oldData) return undefined;
+
+          const index = oldData.body.findIndex((r) => r.id === body.id);
+
+          if (index !== -1) {
+            const newData = produce(oldData, (draft) => {
+              draft.body[index] = body;
+            });
+
+            return newData;
+          }
+
+          return oldData;
+        },
+      );
+    },
+  });
+};
