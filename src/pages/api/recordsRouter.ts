@@ -1,7 +1,6 @@
-import { auth } from "@/app/api/auth/[...nextauth]/auth";
 import { contract } from "@/contracts/contract";
 import { db } from "@/server/db/db";
-import { records, stores } from "@/server/db/schema";
+import { records } from "@/server/db/schema";
 import { createNextRoute } from "@ts-rest/next";
 import { eq } from "drizzle-orm";
 import { getToken } from "next-auth/jwt";
@@ -47,10 +46,9 @@ export const recordsRouter = createNextRoute(contract.records, {
     return { status: 404, body: null };
   },
   editRecord: async (args) => {
-    // const token = await getToken({req: args.req})
-    const session = await auth();
+    const token = await getToken({ req: args.req });
 
-    if (!session?.user.admin)
+    if (!token?.admin)
       return { status: 403, body: { message: "No Permission" } };
 
     await db
