@@ -48,6 +48,7 @@
     "next-auth": "^4.24.6",
     "next13-progressbar": "^1.2.1",
     "postgres": "^3.3.5",
+    "ramda": "^0.29.1",
     "react": "18.2.0",
     "react-barcode": "^1.5.1",
     "react-complex-tree": "^2.4.2",
@@ -65,6 +66,7 @@
   "devDependencies": {
     "@opentelemetry/api": "^1.4.1",
     "@types/bcrypt": "^5.0.0",
+    "@types/ramda": "^0.29.12",
     "@types/swagger-ui-react": "^4.18.0",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@typescript-eslint/parser": "^6.7.0",

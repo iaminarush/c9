@@ -20,7 +20,7 @@ export const recordsRouter = createNextRoute(contract.records, {
     if (newRecord) {
       const createdRecord = await db.query.records.findFirst({
         where: eq(records.id, newRecord.id),
-        with: { store: true, unitType: true },
+        with: { store: true, unitType: { with: { unitFamily: true } } },
       });
 
       if (createdRecord) {
@@ -35,14 +35,14 @@ export const recordsRouter = createNextRoute(contract.records, {
       where: eq(records.itemId, Number(args.query.item)),
       with: {
         store: true,
-        unitType: true,
+        unitType: { with: { unitFamily: true } },
       },
     });
+
 
     if (result) {
       return { status: 200, body: result };
     }
-    // }
     return { status: 404, body: null };
   },
   editRecord: async (args) => {
@@ -60,7 +60,7 @@ export const recordsRouter = createNextRoute(contract.records, {
       where: eq(records.id, Number(args.params.id)),
       with: {
         store: true,
-        unitType: true,
+        unitType: { with: { unitFamily: true } },
       },
     });
 

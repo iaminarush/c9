@@ -2,6 +2,7 @@ import {
   createRecordSchema,
   recordSchema,
   storeSchema,
+  unitFamilySchema,
   unitTypesSchema,
   updateRecordSchema,
 } from "@/server/db/schema";
@@ -11,7 +12,13 @@ import { z } from "zod";
 export const recordDetailSchema = recordSchema.merge(
   z.object({
     store: storeSchema,
-    unitType: unitTypesSchema.nullable(),
+    unitType: unitTypesSchema
+      .merge(
+        z.object({
+          unitFamily: unitFamilySchema,
+        }),
+      )
+      .nullable(),
   }),
 );
 

@@ -65,6 +65,7 @@ import {
   useItem,
   useRecords,
 } from "./query";
+import { partition, uniqBy } from "ramda";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -452,26 +453,58 @@ const DeleteComponent = ({ id }: { id: string }) => {
 };
 
 const RecordList = ({ itemId }: { itemId: string }) => {
-  const records = useRecords(itemId);
+  const { data, isFetching, isSuccess } = useRecords(itemId);
 
-  if (records.isFetching) {
+  if (isFetching) {
     return <Skeleton />;
   }
 
-  if (records.isSuccess) {
-    return (
-      <>
-        {records.data.body.length ? (
-          <Stack>
-            {records.data.body.map((r) => (
-              <RecordCard key={r.id} {...r} />
-            ))}
-          </Stack>
-        ) : (
-          <Text>No Records</Text>
-        )}
-      </>
-    );
+  if (isSuccess) {
+    if (data.body.length === 0) {
+      return <Text>No Records</Text>;
+    } else {
+      console.log(data.body);
+      // const unitFamilies = ((track = new Set()) => (data.body.filter(r => (track.has(r.unitType?.unitFamilyId)))))
+      // const customUnitRecords = data.body.filter((r) => !!r.customUnit);
+
+      const [customUnitRecords, standardUnitRecords] = partition(
+        (r) => !!r.customUnit,
+        data.body,
+      );
+
+      const uniqueUnitFamilies = uniqBy(
+        (r) => r.unitType?.unitFamilyId,
+        standardUnitRecords,
+      );
+
+      console.log(uniqueUnitFamilies);
+
+      return (
+        <Stack>
+          {customUnitRecords.length && (
+            <Stack>
+              <Text>Custom Unit(s)</Text>
+              {customUnitRecords.map((r) => (
+                <RecordCard key={r.id} {...r} />
+              ))}
+            </Stack>
+          )}
+        </Stack>
+      );
+    }
+    // (
+    //   <>
+    //     {records.data.body.length ? (
+    //       <Stack>
+    //         {/* {records.data.body.map((r) => (
+    //           <RecordCard key={r.id} {...r} />
+    //         ))} */}
+    //       </Stack>
+    //     ) : (
+    //       <Text>No Records</Text>
+    //     )}
+    //   </>
+    // );
   }
 
   return <Text>Error loading records</Text>;
@@ -496,6 +529,7 @@ const renderStoreSelectOption = ({
           fallbackSrc="/noImage.svg"
           alt="Logo"
           fit="contain"
+          style={{ objectFit: "contain", maxWidth: 24 }}
         />
       ) : (
         <IconPhotoOff size={24} />
@@ -517,8 +551,6 @@ const renderStoreSelectOption = ({
 type Record = z.infer<typeof recordDetailSchema>;
 
 const RecordCard = (record: Record) => {
-  console.log(record, !!record.unitType);
-
   const unitLabel = record.unitType ? record.unitType.name : record.customUnit;
 
   return (
