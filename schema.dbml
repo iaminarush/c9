@@ -16,13 +16,23 @@ table account {
   }
 }
 
+table barcodes {
+  id serial [pk, not null, increment]
+  barcode varchar(13) [not null]
+  item_id integer [not null]
+}
+
 table categories {
   id serial [pk, not null, increment]
-  name text [not null, unique]
+  name text [not null]
   remark text
   updated_at timestamp
   created_at timestamp [default: `now()`]
   parent_id integer
+
+  indexes {
+    (name, parent_id) [name: 'categories_name_parent_id_unique', unique]
+  }
 }
 
 table items {
@@ -31,13 +41,7 @@ table items {
   remark text
   updated_at timestamp
   created_at timestamp [default: `now()`]
-  category_id integer [not null]
-}
-
-table prices {
-  id serial [pk, not null, increment]
-  price bigint [not null]
-  timestamp timestamp [default: `now()`]
+  category_id integer
 }
 
 table records {
@@ -51,6 +55,7 @@ table records {
   item_id integer [not null]
   store_id integer [not null]
   unit_type_id integer [not null]
+  custom_unit text
 }
 
 table session {
@@ -65,14 +70,21 @@ table stores {
   remark text
   updated_at timestamp
   created_at timestamp [default: `now()`]
+  image text
+}
+
+table unit_families {
+  id serial [pk, not null, increment]
+  name text [not null, unique]
 }
 
 table unit_types {
   id serial [pk, not null, increment]
-  name text [not null]
+  name text [not null, unique]
   remark text
   updated_at timestamp
   created_at timestamp [default: `now()`]
+  unit_family_id integer [not null]
 }
 
 table user {
@@ -83,6 +95,7 @@ table user {
   password text [not null]
   emailVerified timestamp
   image text
+  admin boolean [default: false]
 }
 
 table verificationToken {
@@ -95,12 +108,14 @@ table verificationToken {
   }
 }
 
-ref: items.category_id > categories.id
+ref: barcodes.item_id > items.id
 
-ref: prices.id > items.id
+ref: items.category_id > categories.id
 
 ref: records.unit_type_id > unit_types.id
 
 ref: records.store_id > stores.id
 
 ref: records.item_id > items.id
+
+ref: unit_types.unit_family_id > unit_families.id
