@@ -102,7 +102,7 @@ export default function NavLayout({ children }: { children: ReactNode }) {
             onClick={toggle}
             selected={initialPath === "comparison"}
           >
-            Comparison
+            Comparison (WIP)
           </LinkButton>
 
           <LinkButton
