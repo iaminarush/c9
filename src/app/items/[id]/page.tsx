@@ -21,6 +21,7 @@ import {
   NumberInput,
   Skeleton,
   Stack,
+  Switch,
   Tabs,
   TabsList,
   TabsPanel,
@@ -45,7 +46,12 @@ import NextImage from "next/image";
 import { useRouter } from "next/navigation";
 import { ReactNode, useState } from "react";
 import Barcode from "react-barcode";
-import { SubmitHandler, UseFormReturn, useForm } from "react-hook-form";
+import {
+  SubmitHandler,
+  UseFormReturn,
+  useForm,
+  useWatch,
+} from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
 import {
@@ -62,14 +68,19 @@ import {
 
 type FormData = z.infer<typeof createRecordSchema>;
 
-const formSchema = createRecordSchema.merge(
-  z.object({
-    storeId: z.string(),
-    unitTypeId: z.string(),
-    price: z.number(),
-    amount: z.number(),
-  }),
-);
+const formSchema = createRecordSchema
+  .merge(
+    z.object({
+      storeId: z.string(),
+      unitTypeId: z.string().nullable(),
+      price: z.number(),
+      amount: z.number(),
+      customUnit: z.string().nullable(),
+    }),
+  )
+  .refine((val) => !!val.unitTypeId || !!val.customUnit, {
+    message: "Either unit type or custom unit must be valie",
+  });
 
 type FormSchema = z.infer<typeof formSchema>;
 
@@ -115,6 +126,10 @@ const FormLayout = ({
   submitButton: ReactNode;
 }) => {
   const { control } = form;
+  const customUnit = useWatch({ control, name: "customUnit" });
+
+  const customUnitEnabled = typeof customUnit === "string";
+
   const unitTypes = useUnitTypesData({
     queryOptions: { enabled: enableQueries },
   });
@@ -148,16 +163,35 @@ const FormLayout = ({
         thousandSeparator=","
       />
 
-      <SelectFormField
-        control={control}
-        name="unitTypeId"
-        data={unitTypes.data?.body}
-        loading={unitTypes.isLoading}
-        label="Unit Type"
-        rules={{ required: "Required" }}
-        searchable
-        withAsterisk
+      <Switch
+        label="Custom Unit"
+        checked={customUnitEnabled}
+        onClick={() => {
+          form.setValue("customUnit", customUnitEnabled ? null : "");
+          form.setValue("unitTypeId", customUnitEnabled ? "" : null);
+        }}
       />
+
+      {customUnitEnabled ? (
+        <TextFormField
+          control={control}
+          name="customUnit"
+          label="Custom Unit"
+          rules={{ required: "Required" }}
+          withAsterisk
+        />
+      ) : (
+        <SelectFormField
+          control={control}
+          name="unitTypeId"
+          data={unitTypes.data?.body}
+          loading={unitTypes.isLoading}
+          label="Unit Type"
+          rules={{ required: "Required" }}
+          searchable
+          withAsterisk
+        />
+      )}
 
       <NumberFormField
         control={control}
@@ -483,6 +517,10 @@ const renderStoreSelectOption = ({
 type Record = z.infer<typeof recordDetailSchema>;
 
 const RecordCard = (record: Record) => {
+  console.log(record, !!record.unitType);
+
+  const unitLabel = record.unitType ? record.unitType.name : record.customUnit;
+
   return (
     <Card p="xs">
       <Group style={{ flexGrow: 1 }} justify="space-between" wrap="nowrap">
@@ -519,13 +557,13 @@ const RecordCard = (record: Record) => {
               />
 
               <Text>
-                Weight: {record.amount} {record.unitType.name}
+                Weight: {record.amount} {unitLabel}
               </Text>
             </Group>
 
             <NumberFormatter
               prefix="$ "
-              suffix={` / ${record.unitType.name}`}
+              suffix={` / ${unitLabel}`}
               value={Number(record.price) / Number(record.amount)}
               decimalScale={2}
             />
@@ -553,21 +591,28 @@ const EditRecordComponent = ({ record }: { record: Record }) => {
         </ActionIcon>
       </Tooltip>
 
-      <Modal opened={opened} onClose={handlers.close}>
-        {!!opened && <EditForm record={record} />}
+      <Modal opened={opened} onClose={handlers.close} title="Edit Record">
+        {!!opened && <EditForm record={record} handleClose={handlers.close} />}
       </Modal>
     </>
   );
 };
 
-const EditForm = ({ record }: { record: Record }) => {
+const EditForm = ({
+  record,
+  handleClose,
+}: {
+  record: Record;
+  handleClose: () => void;
+}) => {
   const form = useForm<FormSchema>({
     defaultValues: {
       storeId: `${record.storeId}`,
       price: Number(record.price),
-      unitTypeId: `${record.unitTypeId}`,
+      unitTypeId: record.unitTypeId ? `${record.unitTypeId}` : null,
       amount: Number(record.amount),
       itemId: record.itemId,
+      customUnit: record.customUnit,
     },
   });
 
@@ -588,7 +633,7 @@ const EditForm = ({ record }: { record: Record }) => {
         { body: result.data, params: { id: `${record.id}` } },
         {
           onSuccess: () => {
-            close();
+            handleClose();
             toast.success("Record Updated");
           },
         },

@@ -1,4 +1,4 @@
-import { Mass, Volume } from "convert";
+import { Area, Mass, Volume } from "convert";
 import { relations } from "drizzle-orm";
 import { integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
@@ -10,7 +10,7 @@ import { unitFamilies } from "./unitFamilies";
 
 export const unitTypes = pgTable("unit_types", {
   id: serial("id").primaryKey(),
-  name: text("name").notNull().unique().$type<Mass | Volume>(),
+  name: text("name").notNull().unique().$type<Mass | Volume | Area>(),
   remark: text("remark"),
   updatedAt: timestamp("updated_at"),
   createdAt: timestamp("created_at").defaultNow(),

@@ -5,7 +5,7 @@ import { createSelectSchema } from "drizzle-zod";
 
 export const unitFamilies = pgTable("unit_families", {
   id: serial("id").primaryKey(),
-  name: text("name", { enum: ["Mass", "Volume"] })
+  name: text("name", { enum: ["Mass", "Volume", "Area"] })
     .notNull()
     .unique(),
 });

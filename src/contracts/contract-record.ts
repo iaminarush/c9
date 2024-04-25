@@ -11,7 +11,7 @@ import { z } from "zod";
 export const recordDetailSchema = recordSchema.merge(
   z.object({
     store: storeSchema,
-    unitType: unitTypesSchema,
+    unitType: unitTypesSchema.nullable(),
   }),
 );
 
