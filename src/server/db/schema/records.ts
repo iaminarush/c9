@@ -22,7 +22,7 @@ export const records = pgTable("records", {
   createdAt: timestamp("created_at").defaultNow(),
   itemId: integer("item_id").notNull(),
   storeId: integer("store_id").notNull(),
-  unitTypeId: integer("unit_type_id").notNull(),
+  unitTypeId: integer("unit_type_id"),
   customUnit: text("custom_unit"),
 });
 
@@ -45,4 +45,4 @@ export const recordSchema = createSelectSchema(records);
 
 export const createRecordSchema = createInsertSchema(records);
 
-export const updateRecordSchema = recordSchema.partial()
+export const updateRecordSchema = recordSchema.partial();
