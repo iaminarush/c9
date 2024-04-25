@@ -126,7 +126,7 @@ export const useEditRecord = () => {
   return client.records.editRecord.useMutation({
     onSuccess: ({ body }) => {
       queryClient.setQueryData<RecordsResponse>(
-        keys.barcodes(body.itemId),
+        keys.record(`${body.itemId}`),
         (oldData) => {
           if (!oldData) return undefined;
 
@@ -158,8 +158,6 @@ export const useDeleteRecord = (itemId: string) => {
           if (!oldData) return undefined;
 
           const index = oldData.body.findIndex((r) => r.id === body.id);
-
-          console.log(index);
 
           if (index !== -1) {
             const newData = produce(oldData, (draft) => {
