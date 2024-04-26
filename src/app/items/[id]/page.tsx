@@ -1,5 +1,6 @@
 "use client";
 
+import * as R from "remeda";
 import { BarcodeScanner } from "@/components/barcodeScanner";
 import NumberFormField from "@/components/hook-form/NumberFormField";
 import SelectFormField from "@/components/hook-form/SelectFormField";
@@ -7,7 +8,11 @@ import TextFormField from "@/components/hook-form/TextFormField";
 import { recordDetailSchema } from "@/contracts/contract-record";
 import { useStoresData, useUnitTypesData } from "@/lib/commonQueries";
 import { isNumber } from "@/lib/utils";
-import { createRecordSchema } from "@/server/db/schema";
+import {
+  createRecordSchema,
+  unitFamilySchema,
+  unitTypesSchema,
+} from "@/server/db/schema";
 import {
   ActionIcon,
   Button,
@@ -44,7 +49,7 @@ import {
 import { useSession } from "next-auth/react";
 import NextImage from "next/image";
 import { useRouter } from "next/navigation";
-import { ReactNode, useState } from "react";
+import { Fragment, ReactNode, useState } from "react";
 import Barcode from "react-barcode";
 import {
   SubmitHandler,
@@ -65,7 +70,6 @@ import {
   useItem,
   useRecords,
 } from "./query";
-import { partition, uniqBy } from "ramda";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -452,6 +456,20 @@ const DeleteComponent = ({ id }: { id: string }) => {
   );
 };
 
+const customUnitRecordSchema = recordDetailSchema.merge(
+  z.object({ customUnit: z.string() }),
+);
+
+const standardUnitRecordSchema = recordDetailSchema.merge(
+  z.object({
+    unitType: unitTypesSchema.merge(z.object({ unitFamily: unitFamilySchema })),
+  }),
+);
+
+type CustomUnitRecord = z.infer<typeof customUnitRecordSchema>;
+
+type StandardUnitRecord = z.infer<typeof standardUnitRecordSchema>;
+
 const RecordList = ({ itemId }: { itemId: string }) => {
   const { data, isFetching, isSuccess } = useRecords(itemId);
 
@@ -463,27 +481,40 @@ const RecordList = ({ itemId }: { itemId: string }) => {
     if (data.body.length === 0) {
       return <Text>No Records</Text>;
     } else {
-      console.log(data.body);
-      // const unitFamilies = ((track = new Set()) => (data.body.filter(r => (track.has(r.unitType?.unitFamilyId)))))
-      // const customUnitRecords = data.body.filter((r) => !!r.customUnit);
-
-      const [customUnitRecords, standardUnitRecords] = partition(
+      const customUnitRecords = data.body.filter(
         (r) => !!r.customUnit,
-        data.body,
-      );
+      ) as CustomUnitRecord[];
+      const standardUnitRecords = data.body.filter(
+        (r) => !!r.unitType,
+      ) as StandardUnitRecord[];
 
-      const uniqueUnitFamilies = uniqBy(
-        (r) => r.unitType?.unitFamilyId,
+      const uniqueUnitFamilies = R.uniqueBy(
         standardUnitRecords,
-      );
-
-      console.log(uniqueUnitFamilies);
+        (r) => r.unitType.unitFamilyId,
+      ).map((r) => ({
+        id: r.unitType.unitFamilyId,
+        family: r.unitType.unitFamily.name,
+      }));
 
       return (
         <Stack>
-          {customUnitRecords.length && (
+          {standardUnitRecordSchema && (
             <Stack>
-              <Text>Custom Unit(s)</Text>
+              {uniqueUnitFamilies.map((r) => (
+                <Stack key={r.id}>
+                  <Title order={3}>{r.family}</Title>
+                  {standardUnitRecords
+                    .filter((sr) => (sr.unitType.unitFamilyId = r.id))
+                    .map((sr) => (
+                      <RecordCard key={sr.id} {...sr} />
+                    ))}
+                </Stack>
+              ))}
+            </Stack>
+          )}
+          {uniqueUnitFamilies.length && (
+            <Stack>
+              <Title order={3}>Custom Units</Title>
               {customUnitRecords.map((r) => (
                 <RecordCard key={r.id} {...r} />
               ))}
@@ -492,19 +523,6 @@ const RecordList = ({ itemId }: { itemId: string }) => {
         </Stack>
       );
     }
-    // (
-    //   <>
-    //     {records.data.body.length ? (
-    //       <Stack>
-    //         {/* {records.data.body.map((r) => (
-    //           <RecordCard key={r.id} {...r} />
-    //         ))} */}
-    //       </Stack>
-    //     ) : (
-    //       <Text>No Records</Text>
-    //     )}
-    //   </>
-    // );
   }
 
   return <Text>Error loading records</Text>;
