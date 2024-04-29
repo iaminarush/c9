@@ -105,7 +105,7 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
       <Stack>
         <Group justify="space-between">
           <Group align="center">
-            <Title>{data.body.name}</Title>
+            <Title />
             <DeleteComponent id={id} />
           </Group>
           <Group>
@@ -120,6 +120,49 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
     </>
   );
 }
+
+const TitleComponent = ({ title }: { title: string }) => {
+  const [edit, handlers] = useDisclosure(false);
+
+  if (!edit)
+    return (
+      <Group gap="xs">
+        <Title>{title}</Title>
+        <ActionIcon>
+          <IconEdit />
+        </ActionIcon>
+      </Group>
+    );
+
+  if (edit)
+    return (
+      <Group gap="xs">
+        {/* <TextInput
+          value={value}
+          onChange={(e) => setValue(e.currentTarget.value)}
+          rightSection={
+            <ActionIcon
+              variant="transparent"
+              color="red"
+              onClick={handlers.close}
+              disabled={isLoading}
+            >
+              <IconX />
+            </ActionIcon>
+          }
+          disabled={isLoading}
+        />
+        <ActionIcon
+          variant="transparent"
+          color="green"
+          onClick={handleUpdate}
+          loading={isLoading}
+        >
+          <IconDeviceFloppy />
+        </ActionIcon> */}
+      </Group>
+    );
+};
 
 const FormLayout = ({
   form,
