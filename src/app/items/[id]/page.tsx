@@ -105,7 +105,7 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
       <Stack>
         <Group justify="space-between">
           <Group align="center">
-            <Title />
+            <TitleComponent title={data.body.name} />
             <DeleteComponent id={id} />
           </Group>
           <Group>
