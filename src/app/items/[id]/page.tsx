@@ -1,6 +1,5 @@
 "use client";
 
-import * as R from "remeda";
 import { BarcodeScanner } from "@/components/barcodeScanner";
 import NumberFormField from "@/components/hook-form/NumberFormField";
 import SelectFormField from "@/components/hook-form/SelectFormField";
@@ -40,16 +39,18 @@ import { useDisclosure, useInputState } from "@mantine/hooks";
 import {
   IconBarcode,
   IconCheck,
+  IconDeviceFloppy,
   IconEdit,
   IconPhoto,
   IconPhotoOff,
   IconPlus,
   IconTrash,
+  IconX,
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import NextImage from "next/image";
 import { useRouter } from "next/navigation";
-import { Fragment, ReactNode, useState } from "react";
+import { ReactNode, useState } from "react";
 import Barcode from "react-barcode";
 import {
   SubmitHandler,
@@ -58,6 +59,7 @@ import {
   useWatch,
 } from "react-hook-form";
 import { toast } from "react-hot-toast";
+import * as R from "remeda";
 import { z } from "zod";
 import {
   useBarcodes,
@@ -69,6 +71,7 @@ import {
   useEditRecord,
   useItem,
   useRecords,
+  useUpdateItem,
 } from "./query";
 
 type FormData = z.infer<typeof createRecordSchema>;
@@ -105,7 +108,7 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
       <Stack>
         <Group justify="space-between">
           <Group align="center">
-            <TitleComponent title={data.body.name} />
+            <TitleComponent title={data.body.name} id={id} />
             <DeleteComponent id={id} />
           </Group>
           <Group>
@@ -121,14 +124,28 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
   );
 }
 
-const TitleComponent = ({ title }: { title: string }) => {
+const TitleComponent = ({ title, id }: { title: string; id: string }) => {
   const [edit, handlers] = useDisclosure(false);
+  const [value, setValue] = useState(title);
+  const { mutate, isLoading } = useUpdateItem();
+  const { data } = useSession();
+
+  const handleUpdate = () => {
+    mutate(
+      { body: { name: value }, params: { id } },
+      {
+        onSuccess: () => {
+          handlers.close();
+        },
+      },
+    );
+  };
 
   if (!edit)
     return (
       <Group gap="xs">
         <Title>{title}</Title>
-        <ActionIcon>
+        <ActionIcon onClick={handlers.open} disabled={!data?.user.admin}>
           <IconEdit />
         </ActionIcon>
       </Group>
@@ -137,7 +154,7 @@ const TitleComponent = ({ title }: { title: string }) => {
   if (edit)
     return (
       <Group gap="xs">
-        {/* <TextInput
+        <TextInput
           value={value}
           onChange={(e) => setValue(e.currentTarget.value)}
           rightSection={
@@ -159,7 +176,7 @@ const TitleComponent = ({ title }: { title: string }) => {
           loading={isLoading}
         >
           <IconDeviceFloppy />
-        </ActionIcon> */}
+        </ActionIcon>
       </Group>
     );
 };
