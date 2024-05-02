@@ -28,3 +28,5 @@ export const itemsRelations = relations(items, ({ one, many }) => ({
 export const itemSchema = createSelectSchema(items);
 
 export const createItemSchema = createInsertSchema(items);
+
+export const updateItemSchema = createSelectSchema(items).partial();

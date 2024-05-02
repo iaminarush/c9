@@ -24,6 +24,8 @@ type BarcodesResponse = ServerInferResponses<
   200
 >;
 
+type ItemResponse = ServerInferResponses<typeof itemContract.getItem, 200>;
+
 export const useItem = (
   id: string,
   queryOptions?: UseQueryOptions<typeof itemContract.getItem>,
@@ -168,6 +170,27 @@ export const useDeleteRecord = (itemId: string) => {
           }
 
           return oldData;
+        },
+      );
+    },
+  });
+};
+
+export const useUpdateItem = () => {
+  const queryClient = useQueryClient();
+
+  return client.items.updateItem.useMutation({
+    onSuccess: ({ body }) => {
+      queryClient.setQueryData<ItemResponse>(
+        keys.item(`${body.id}`),
+        (oldData) => {
+          if (!oldData) return undefined
+            
+          const newData = produce(oldData, (draft) => {
+            draft.body.name = body.name;
+          });
+
+          return newData;
         },
       );
     },
