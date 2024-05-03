@@ -18,7 +18,6 @@ import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useCategories, useCreateCategory } from "./query";
-import { Route } from "next";
 
 export default function Home() {
   const { isLoading, isError, data } = useCategories();

@@ -119,7 +119,7 @@ export default function Category({
             <Box style={{ height: "100%", overflow: "auto" }} py="xs">
               <Stack>
                 {category.data.body.subCategories.length ? (
-                  category.data.body.subCategories.map((sc, i) => (
+                  category.data.body.subCategories.map((sc) => (
                     <Button
                       renderRoot={(props) => (
                         <Link href={`/categories/${sc.id}`} {...props} />
@@ -146,7 +146,7 @@ export default function Category({
             <Box style={{ height: "100%", overflow: "auto" }} py="xs">
               <Stack>
                 {category.data.body.items.length ? (
-                  category.data.body.items.map((item, i) => (
+                  category.data.body.items.map((item) => (
                     <Button
                       renderRoot={(props) => (
                         <Link href={`/items/${item.id}`} {...props} />
