@@ -564,7 +564,7 @@ const RecordList = ({ itemId }: { itemId: string }) => {
                 <Stack key={r.id}>
                   <Title order={3}>{r.family}</Title>
                   {standardUnitRecords
-                    .filter((sr) => (sr.unitType.unitFamilyId = r.id))
+                    .filter((sr) => (sr.unitType.unitFamilyId === r.id))
                     .map((sr) => (
                       <RecordCard key={sr.id} {...sr} />
                     ))}
