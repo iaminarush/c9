@@ -184,8 +184,8 @@ export const useUpdateItem = () => {
       queryClient.setQueryData<ItemResponse>(
         keys.item(`${body.id}`),
         (oldData) => {
-          if (!oldData) return undefined
-            
+          if (!oldData) return undefined;
+
           const newData = produce(oldData, (draft) => {
             draft.body.name = body.name;
           });
