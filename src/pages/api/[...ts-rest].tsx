@@ -1,22 +1,22 @@
 import { contract } from "@/contracts/contract";
 import { createNextRoute, createNextRouter } from "@ts-rest/next";
 import { NextApiRequest, NextApiResponse } from "next";
-import { categoriesRouter } from "./categoriesRouter";
-import { itemsRouter } from "./itemsRouter";
-import { recordsRouter } from "./recordsRouter";
-import { storesRouter } from "./storesRouter";
-import { unitTypesRouter } from "./unitTypesRouter";
-import { unitFamiliesRouter } from "./unitFamiliesRouter";
-import { searchRouter } from "./searchRouter";
-import { barcodeRouter } from "./barcodesRouter";
+import { categoryRouter } from "./category-router";
+import { itemRouter } from "./item-router";
+import { recordRouter } from "./record-router";
+import { storeRouter } from "./store-router";
+import { unitTypeRouter } from "./unit-type-router";
+import { unitFamilyRouter } from "./unit-family-router";
+import { searchRouter } from "./search-router";
+import { barcodeRouter } from "./barcode-router";
 
 const router = createNextRoute(contract, {
-  categories: categoriesRouter,
-  items: itemsRouter,
-  records: recordsRouter,
-  stores: storesRouter,
-  unitTypes: unitTypesRouter,
-  unitFamilies: unitFamiliesRouter,
+  categories: categoryRouter,
+  items: itemRouter,
+  records: recordRouter,
+  stores: storeRouter,
+  unitTypes: unitTypeRouter,
+  unitFamilies: unitFamilyRouter,
   search: searchRouter,
   barcodes: barcodeRouter,
 });

@@ -2,7 +2,7 @@ import { contract } from "@/contracts/contract";
 import { db } from "@/server/db/db";
 import { createNextRoute } from "@ts-rest/next";
 
-export const unitFamiliesRouter = createNextRoute(contract.unitFamilies, {
+export const unitFamilyRouter = createNextRoute(contract.unitFamilies, {
   getUnitFamilies: async () => {
     const result = await db.query.unitFamilies.findMany();
 

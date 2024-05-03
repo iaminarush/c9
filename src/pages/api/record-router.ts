@@ -5,7 +5,7 @@ import { createNextRoute } from "@ts-rest/next";
 import { eq } from "drizzle-orm";
 import { getToken } from "next-auth/jwt";
 
-export const recordsRouter = createNextRoute(contract.records, {
+export const recordRouter = createNextRoute(contract.records, {
   createRecord: async (args) => {
     const token = await getToken({ req: args.req });
 

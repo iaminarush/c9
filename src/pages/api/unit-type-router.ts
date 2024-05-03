@@ -2,7 +2,7 @@ import { contract } from "@/contracts/contract";
 import { db } from "@/server/db/db";
 import { createNextRoute } from "@ts-rest/next";
 
-export const unitTypesRouter = createNextRoute(contract.unitTypes, {
+export const unitTypeRouter = createNextRoute(contract.unitTypes, {
   getUnitTypes: async () => {
     const result = await db.query.unitTypes.findMany();
 

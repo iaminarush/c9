@@ -11,7 +11,7 @@ import { eq, isNull, sql } from "drizzle-orm";
 import { getToken } from "next-auth/jwt";
 import { z } from "zod";
 
-export const categoriesRouter = createNextRoute(contract.categories, {
+export const categoryRouter = createNextRoute(contract.categories, {
   createCategory: async (args) => {
     const token = await getToken({ req: args.req });
 

@@ -6,7 +6,7 @@ import { createNextRoute } from "@ts-rest/next";
 import { eq } from "drizzle-orm";
 import { getToken } from "next-auth/jwt";
 
-export const storesRouter = createNextRoute(contract.stores, {
+export const storeRouter = createNextRoute(contract.stores, {
   getStores: async () => {
     const result = await db.query.stores.findMany();
 
