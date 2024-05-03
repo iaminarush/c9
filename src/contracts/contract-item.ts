@@ -1,4 +1,4 @@
-import { createItemSchema, itemSchema } from "@/server/db/schema/items";
+import { createItemSchema, itemSchema, updateItemSchema } from "@/server/db/schema/items";
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 
@@ -54,7 +54,7 @@ export const itemContract = c.router({
   updateItem: {
     method: "PATCH",
     path: "/items/:id",
-    body: itemSchema,
+    body: updateItemSchema,
     responses: {
       201: itemSchema,
       400: z.object({ message: z.string() }),
