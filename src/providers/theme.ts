@@ -1,5 +1,13 @@
 // "use client";
-import { ActionIcon, Button, Skeleton, createTheme } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  NumberInput,
+  Select,
+  Skeleton,
+  TextInput,
+  createTheme,
+} from "@mantine/core";
 
 const fontFamily = [
   "Inter",
@@ -32,6 +40,27 @@ export const mantineTheme = createTheme({
     Skeleton: Skeleton.extend({
       defaultProps: {
         h: 250,
+      },
+    }),
+    TextInput: TextInput.extend({
+      styles: {
+        input: {
+          fontSize: 16,
+        },
+      },
+    }),
+    Select: Select.extend({
+      styles: {
+        input: {
+          fontSize: 16,
+        },
+      },
+    }),
+    NumberInput: NumberInput.extend({
+      styles: {
+        input: {
+          fontSize: 16,
+        },
       },
     }),
   },
