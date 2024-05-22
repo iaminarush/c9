@@ -144,7 +144,7 @@ const TitleComponent = ({ title, id }: { title: string; id: string }) => {
   if (!edit)
     return (
       <Group gap="xs">
-        <Title>{title}</Title>
+        <Title order={3}>{title}</Title>
         <ActionIcon onClick={handlers.open} disabled={!data?.user.admin}>
           <IconEdit />
         </ActionIcon>
@@ -558,11 +558,11 @@ const RecordList = ({ itemId }: { itemId: string }) => {
 
       return (
         <Stack>
-          {standardUnitRecordSchema && (
+          {!!standardUnitRecords.length && (
             <Stack>
               {uniqueUnitFamilies.map((r) => (
                 <Stack key={r.id}>
-                  <Title order={3}>{r.family}</Title>
+                  <Title order={4}>{r.family}</Title>
                   {standardUnitRecords
                     .filter((sr) => sr.unitType.unitFamilyId === r.id)
                     .map((sr) => (
@@ -572,9 +572,9 @@ const RecordList = ({ itemId }: { itemId: string }) => {
               ))}
             </Stack>
           )}
-          {uniqueUnitFamilies.length && (
+          {!!customUnitRecords.length && (
             <Stack>
-              <Title order={3}>Custom Units</Title>
+              <Title order={4}>Custom Units</Title>
               {customUnitRecords.map((r) => (
                 <RecordCard key={r.id} {...r} />
               ))}
@@ -603,11 +603,13 @@ const renderStoreSelectOption = ({
           component={NextImage}
           height={24}
           width={24}
+          h={24}
+          w={24}
           src={option.image}
           fallbackSrc="/noImage.svg"
           alt="Logo"
           fit="contain"
-          style={{ objectFit: "contain", maxWidth: 24 }}
+          style={{ objectFit: "contain" }}
         />
       ) : (
         <IconPhotoOff size={24} />
@@ -639,12 +641,15 @@ const RecordCard = (record: Record) => {
             {record.store.image ? (
               <Image
                 component={NextImage}
-                src={record.store.image}
                 height={48}
                 width={48}
-                radius="sm"
+                h={48}
+                w={48}
+                src={record.store.image}
+                fallbackSrc="/noImage.svg"
                 alt="Logo"
-                style={{ objectFit: "contain", maxWidth: 48 }}
+                radius="sm"
+                style={{ objectFit: "contain" }}
               />
             ) : (
               <IconPhoto size={48} />
