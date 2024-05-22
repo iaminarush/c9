@@ -16,9 +16,9 @@
   "dependencies": {
     "@auth/drizzle-adapter": "^0.3.2",
     "@formkit/auto-animate": "^0.8.1",
-    "@mantine/core": "7.6.1",
-    "@mantine/hooks": "7.6.1",
-    "@mantine/spotlight": "^7.6.1",
+    "@mantine/core": "^7.9.2",
+    "@mantine/hooks": "^7.9.2",
+    "@mantine/spotlight": "^7.9.2",
     "@neondatabase/serverless": "^0.6.0",
     "@next/bundle-analyzer": "^14.2.2",
     "@paralleldrive/cuid2": "^2.2.2",
