@@ -186,10 +186,12 @@ const FormLayout = ({
   form,
   enableQueries,
   submitButton,
+  create,
 }: {
   form: UseFormReturn<FormSchema>;
   enableQueries: boolean;
   submitButton: ReactNode;
+  create?: boolean;
 }) => {
   const { control } = form;
   const customUnit = useWatch({ control, name: "customUnit" });
@@ -201,12 +203,8 @@ const FormLayout = ({
   });
   const stores = useStoresData({ queryOptions: { enabled: enableQueries } });
 
-  const watch = useWatch({ control });
-
-  console.log(watch);
-
   useEffect(() => {
-    if (unitTypes.isSuccess) {
+    if (unitTypes.isSuccess && create) {
       const gram = unitTypes.data.body.find((ut) => ut.label === "g");
       if (gram) form.setValue("unitTypeId", gram.value);
     }
@@ -339,6 +337,7 @@ const AddComponent = ({ id }: { id: string }) => {
               Create Record
             </Button>
           }
+          create={true}
         />
       </Modal>
     </>
