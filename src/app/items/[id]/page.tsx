@@ -37,6 +37,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure, useInputState } from "@mantine/hooks";
 import {
+  IconBan,
   IconBarcode,
   IconCheck,
   IconDeviceFloppy,
@@ -50,7 +51,7 @@ import {
 import { useSession } from "next-auth/react";
 import NextImage from "next/image";
 import { useRouter } from "next/navigation";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import Barcode from "react-barcode";
 import {
   SubmitHandler,
@@ -143,12 +144,12 @@ const TitleComponent = ({ title, id }: { title: string; id: string }) => {
 
   if (!edit)
     return (
-      <Group gap="xs">
+      <>
         <Title order={3}>{title}</Title>
         <ActionIcon onClick={handlers.open} disabled={!data?.user.admin}>
           <IconEdit />
         </ActionIcon>
-      </Group>
+      </>
     );
 
   if (edit)
@@ -164,7 +165,7 @@ const TitleComponent = ({ title, id }: { title: string; id: string }) => {
               onClick={handlers.close}
               disabled={isLoading}
             >
-              <IconX />
+              <IconBan />
             </ActionIcon>
           }
           disabled={isLoading}
@@ -199,6 +200,17 @@ const FormLayout = ({
     queryOptions: { enabled: enableQueries },
   });
   const stores = useStoresData({ queryOptions: { enabled: enableQueries } });
+
+  const watch = useWatch({ control });
+
+  console.log(watch);
+
+  useEffect(() => {
+    if (unitTypes.isSuccess) {
+      const gram = unitTypes.data.body.find((ut) => ut.label === "g");
+      if (gram) form.setValue("unitTypeId", gram.value);
+    }
+  }, [unitTypes.isSuccess]);
 
   return (
     <Stack>
