@@ -53,7 +53,7 @@ export const BarcodeScanner = ({
         placeholder={noCamera ? "No cameras found" : undefined}
         disabled={noCamera}
       />
-      {!!error && <Text>{error}</Text>}
+      {!!error && <Text c="red">Error: {error}</Text>}
       <video ref={ref} />
     </Stack>
   );
