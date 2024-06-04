@@ -1,6 +1,7 @@
 import { Loader, Select, Stack } from "@mantine/core";
 import { BarcodeFormat, DecodeHintType } from "@zxing/library";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { useMediaDevices } from "react-media-devices";
 import { useZxing } from "react-zxing";
 
@@ -32,9 +33,10 @@ export const BarcodeScanner = ({
     onDecodeResult: (result) => {
       handleScan(result.getText());
     },
-    // onDecodeError: (error) => {
-    //   console.log(error);
-    // },
+    onDecodeError: (error) => {
+      // console.log(error);
+      toast.error(error.message);
+    },
     // hints,
   });
 
