@@ -1,4 +1,4 @@
-import { Loader, Select, Stack } from "@mantine/core";
+import { Loader, Select, Stack, Text } from "@mantine/core";
 import { BarcodeFormat, DecodeHintType } from "@zxing/library";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -19,6 +19,7 @@ export const BarcodeScanner = ({
     constraints: { video: true, audio: false },
   });
   const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
+  const [error, setError] = useState("");
 
   const videoSources =
     devices
@@ -35,7 +36,8 @@ export const BarcodeScanner = ({
     },
     onDecodeError: (error) => {
       // console.log(error);
-      toast.error(error.message);
+      // toast.error(error.message);
+      setError(error.message);
     },
     // hints,
   });
@@ -51,6 +53,7 @@ export const BarcodeScanner = ({
         placeholder={noCamera ? "No cameras found" : undefined}
         disabled={noCamera}
       />
+      {!!error && <Text>{error}</Text>}
       <video ref={ref} />
     </Stack>
   );
