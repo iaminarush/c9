@@ -6,7 +6,7 @@ import { useMediaDevices } from "react-media-devices";
 import { useZxing } from "react-zxing";
 
 const hints = new Map();
-const formats = [BarcodeFormat.CODABAR];
+const formats = [BarcodeFormat.EAN_13];
 
 hints.set(DecodeHintType.POSSIBLE_FORMATS, formats);
 
@@ -39,7 +39,7 @@ export const BarcodeScanner = ({
       // toast.error(error.message);
       setError(error.message);
     },
-    // hints,
+    hints,
   });
 
   return (
