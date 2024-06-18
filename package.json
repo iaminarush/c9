@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^0.3.2",
+    "@ericblade/quagga2": "^1.8.4",
     "@formkit/auto-animate": "^0.8.1",
     "@mantine/core": "^7.9.2",
     "@mantine/hooks": "^7.9.2",
