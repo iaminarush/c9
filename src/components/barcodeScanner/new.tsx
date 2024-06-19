@@ -1,18 +1,23 @@
 import { useDisclosure } from "@mantine/hooks";
-import { useEffect, useRef, useState } from "react";
-import Quagga from '@ericblade/quagga2'
+import {
+  MutableRefObject,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import Quagga, {
+  QuaggaJSResultObject,
+  QuaggaJSResultObject_CodeResult,
+} from "@ericblade/quagga2";
 import { useMediaDevices } from "react-media-devices";
 import { Loader, Select, Stack } from "@mantine/core";
+import { on } from "events";
 
 export default function NewBarcodeScanner() {
-  const [scanning, scanningHandlers] = useDisclosure(false)
-  const [cameras, setCameras] = useState([])
-  const [cameraId, setCameraId] = useState(null)
-  const [cameraError, setCameraError] = useState(null)
-  const [results, setResults] = useState([])
-  const [torch, torchHandlers] = useDisclosure(false)
-  const scannerRef = useRef(null)
-  
+  // const scannerRef = useRef<HTMLDivElement | null>(null);
+
   const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
 
   const { devices, loading } = useMediaDevices({
@@ -37,6 +42,18 @@ export default function NewBarcodeScanner() {
         placeholder={noCamera ? "No cameras found" : undefined}
         disabled={noCamera}
       />
+
+      <div style={{ width: "15rem", height: "15rem" }}>
+        {/* <Scanner scannerRef={scannerRef} /> */}
+      </div>
     </Stack>
   );
 }
+
+const Scanner = () => {
+  return (
+    <>
+      <></>
+    </>
+  );
+};
