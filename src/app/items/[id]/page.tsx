@@ -1,6 +1,5 @@
 "use client";
 
-import { BarcodeScanner } from "@/components/barcodeScanner";
 import NumberFormField from "@/components/hook-form/NumberFormField";
 import SelectFormField from "@/components/hook-form/SelectFormField";
 import TextFormField from "@/components/hook-form/TextFormField";
@@ -74,6 +73,7 @@ import {
   useRecords,
   useUpdateItem,
 } from "./query";
+import BarcodeScanner from "@/components/barcodeScanner";
 
 type FormData = z.infer<typeof createRecordSchema>;
 

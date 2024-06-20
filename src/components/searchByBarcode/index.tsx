@@ -3,10 +3,10 @@
 import { ActionIcon, LoadingOverlay, Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconBarcode } from "@tabler/icons-react";
-import { BarcodeScanner } from "../barcodeScanner";
 import { client } from "@/contracts/contract";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import BarcodeScanner from "../barcodeScanner";
 
 const useBarcodeQuery = (barcode: string | null) =>
   client.items.searchItemByBarcode.useQuery(
@@ -60,6 +60,7 @@ export const SearchByBarcode = () => {
             overlayProps={{ blur: 1 }}
           />
           {!!opened && <BarcodeScanner handleScan={(b) => setBarcode(b)} />}
+          {/* {!!opened && <NewBarcodeScanner handleScan={(b) => setBarcode(b)} />} */}
         </>
       </Modal>
     </>
