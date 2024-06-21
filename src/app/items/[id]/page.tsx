@@ -45,7 +45,6 @@ import {
   IconPhotoOff,
   IconPlus,
   IconTrash,
-  IconX,
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import NextImage from "next/image";
