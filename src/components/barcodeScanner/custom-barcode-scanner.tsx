@@ -33,10 +33,10 @@ const BarcodeScanner: FunctionComponent<ScannerProps> = ({
   }, [close, isCameraSupport, open]);
 
   useEffect(() => {
-    console.log("ran");
     if (detected !== undefined) {
       onCapture?.(detected);
     }
+    //Remove onCapture from dependency array, function identiy causes infinite loop
   }, [detected]);
 
   return (
