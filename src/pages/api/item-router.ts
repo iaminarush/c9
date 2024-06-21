@@ -57,7 +57,7 @@ export const itemRouter = createNextRoute(contract.items, {
   },
   searchItemByBarcode: async (args) => {
     const barcodeRecord = await db.query.barcodes.findFirst({
-      where: eq(barcodes.barcode, args.params.barcode),
+      where: eq(barcodes.barcode, args.body.barcode),
       with: {
         item: true,
       },

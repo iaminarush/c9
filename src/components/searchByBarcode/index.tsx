@@ -1,44 +1,21 @@
 "use client";
 
+import { client } from "@/contracts/contract";
 import { ActionIcon, LoadingOverlay, Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconBarcode } from "@tabler/icons-react";
-import { client } from "@/contracts/contract";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 import BarcodeScanner from "../barcodeScanner";
 
-const useBarcodeQuery = (barcode: string | null) =>
-  client.items.searchItemByBarcode.useQuery(
-    ["barcode search"],
-    {
-      params: { barcode: barcode || "" },
-    },
-    {
-      enabled: !!barcode,
-      meta: { errorMessage: "Can't find item" },
-    },
-  );
+const useSearchItemByBarcode = () => {
+  return client.items.searchItemByBarcode.useMutation();
+};
 
 export const SearchByBarcode = () => {
   const [opened, handlers] = useDisclosure(false);
-  const [barcode, setBarcode] = useState<string | null>(null);
-  const { data, isFetching, isRefetching, error } = useBarcodeQuery(barcode);
   const router = useRouter();
-
-  useEffect(() => {
-    if (error) {
-      setBarcode(null);
-    }
-  }, [error]);
-
-  useEffect(() => {
-    if (data) {
-      router.push(`/items/${data.body.id}`);
-      handlers.close();
-      setBarcode(null);
-    }
-  }, [data]);
+  const { isLoading, mutate } = useSearchItemByBarcode();
 
   return (
     <>
@@ -49,18 +26,30 @@ export const SearchByBarcode = () => {
       <Modal
         opened={opened}
         onClose={() => {
-          setBarcode(null);
           handlers.close();
         }}
         title="Search item with barcode"
       >
         <>
           <LoadingOverlay
-            visible={isFetching || isRefetching}
+            // visible={isFetching || isRefetching}
+            visible={isLoading}
             overlayProps={{ blur: 1 }}
           />
-          {!!opened && <BarcodeScanner handleScan={(b) => setBarcode(b)} />}
-          {/* {!!opened && <NewBarcodeScanner handleScan={(b) => setBarcode(b)} />} */}
+          {!!opened && (
+            <BarcodeScanner
+              handleScan={(barcode) => {
+                mutate(
+                  { body: { barcode } },
+                  {
+                    onSuccess: ({ body }) => router.push(`/items/${body.id}`),
+                    onError: () =>
+                      toast.error(`Barcode ${barcode} not found for any items`),
+                  },
+                );
+              }}
+            />
+          )}
         </>
       </Modal>
     </>
