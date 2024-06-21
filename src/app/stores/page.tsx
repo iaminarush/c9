@@ -262,7 +262,6 @@ const StoreButton = ({
       }
       rightSection={<span />}
       onClick={() => {
-        console.log(store.image);
         reset({ name: store.name, image: store.image, remark: store.remark });
         setStoreId(store.id);
       }}

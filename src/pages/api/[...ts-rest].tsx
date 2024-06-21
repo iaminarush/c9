@@ -25,7 +25,6 @@ export default createNextRouter(contract, router, {
   responseValidation: true,
   errorHandler: (error: unknown, req: NextApiRequest, res: NextApiResponse) => {
     return res.status(500).json({ message: JSON.stringify(error) });
-    // console.log(typeof error, error);
     // if (error instanceof ResponseValidationError) {
     //   return res.status(500).json({ message: "Internal Server Error" });
     // }

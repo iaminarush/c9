@@ -312,8 +312,7 @@ const AddComponent = ({ id }: { id: string }) => {
     if (result.success) {
       createRecord.mutate({ body: result.data }, { onSuccess: () => close() });
     } else {
-      toast.error("Error, view console");
-      console.log(result.error);
+      toast.error("Error occured when creating");
     }
   };
 
@@ -765,8 +764,7 @@ const EditForm = ({
         },
       );
     } else {
-      toast.error("Error, view console");
-      console.log(result.error);
+      toast.error("Error occured when creating");
     }
   };
 

@@ -13,7 +13,6 @@ export const queryClientOptions: QueryClientConfig = {
   },
   queryCache: new QueryCache({
     onError: (error, query) => {
-      console.log(error, query);
       if (query.meta?.errorMessage) {
         toast.error(query.meta.errorMessage as string);
       } else {

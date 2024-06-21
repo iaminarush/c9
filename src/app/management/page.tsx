@@ -155,7 +155,6 @@ const CategoryTree = ({
 
           if (movedCategory) {
             if (t.targetType !== "root") {
-              console.log("non root", items, t, movedCategory);
               const newTreeData = produce(treeData, (draft) => {
                 if (t.targetType === "between-items") {
                   const target = draft.find((c) => c.id === items[0]?.index);
@@ -175,8 +174,6 @@ const CategoryTree = ({
                 return draft;
               });
               setTreeData(newTreeData);
-            } else {
-              console.log("root", items, t);
             }
           }
         }}
