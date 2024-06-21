@@ -1,4 +1,8 @@
-import { createItemSchema, itemSchema, updateItemSchema } from "@/server/db/schema/items";
+import {
+  createItemSchema,
+  itemSchema,
+  updateItemSchema,
+} from "@/server/db/schema/items";
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 
@@ -46,8 +50,10 @@ export const itemContract = c.router({
     summary: "Delete an item",
   },
   searchItemByBarcode: {
-    method: "GET",
-    path: "/items-by-barcode/:barcode",
+    method: "POST",
+    // path: "/items-by-barcode/:barcode",
+    path: "/items-by-barcode",
+    body: z.object({ barcode: z.string() }),
     responses: { 200: itemSchema, 404: z.object({ message: z.string() }) },
     summary: "Find item by barcode",
   },
