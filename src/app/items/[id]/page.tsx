@@ -240,9 +240,9 @@ const FormLayout = ({
       <Switch
         label="Custom Unit"
         checked={customUnitEnabled}
-        onClick={() => {
-          form.setValue("customUnit", customUnitEnabled ? null : "");
-          form.setValue("unitTypeId", customUnitEnabled ? "" : null);
+        onClick={({ currentTarget: { checked } }) => {
+          form.setValue("customUnit", checked ? "" : null);
+          form.setValue("unitTypeId", checked ? null : "");
         }}
       />
 
@@ -302,7 +302,7 @@ const AddComponent = ({ id }: { id: string }) => {
     const submitData: FormData = {
       ...data,
       storeId: Number(data.storeId),
-      unitTypeId: Number(data.unitTypeId),
+      unitTypeId: data.unitTypeId ? Number(data.unitTypeId) : null,
       price: `${data.price}`,
       amount: `${data.amount}`,
     };
@@ -746,7 +746,7 @@ const EditForm = ({
     const submitData: FormData = {
       ...data,
       storeId: Number(data.storeId),
-      unitTypeId: Number(data.unitTypeId),
+      unitTypeId: data.unitTypeId ? Number(data.unitTypeId) : null,
       price: `${data.price}`,
       amount: `${data.amount}`,
     };
