@@ -55,10 +55,8 @@
     "react-dom": "18.2.0",
     "react-hook-form": "^7.46.1",
     "react-hot-toast": "^2.4.1",
-    "react-media-devices": "^1.1.5",
     "react-resizable-panels": "^2.0.16",
     "react-webcam": "^7.2.0",
-    "react-zxing": "^2.0.0",
     "remeda": "^1.61.0",
     "typescript": "5.1.6",
     "uploadthing": "^6.9.0",
@@ -85,5 +83,6 @@
     "postcss-url": "^10.1.3",
     "prettier": "^3.0.3",
     "ts-node": "^10.9.1"
-  }
+  },
+  "packageManager": "pnpm@9.5.0+sha512.140036830124618d624a2187b50d04289d5a087f326c9edfc0ccd733d76c4f52c3a313d4fc148794a2a9d81553016004e6742e8cf850670268a7387fc220c903"
 }

@@ -131,18 +131,12 @@ importers:
       react-hot-toast:
         specifier: ^2.4.1
         version: 2.4.1(csstype@3.1.3)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      react-media-devices:
-        specifier: ^1.1.5
-        version: 1.1.5(react@18.2.0)
       react-resizable-panels:
         specifier: ^2.0.16
         version: 2.0.16(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-webcam:
         specifier: ^7.2.0
         version: 7.2.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      react-zxing:
-        specifier: ^2.0.0
-        version: 2.0.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       remeda:
         specifier: ^1.61.0
         version: 1.61.0
@@ -2869,11 +2863,6 @@ packages:
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
-  react-media-devices@1.1.5:
-    resolution: {integrity: sha512-ozMqxjAuZL66oNUByGuAsZuMe1nYWVmbmdwuV3bp+X8XvN5OPvi0xGDHPbAWX8HA51z9Wfb5OzZ3rLeGM5cWZA==}
-    peerDependencies:
-      react: ^16.8.0  || ^17.0.0 || ^18.0.0
-
   react-number-format@5.3.4:
     resolution: {integrity: sha512-2hHN5mbLuCDUx19bv0Q8wet67QqYK6xmtLQeY5xx+h7UXiMmRtaCwqko4mMPoKXLc6xAzwRrutg8XbTRlsfjRg==}
     peerDependencies:
@@ -2927,13 +2916,6 @@ packages:
     peerDependencies:
       react: '>=16.2.0'
       react-dom: '>=16.2.0'
-
-  react-zxing@2.0.0:
-    resolution: {integrity: sha512-tZV0UnWDnL+xUUVv15N8w04iKP2RJsraDZvN+t5VBb/3jDqmneLkfDs/beFS0l67aL55UCMN44mFmdx9mHqSrQ==}
-    engines: {node: ^18 || ^20, yarn: ^1.22}
-    peerDependencies:
-      react: ^16.8.0  || ^17.0.0 || ^18.0.0
-      react-dom: ^16.8.0  || ^17.0.0 || ^18.0.0
 
   react@18.2.0:
     resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
@@ -3284,12 +3266,6 @@ packages:
     resolution: {integrity: sha512-GLMG0Jc/jiKov/3Ulid1wbv3r54K9HlMW29IWcDFPEqFkSO2nS0MuefWgMJpeHQ9YJeXDL3ZUF+P3jdXlZX/cQ==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
-
-  use-deep-compare-effect@1.8.1:
-    resolution: {integrity: sha512-kbeNVZ9Zkc0RFGpfMN3MNfaKNvcLNyxOAAd9O4CBZ+kCBXXscn9s/4I+8ytUER4RDpEYs5+O6Rs4PqiZ+rHr5Q==}
-    engines: {node: '>=10', npm: '>=6'}
-    peerDependencies:
-      react: '>=16.13'
 
   use-isomorphic-layout-effect@1.1.2:
     resolution: {integrity: sha512-49L8yCO3iGT/ZF9QttjwLF/ZD9Iwto5LnH5LmEdk/6cFmXddqi2ulF0edxTwjj+7mqvpVVGQWvbXZdn32wRSHA==}
@@ -6037,11 +6013,6 @@ snapshots:
 
   react-is@16.13.1: {}
 
-  react-media-devices@1.1.5(react@18.2.0):
-    dependencies:
-      react: 18.2.0
-      use-deep-compare-effect: 1.8.1(react@18.2.0)
-
   react-number-format@5.3.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       prop-types: 15.8.1
@@ -6092,12 +6063,6 @@ snapshots:
 
   react-webcam@7.2.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-
-  react-zxing@2.0.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
-    dependencies:
-      '@zxing/library': 0.20.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
@@ -6455,12 +6420,6 @@ snapshots:
 
   use-composed-ref@1.3.0(react@18.2.0):
     dependencies:
-      react: 18.2.0
-
-  use-deep-compare-effect@1.8.1(react@18.2.0):
-    dependencies:
-      '@babel/runtime': 7.24.0
-      dequal: 2.0.3
       react: 18.2.0
 
   use-isomorphic-layout-effect@1.1.2(@types/react@18.2.21)(react@18.2.0):
