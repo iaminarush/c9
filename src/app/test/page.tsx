@@ -1,7 +1,15 @@
 "use client";
 
-import CalculatorInput from "@/components/calculator-input";
+import { redirect } from "next/navigation";
 
 export default function Test() {
-  return <CalculatorInput />;
+  if (process.env.NODE_ENV === "production") {
+    redirect("/categories");
+  }
+
+  return (
+    <>
+      <></>
+    </>
+  );
 }
