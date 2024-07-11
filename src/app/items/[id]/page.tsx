@@ -281,6 +281,10 @@ const FormLayout = ({
         min={0.01}
         decimalScale={2}
         thousandSeparator=","
+        rightSection={
+          <CalculatorInput onEnter={(value) => setValue("amount", value)} />
+        }
+        rightSectionWidth={36}
       />
 
       <TextFormField control={control} name="description" label="Description" />
