@@ -73,6 +73,7 @@ import {
   useUpdateItem,
 } from "./query";
 import BarcodeScanner from "@/components/barcodeScanner";
+import CalculatorInput from "@/components/calculator-input";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -192,7 +193,7 @@ const FormLayout = ({
   submitButton: ReactNode;
   create?: boolean;
 }) => {
-  const { control } = form;
+  const { control, setValue } = form;
   const customUnit = useWatch({ control, name: "customUnit" });
 
   const customUnitEnabled = typeof customUnit === "string";
@@ -235,6 +236,10 @@ const FormLayout = ({
         prefix="$"
         decimalScale={2}
         thousandSeparator=","
+        rightSection={
+          <CalculatorInput onEnter={(value) => setValue("price", value)} />
+        }
+        rightSectionWidth={36}
       />
 
       <Switch
