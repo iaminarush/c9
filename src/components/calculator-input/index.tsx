@@ -7,7 +7,7 @@ import {
   Group,
   Modal,
   NumberFormatter,
-  Stack
+  Stack,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconBackspace, IconCalculator } from "@tabler/icons-react";
@@ -63,32 +63,6 @@ export default function CalculatorInput({
     action: "",
   });
 
-  const appendValue = (value: string) => {
-    console.log("append", state);
-    if (state.action && state.preCalc && !state.value) {
-      setState({ ...state, value });
-    } else {
-      setState({ ...state, value: state.value + value });
-    }
-  };
-
-  const prepCalculation = (action: Action) => {
-    if (state.preCalc && state.value) {
-      setState({
-        ...state,
-        value: calculate(state.preCalc, state.value, action).toString(),
-        action: "",
-      });
-    } else if (state.preCalc && !state.value) {
-      setState({
-        ...state,
-        action,
-      });
-    } else {
-      setState({ ...state, value: "", preCalc: state.value, action });
-    }
-  };
-
   const handleClose = useCallback(() => {
     handlers.close();
     setState(initialState);
@@ -97,7 +71,35 @@ export default function CalculatorInput({
   const hasDecimal = state.value.includes(".");
   const isValue = !!state.value;
   const isPreCalcValue = !!state.preCalc;
+  const isAction = !!state.action;
+  const isLeadingZero = state.value.charAt(0) === "0";
   const noValues = !isValue && !isPreCalcValue;
+
+  const handleNumberPress = (value: string) => {
+    if (isAction && isValue && !isPreCalcValue) {
+      setState({ ...state, preCalc: state.value, value });
+    } else {
+      setState({ ...state, value: state.value + value });
+    }
+  };
+
+  const handleSymbolPress = (action: Action) => {
+    if (isValue && !isPreCalcValue) {
+      setState({ action, preCalc: state.value, value: "" });
+    } else {
+      setState({ ...state, action });
+    }
+  };
+
+  const handleBackspace = () => {
+    if (!isValue && isAction) {
+      setState({ ...state, action: "" });
+    } else if (!isValue && isPreCalcValue) {
+      setState({ ...state, preCalc: state.preCalc.slice(0, -1) });
+    } else {
+      setState({ ...state, value: state.value.slice(0, -1) });
+    }
+  };
 
   return (
     <>
@@ -138,55 +140,58 @@ export default function CalculatorInput({
             <GridCol span={3} offset={3}>
               <Button
                 w="100%"
-                disabled={!isValue}
-                onClick={() =>
-                  setState({ ...state, value: state.value.slice(0, -1) })
-                }
+                disabled={!isValue && !isAction && !isPreCalcValue}
+                onClick={handleBackspace}
               >
                 <IconBackspace />
               </Button>
             </GridCol>
             <ColCalculate
               disabled={noValues}
-              handleClick={() => prepCalculation("divide")}
+              handleClick={() => handleSymbolPress("divide")}
             >
               ÷
             </ColCalculate>
 
-            <ColButton value="7" appendValue={appendValue} />
-            <ColButton value="8" appendValue={appendValue} />
-            <ColButton value="9" appendValue={appendValue} />
+            <ColButton value="7" appendValue={handleNumberPress} />
+            <ColButton value="8" appendValue={handleNumberPress} />
+            <ColButton value="9" appendValue={handleNumberPress} />
             <ColCalculate
               disabled={noValues}
-              handleClick={() => prepCalculation("times")}
+              handleClick={() => handleSymbolPress("times")}
             >
               ×
             </ColCalculate>
 
-            <ColButton value="4" appendValue={appendValue} />
-            <ColButton value="5" appendValue={appendValue} />
-            <ColButton value="6" appendValue={appendValue} />
+            <ColButton value="4" appendValue={handleNumberPress} />
+            <ColButton value="5" appendValue={handleNumberPress} />
+            <ColButton value="6" appendValue={handleNumberPress} />
             <ColCalculate
               disabled={noValues}
-              handleClick={() => prepCalculation("minus")}
+              handleClick={() => handleSymbolPress("minus")}
             >
               −
             </ColCalculate>
 
-            <ColButton value="1" appendValue={appendValue} />
-            <ColButton value="2" appendValue={appendValue} />
-            <ColButton value="3" appendValue={appendValue} />
+            <ColButton value="1" appendValue={handleNumberPress} />
+            <ColButton value="2" appendValue={handleNumberPress} />
+            <ColButton value="3" appendValue={handleNumberPress} />
             <ColCalculate
               disabled={noValues}
-              handleClick={() => prepCalculation("plus")}
+              handleClick={() => handleSymbolPress("plus")}
             >
               +
             </ColCalculate>
 
-            <ColButton value="0" appendValue={appendValue} span={6} />
+            <ColButton
+              value="0"
+              appendValue={handleNumberPress}
+              span={6}
+              disabled={isLeadingZero && !hasDecimal}
+            />
             <ColButton
               value="."
-              appendValue={appendValue}
+              appendValue={handleNumberPress}
               disabled={hasDecimal}
             />
             <ColCalculate
