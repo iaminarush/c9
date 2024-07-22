@@ -738,6 +738,7 @@ const EditForm = ({
   record: Record;
   handleClose: () => void;
 }) => {
+  console.log(record);
   const form = useForm<FormSchema>({
     defaultValues: {
       storeId: `${record.storeId}`,
@@ -746,10 +747,14 @@ const EditForm = ({
       amount: Number(record.amount),
       itemId: record.itemId,
       customUnit: record.customUnit,
+      description: record.description,
     },
   });
 
   const { mutate, isLoading } = useEditRecord();
+
+  // const watch = useWatch({ control: form.control });
+  // console.log(watch);
 
   const onSubmit: SubmitHandler<FormSchema> = (data) => {
     const submitData: FormData = {
