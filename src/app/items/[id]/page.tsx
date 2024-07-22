@@ -673,12 +673,12 @@ const RecordCard = (record: Record) => {
               <IconPhoto size={48} />
             )}
             <Text>{record.store.name}</Text>
-            {!!record.description && (
+            {/* {!!record.description && (
               <>
                 &nbsp;
                 <Text> - {record.store.name}</Text>
               </>
-            )}
+            )} */}
           </Group>
 
           <Group justify="space-between">
@@ -752,9 +752,6 @@ const EditForm = ({
   });
 
   const { mutate, isLoading } = useEditRecord();
-
-  // const watch = useWatch({ control: form.control });
-  // console.log(watch);
 
   const onSubmit: SubmitHandler<FormSchema> = (data) => {
     const submitData: FormData = {
