@@ -581,22 +581,6 @@ const RecordList = ({ itemId }: { itemId: string }) => {
         <Stack>
           {!!standardUnitRecords.length && (
             <Stack>
-              {/* {uniqueUnitFamilies.map((r) => (
-                // <Stack key={r.id}>
-                //   <Title order={4}>{r.name}</Title>
-                //   {standardUnitRecords
-                //     .filter((sr) => sr.unitType.unitFamilyId === r.id)
-                //     .map((sr) => (
-                //       <RecordCard key={sr.id} {...sr} />
-                //     ))}
-                // </Stack>
-                // <StandardUnitGroup
-                //   key={r.id}
-                //   id={r.id}
-                //   name={r.name}
-                //   records={standardUnitRecords}
-                // />
-              ))} */}
               <StandardUnitGroups
                 unitFamilies={uniqueUnitFamilies}
                 records={standardUnitRecords}
@@ -726,7 +710,7 @@ const RecordCard = (record: Record) => {
   );
 };
 
-const EditRecordComponent = ({ record }: { record: Record }) => {
+export const EditRecordComponent = ({ record }: { record: Record }) => {
   const [opened, handlers] = useDisclosure(false);
 
   return (
@@ -804,7 +788,7 @@ const EditForm = ({
   );
 };
 
-const DeleteRecordComponent = ({
+export const DeleteRecordComponent = ({
   itemId,
   recordId,
 }: {
