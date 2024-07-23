@@ -2,7 +2,7 @@ import { client } from "@/contracts/contract";
 import { barcodeContract } from "@/contracts/contract-barcode";
 import { itemContract } from "@/contracts/contract-item";
 import { recordContract } from "@/contracts/contract-record";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ServerInferResponses } from "@ts-rest/core";
 import { UseQueryOptions } from "@ts-rest/react-query";
 import { produce } from "immer";
@@ -12,6 +12,7 @@ const keys = {
   item: (id: string) => [...keys.all, id] as const,
   record: (itemId: string) => ["record", itemId] as const,
   barcodes: (id: number) => [...keys.all, "barcodes", id],
+  unitTypes: (id: number) => ["unit types by family", id],
 };
 
 type RecordsResponse = ServerInferResponses<
@@ -196,3 +197,15 @@ export const useUpdateItem = () => {
     },
   });
 };
+
+export const useUnitTypesFromFamily = (id: number) =>
+  client.unitTypes.getUnitTypesByFamily.useQuery(
+    keys.unitTypes(id),
+    {
+      params: { id: `${id}` },
+    },
+    {
+      select: ({ body }) =>
+        body.map((b) => ({ value: `${b.id}`, label: b.name })),
+    },
+  );

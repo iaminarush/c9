@@ -35,4 +35,12 @@ export const unitTypesContract = c.router({
       404: z.null(),
     },
   },
+  getUnitTypesByFamily: {
+    method: "GET",
+    path: "/unit-types-by-family/:id",
+    responses: {
+      200: unitTypesSchema.array(),
+      404: z.null(),
+    },
+  },
 });
