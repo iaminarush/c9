@@ -74,6 +74,7 @@ import {
 } from "./query";
 import BarcodeScanner from "@/components/barcodeScanner";
 import CalculatorInput from "@/components/calculator-input";
+import StandardUnitGroups from "./standard-unit-groups";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -544,9 +545,9 @@ const standardUnitRecordSchema = recordDetailSchema.merge(
   }),
 );
 
-type CustomUnitRecord = z.infer<typeof customUnitRecordSchema>;
+export type CustomUnitRecord = z.infer<typeof customUnitRecordSchema>;
 
-type StandardUnitRecord = z.infer<typeof standardUnitRecordSchema>;
+export type StandardUnitRecord = z.infer<typeof standardUnitRecordSchema>;
 
 const RecordList = ({ itemId }: { itemId: string }) => {
   const { data, isFetching, isSuccess } = useRecords(itemId);
@@ -571,23 +572,35 @@ const RecordList = ({ itemId }: { itemId: string }) => {
         (r) => r.unitType.unitFamilyId,
       ).map((r) => ({
         id: r.unitType.unitFamilyId,
-        family: r.unitType.unitFamily.name,
+        name: r.unitType.unitFamily.name,
       }));
+
+      console.log(standardUnitRecords);
 
       return (
         <Stack>
           {!!standardUnitRecords.length && (
             <Stack>
-              {uniqueUnitFamilies.map((r) => (
-                <Stack key={r.id}>
-                  <Title order={4}>{r.family}</Title>
-                  {standardUnitRecords
-                    .filter((sr) => sr.unitType.unitFamilyId === r.id)
-                    .map((sr) => (
-                      <RecordCard key={sr.id} {...sr} />
-                    ))}
-                </Stack>
-              ))}
+              {/* {uniqueUnitFamilies.map((r) => (
+                // <Stack key={r.id}>
+                //   <Title order={4}>{r.name}</Title>
+                //   {standardUnitRecords
+                //     .filter((sr) => sr.unitType.unitFamilyId === r.id)
+                //     .map((sr) => (
+                //       <RecordCard key={sr.id} {...sr} />
+                //     ))}
+                // </Stack>
+                // <StandardUnitGroup
+                //   key={r.id}
+                //   id={r.id}
+                //   name={r.name}
+                //   records={standardUnitRecords}
+                // />
+              ))} */}
+              <StandardUnitGroups
+                unitFamilies={uniqueUnitFamilies}
+                records={standardUnitRecords}
+              />
             </Stack>
           )}
           {!!customUnitRecords.length && (
