@@ -1,10 +1,7 @@
 "use client";
 
-import NumberFormField from "@/components/hook-form/NumberFormField";
-import SelectFormField from "@/components/hook-form/SelectFormField";
-import TextFormField from "@/components/hook-form/TextFormField";
+import BarcodeScanner from "@/components/barcodeScanner";
 import { recordDetailSchema } from "@/contracts/contract-record";
-import { useStoresData, useUnitTypesData } from "@/lib/commonQueries";
 import { isNumber } from "@/lib/utils";
 import {
   createRecordSchema,
@@ -15,7 +12,6 @@ import {
   ActionIcon,
   Button,
   Card,
-  ComboboxLikeRenderOptionInput,
   Group,
   Image,
   LoadingOverlay,
@@ -24,7 +20,6 @@ import {
   NumberInput,
   Skeleton,
   Stack,
-  Switch,
   Tabs,
   TabsList,
   TabsPanel,
@@ -32,48 +27,41 @@ import {
   Text,
   TextInput,
   Title,
-  Tooltip,
+  Tooltip
 } from "@mantine/core";
 import { useDisclosure, useInputState } from "@mantine/hooks";
 import {
   IconBan,
   IconBarcode,
-  IconCheck,
   IconDeviceFloppy,
   IconEdit,
   IconPhoto,
-  IconPhotoOff,
   IconPlus,
-  IconTrash,
+  IconTrash
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import NextImage from "next/image";
 import { useRouter } from "next/navigation";
-import { ReactNode, useEffect, useState } from "react";
+import { useState } from "react";
 import Barcode from "react-barcode";
 import {
   SubmitHandler,
-  UseFormReturn,
-  useForm,
-  useWatch,
+  useForm
 } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import * as R from "remeda";
 import { z } from "zod";
+import { DeleteRecordComponent, EditRecordComponent, FormLayout } from "./components";
 import {
   useBarcodes,
   useCreateBarcode,
   useCreateRecord,
   useDeleteBarcode,
   useDeleteItem,
-  useDeleteRecord,
-  useEditRecord,
   useItem,
   useRecords,
   useUpdateItem,
 } from "./query";
-import BarcodeScanner from "@/components/barcodeScanner";
-import CalculatorInput from "@/components/calculator-input";
 import StandardUnitGroups from "./standard-unit-groups";
 
 type FormData = z.infer<typeof createRecordSchema>;
@@ -183,117 +171,117 @@ const TitleComponent = ({ title, id }: { title: string; id: string }) => {
     );
 };
 
-const FormLayout = ({
-  form,
-  enableQueries,
-  submitButton,
-  create,
-}: {
-  form: UseFormReturn<FormSchema>;
-  enableQueries: boolean;
-  submitButton: ReactNode;
-  create?: boolean;
-}) => {
-  const { control, setValue } = form;
-  const customUnit = useWatch({ control, name: "customUnit" });
+// const FormLayout = ({
+//   form,
+//   enableQueries,
+//   submitButton,
+//   create,
+// }: {
+//   form: UseFormReturn<FormSchema>;
+//   enableQueries: boolean;
+//   submitButton: ReactNode;
+//   create?: boolean;
+// }) => {
+//   const { control, setValue } = form;
+//   const customUnit = useWatch({ control, name: "customUnit" });
 
-  const customUnitEnabled = typeof customUnit === "string";
+//   const customUnitEnabled = typeof customUnit === "string";
 
-  const unitTypes = useUnitTypesData({
-    queryOptions: { enabled: enableQueries },
-  });
-  const stores = useStoresData({ queryOptions: { enabled: enableQueries } });
+//   const unitTypes = useUnitTypesData({
+//     queryOptions: { enabled: enableQueries },
+//   });
+//   const stores = useStoresData({ queryOptions: { enabled: enableQueries } });
 
-  useEffect(() => {
-    if (unitTypes.isSuccess && create) {
-      const gram = unitTypes.data.body.find((ut) => ut.label === "g");
-      if (gram) form.setValue("unitTypeId", gram.value);
-    }
-  }, [unitTypes.isSuccess]);
+//   useEffect(() => {
+//     if (unitTypes.isSuccess && create) {
+//       const gram = unitTypes.data.body.find((ut) => ut.label === "g");
+//       if (gram) form.setValue("unitTypeId", gram.value);
+//     }
+//   }, [unitTypes.isSuccess]);
 
-  return (
-    <Stack>
-      <SelectFormField
-        control={control}
-        name="storeId"
-        data={stores.data?.body}
-        loading={stores.isLoading}
-        label="Store"
-        rules={{ required: "Required" }}
-        searchable
-        withAsterisk
-        //eslint-disable-next-line
-        //@ts-expect-error Mantine types doesn't pass additional object propertis to item
-        renderOption={renderStoreSelectOption}
-      />
+//   return (
+//     <Stack>
+//       <SelectFormField
+//         control={control}
+//         name="storeId"
+//         data={stores.data?.body}
+//         loading={stores.isLoading}
+//         label="Store"
+//         rules={{ required: "Required" }}
+//         searchable
+//         withAsterisk
+//         //eslint-disable-next-line
+//         //@ts-expect-error Mantine types doesn't pass additional object propertis to item
+//         renderOption={renderStoreSelectOption}
+//       />
 
-      <NumberFormField
-        control={control}
-        name="price"
-        rules={{ required: "Required" }}
-        label="Price"
-        withAsterisk
-        min={0}
-        prefix="$"
-        decimalScale={2}
-        thousandSeparator=","
-        rightSection={
-          <CalculatorInput onEnter={(value) => setValue("price", value)} />
-        }
-        rightSectionWidth={36}
-      />
+//       <NumberFormField
+//         control={control}
+//         name="price"
+//         rules={{ required: "Required" }}
+//         label="Price"
+//         withAsterisk
+//         min={0}
+//         prefix="$"
+//         decimalScale={2}
+//         thousandSeparator=","
+//         rightSection={
+//           <CalculatorInput onEnter={(value) => setValue("price", value)} />
+//         }
+//         rightSectionWidth={36}
+//       />
 
-      <Switch
-        label="Custom Unit"
-        checked={customUnitEnabled}
-        onClick={({ currentTarget: { checked } }) => {
-          form.setValue("customUnit", checked ? "" : null);
-          form.setValue("unitTypeId", checked ? null : "");
-        }}
-      />
+//       <Switch
+//         label="Custom Unit"
+//         checked={customUnitEnabled}
+//         onClick={({ currentTarget: { checked } }) => {
+//           form.setValue("customUnit", checked ? "" : null);
+//           form.setValue("unitTypeId", checked ? null : "");
+//         }}
+//       />
 
-      {customUnitEnabled ? (
-        <TextFormField
-          control={control}
-          name="customUnit"
-          label="Custom Unit"
-          rules={{ required: "Required" }}
-          withAsterisk
-        />
-      ) : (
-        <SelectFormField
-          control={control}
-          name="unitTypeId"
-          data={unitTypes.data?.body}
-          loading={unitTypes.isLoading}
-          label="Unit Type"
-          rules={{ required: "Required" }}
-          searchable
-          withAsterisk
-        />
-      )}
+//       {customUnitEnabled ? (
+//         <TextFormField
+//           control={control}
+//           name="customUnit"
+//           label="Custom Unit"
+//           rules={{ required: "Required" }}
+//           withAsterisk
+//         />
+//       ) : (
+//         <SelectFormField
+//           control={control}
+//           name="unitTypeId"
+//           data={unitTypes.data?.body}
+//           loading={unitTypes.isLoading}
+//           label="Unit Type"
+//           rules={{ required: "Required" }}
+//           searchable
+//           withAsterisk
+//         />
+//       )}
 
-      <NumberFormField
-        control={control}
-        name="amount"
-        rules={{ required: "Required" }}
-        label="Amount"
-        withAsterisk
-        min={0.01}
-        decimalScale={2}
-        thousandSeparator=","
-        rightSection={
-          <CalculatorInput onEnter={(value) => setValue("amount", value)} />
-        }
-        rightSectionWidth={36}
-      />
+//       <NumberFormField
+//         control={control}
+//         name="amount"
+//         rules={{ required: "Required" }}
+//         label="Amount"
+//         withAsterisk
+//         min={0.01}
+//         decimalScale={2}
+//         thousandSeparator=","
+//         rightSection={
+//           <CalculatorInput onEnter={(value) => setValue("amount", value)} />
+//         }
+//         rightSectionWidth={36}
+//       />
 
-      <TextFormField control={control} name="description" label="Description" />
+//       <TextFormField control={control} name="description" label="Description" />
 
-      {submitButton}
-    </Stack>
-  );
-};
+//       {submitButton}
+//     </Stack>
+//   );
+// };
 
 const AddComponent = ({ id }: { id: string }) => {
   const { data } = useSession();
@@ -575,8 +563,6 @@ const RecordList = ({ itemId }: { itemId: string }) => {
         name: r.unitType.unitFamily.name,
       }));
 
-      console.log(standardUnitRecords);
-
       return (
         <Stack>
           {!!standardUnitRecords.length && (
@@ -603,47 +589,8 @@ const RecordList = ({ itemId }: { itemId: string }) => {
   return <Text>Error loading records</Text>;
 };
 
-const renderStoreSelectOption = ({
-  option,
-  checked,
-}: ComboboxLikeRenderOptionInput<{
-  value: string;
-  label: string;
-  image: string | null;
-}>) => {
-  return (
-    <Group flex="1" gap="xs">
-      {option.image ? (
-        <Image
-          component={NextImage}
-          height={24}
-          width={24}
-          h={24}
-          w={24}
-          src={option.image}
-          fallbackSrc="/noImage.svg"
-          alt="Logo"
-          fit="contain"
-          style={{ objectFit: "contain" }}
-        />
-      ) : (
-        <IconPhotoOff size={24} />
-      )}
-      {option.label}
-      {checked && (
-        <IconCheck
-          style={{ marginInlineStart: "auto" }}
-          stroke={1.5}
-          color="currentColor"
-          opacity={0.6}
-          size={18}
-        />
-      )}
-    </Group>
-  );
-};
 
-type Record = z.infer<typeof recordDetailSchema>;
+export type Record = z.infer<typeof recordDetailSchema>;
 
 const RecordCard = (record: Record) => {
   const unitLabel = record.unitType ? record.unitType.name : record.customUnit;
@@ -707,134 +654,5 @@ const RecordCard = (record: Record) => {
         </Stack>
       </Group>
     </Card>
-  );
-};
-
-export const EditRecordComponent = ({ record }: { record: Record }) => {
-  const [opened, handlers] = useDisclosure(false);
-
-  return (
-    <>
-      <Tooltip label="Edit Record">
-        <ActionIcon onClick={handlers.open}>
-          <IconEdit />
-        </ActionIcon>
-      </Tooltip>
-
-      <Modal opened={opened} onClose={handlers.close} title="Edit Record">
-        {!!opened && <EditForm record={record} handleClose={handlers.close} />}
-      </Modal>
-    </>
-  );
-};
-
-const EditForm = ({
-  record,
-  handleClose,
-}: {
-  record: Record;
-  handleClose: () => void;
-}) => {
-  console.log(record);
-  const form = useForm<FormSchema>({
-    defaultValues: {
-      storeId: `${record.storeId}`,
-      price: Number(record.price),
-      unitTypeId: record.unitTypeId ? `${record.unitTypeId}` : null,
-      amount: Number(record.amount),
-      itemId: record.itemId,
-      customUnit: record.customUnit,
-      description: record.description,
-    },
-  });
-
-  const { mutate, isLoading } = useEditRecord();
-
-  const onSubmit: SubmitHandler<FormSchema> = (data) => {
-    const submitData: FormData = {
-      ...data,
-      storeId: Number(data.storeId),
-      unitTypeId: data.unitTypeId ? Number(data.unitTypeId) : null,
-      price: `${data.price}`,
-      amount: `${data.amount}`,
-    };
-
-    const result = createRecordSchema.safeParse(submitData);
-    if (result.success) {
-      mutate(
-        { body: result.data, params: { id: `${record.id}` } },
-        {
-          onSuccess: () => {
-            handleClose();
-            toast.success("Record Updated");
-          },
-        },
-      );
-    } else {
-      toast.error("Error occured when creating");
-    }
-  };
-
-  return (
-    <FormLayout
-      form={form}
-      enableQueries={true}
-      submitButton={
-        <Button loading={isLoading} onClick={form.handleSubmit(onSubmit)}>
-          Update record
-        </Button>
-      }
-    />
-  );
-};
-
-export const DeleteRecordComponent = ({
-  itemId,
-  recordId,
-}: {
-  itemId: number;
-  recordId: number;
-}) => {
-  const [opened, handlers] = useDisclosure(false);
-  const { mutate, isLoading } = useDeleteRecord(`${itemId}`);
-
-  const handleClick = () => {
-    mutate(
-      { params: { id: `${recordId}` }, body: null },
-      {
-        onSuccess: () => {
-          handlers.close();
-          toast.success("Record deleted", { icon: <IconTrash /> });
-        },
-      },
-    );
-  };
-
-  return (
-    <>
-      <Tooltip label="Delete Record">
-        <ActionIcon color="red" variant="filled" onClick={handlers.open}>
-          <IconTrash />
-        </ActionIcon>
-      </Tooltip>
-
-      <Modal
-        opened={opened}
-        onClose={handlers.close}
-        centered
-        title="Do you want to delete this record"
-      >
-        <Stack>
-          <Button
-            variant="filled"
-            color="red"
-            onClick={handleClick}
-            loading={isLoading}
-          >
-            Delete
-          </Button>
-        </Stack>
-      </Modal>
-    </>
   );
 };

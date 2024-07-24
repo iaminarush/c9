@@ -16,12 +16,9 @@ import convert, { Unit } from "convert";
 import NextImage from "next/image";
 import { useState } from "react";
 import { z } from "zod";
-import {
-  DeleteRecordComponent,
-  EditRecordComponent,
-  StandardUnitRecord,
-} from "./page";
+import { StandardUnitRecord } from "./page";
 import { useUnitTypesFromFamily } from "./query";
+import { DeleteRecordComponent, EditRecordComponent } from "./components";
 
 type UnitFamily = z.infer<typeof unitFamilySchema>;
 
