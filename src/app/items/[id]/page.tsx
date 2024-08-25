@@ -27,7 +27,7 @@ import {
   Text,
   TextInput,
   Title,
-  Tooltip
+  Tooltip,
 } from "@mantine/core";
 import { useDisclosure, useInputState } from "@mantine/hooks";
 import {
@@ -37,21 +37,22 @@ import {
   IconEdit,
   IconPhoto,
   IconPlus,
-  IconTrash
+  IconTrash,
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import NextImage from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Barcode from "react-barcode";
-import {
-  SubmitHandler,
-  useForm
-} from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import * as R from "remeda";
 import { z } from "zod";
-import { DeleteRecordComponent, EditRecordComponent, FormLayout } from "./components";
+import {
+  DeleteRecordComponent,
+  EditRecordComponent,
+  FormLayout,
+} from "./components";
 import {
   useBarcodes,
   useCreateBarcode,
@@ -95,7 +96,7 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
 
   return (
     <>
-      <Stack>
+      <Stack gap="xs">
         <Group justify="space-between">
           <Group align="center">
             <TitleComponent title={data.body.name} id={id} />
@@ -108,7 +109,20 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
           </Group>
         </Group>
 
-        <RecordList itemId={id} />
+        <Tabs defaultValue="prices">
+          <TabsList>
+            <TabsTab value="prices">Prices</TabsTab>
+            <TabsTab value="inventory">Inventory</TabsTab>
+          </TabsList>
+
+          <TabsPanel value="prices">
+            <RecordList itemId={id} />
+          </TabsPanel>
+
+          <TabsPanel value="inventory">
+            <InventoryPanel />
+          </TabsPanel>
+        </Tabs>
       </Stack>
     </>
   );
@@ -589,7 +603,6 @@ const RecordList = ({ itemId }: { itemId: string }) => {
   return <Text>Error loading records</Text>;
 };
 
-
 export type Record = z.infer<typeof recordDetailSchema>;
 
 const RecordCard = (record: Record) => {
@@ -654,5 +667,13 @@ const RecordCard = (record: Record) => {
         </Stack>
       </Group>
     </Card>
+  );
+};
+
+const InventoryPanel = () => {
+  return (
+    <>
+      <></>
+    </>
   );
 };
