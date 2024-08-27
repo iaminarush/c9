@@ -24,7 +24,12 @@ export const AddInventoryComponent = ({ id }: { id: string }) => {
 
     createInventory.mutate(
       { body: submitData },
-      { onSuccess: () => close(), onError: () => toast.error("Error") },
+      {
+        onSuccess: () => {
+          close(), form.reset({ itemId: Number(id) });
+        },
+        onError: () => toast.error("Error"),
+      },
     );
   };
 
