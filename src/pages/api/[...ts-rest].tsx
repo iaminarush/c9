@@ -9,6 +9,7 @@ import { unitTypeRouter } from "./unit-type-router";
 import { unitFamilyRouter } from "./unit-family-router";
 import { searchRouter } from "./search-router";
 import { barcodeRouter } from "./barcode-router";
+import { inventoryRouter } from "./inventory-router";
 
 const router = createNextRoute(contract, {
   categories: categoryRouter,
@@ -19,6 +20,7 @@ const router = createNextRoute(contract, {
   unitFamilies: unitFamilyRouter,
   search: searchRouter,
   barcodes: barcodeRouter,
+  inventory: inventoryRouter,
 });
 
 export default createNextRouter(contract, router, {

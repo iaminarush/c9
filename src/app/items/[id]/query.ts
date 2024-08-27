@@ -209,3 +209,7 @@ export const useUnitTypesFromFamily = (id: number) =>
         body.map((b) => ({ value: `${b.id}`, label: b.name })),
     },
   );
+
+export const useCreateInventory = () => {
+  return client.inventory.createInventory.useMutation();
+};
