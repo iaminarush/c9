@@ -37,7 +37,7 @@ import {
   IconEdit,
   IconPhoto,
   IconPlus,
-  IconTrash
+  IconTrash,
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import NextImage from "next/image";
@@ -115,7 +115,11 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
           </Group>
         </Group>
 
-        <Tabs value={activeTab} onChange={setActiveTab}>
+        <Tabs
+          value={activeTab}
+          onChange={setActiveTab}
+          styles={{ panel: { paddingTop: "8px" } }}
+        >
           <TabsList>
             <TabsTab value="prices">Prices</TabsTab>
             <TabsTab value="inventory">Inventory</TabsTab>
@@ -563,4 +567,3 @@ const RecordCard = (record: Record) => {
     </Card>
   );
 };
-

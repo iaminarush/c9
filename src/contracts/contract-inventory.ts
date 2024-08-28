@@ -19,4 +19,15 @@ export const inventoryContract = c.router({
     body: createInventorySchema,
     summary: "Add inventory",
   },
+  getInventories: {
+    method: "GET",
+    path: "/inventory",
+    responses: {
+      200: inventorySchema.array(),
+      404: z.null(),
+    },
+    query: z.object({
+      item: z.number(),
+    }),
+  },
 });

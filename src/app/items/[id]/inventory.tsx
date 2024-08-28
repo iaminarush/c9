@@ -1,16 +1,29 @@
 import CalculatorInput from "@/components/calculator-input";
 import DateFormField from "@/components/hook-form/DateFormField";
 import NumberFormField from "@/components/hook-form/NumberFormField";
-import { createInventorySchema } from "@/server/db/schema/inventory";
-import { ActionIcon, Button, Modal, Stack } from "@mantine/core";
+import {
+  createInventorySchema,
+  inventorySchema,
+} from "@/server/db/schema/inventory";
+import {
+  ActionIcon,
+  Button,
+  Card,
+  Group,
+  Modal,
+  Skeleton,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconHomePlus } from "@tabler/icons-react";
+import { IconHomePlus, IconTrack, IconTrash } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import { ReactNode } from "react";
 import { SubmitHandler, useForm, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
-import { useCreateInventory } from "./query";
+import { useCreateInventory, useInventories } from "./query";
 import toast from "react-hot-toast";
+import { IconEdit } from "@tabler/icons-react";
 
 export const AddInventoryComponent = ({ id }: { id: string }) => {
   const { data } = useSession();
@@ -82,7 +95,6 @@ const FormLayout = ({
         label="Quantity"
         withAsterisk
         min={0}
-        prefix="$"
         decimalScale={2}
         thousandSeparator=","
         rightSection={
@@ -103,5 +115,57 @@ const FormLayout = ({
 
       {submitButton}
     </Stack>
+  );
+};
+
+export const InventoryPanel = ({ id }: { id: string }) => {
+  const inventories = useInventories(id);
+
+  if (inventories.isLoading) return <Skeleton />;
+
+  if (inventories.isError) return <Text>Error</Text>;
+
+  if (inventories.data.body.length === 0) {
+    return <Text>{"No inventory :("}</Text>;
+  }
+
+  return (
+    <Stack>
+      {inventories.data.body.map((i) => (
+        <InventoryCard key={i.id} {...i} />
+      ))}
+    </Stack>
+  );
+};
+
+type Inventory = z.infer<typeof inventorySchema>;
+
+const InventoryCard = (inventory: Inventory) => {
+  return (
+    <Card p="xs">
+      <Group justify="space-between">
+        <Group>
+          <Stack gap="xs">
+            <Text fw={700}>Quantity</Text>
+            <Text>{inventory.quantity}</Text>
+          </Stack>
+
+          <Stack gap="xs">
+            <Text fw={700}>Expiry</Text>
+            <Text>{inventory.expiryDate}</Text>
+          </Stack>
+        </Group>
+
+        <Group>
+          <ActionIcon disabled>
+            <IconEdit />
+          </ActionIcon>
+
+          <ActionIcon color="red" variant="filled" disabled>
+            <IconTrash />
+          </ActionIcon>
+        </Group>
+      </Group>
+    </Card>
   );
 };
