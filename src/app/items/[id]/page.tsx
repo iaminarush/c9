@@ -219,7 +219,15 @@ const AddComponent = ({ id }: { id: string }) => {
 
     const result = createRecordSchema.safeParse(submitData);
     if (result.success) {
-      createRecord.mutate({ body: result.data }, { onSuccess: () => close() });
+      createRecord.mutate(
+        { body: result.data },
+        {
+          onSuccess: () => {
+            close();
+            form.reset({ itemId: Number(id) });
+          },
+        },
+      );
     } else {
       toast.error("Error occured when creating");
     }
