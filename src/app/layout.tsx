@@ -1,5 +1,6 @@
 import "@mantine/core/styles.css";
 import "@mantine/spotlight/styles.css";
+import "@mantine/dates/styles.css";
 import "@uploadthing/react/styles.css";
 
 import Providers from "@/providers";

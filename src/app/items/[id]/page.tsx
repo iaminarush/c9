@@ -41,7 +41,7 @@ import {
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import NextImage from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next13-progressbar";
 import { useState } from "react";
 import Barcode from "react-barcode";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -53,6 +53,7 @@ import {
   EditRecordComponent,
   FormLayout,
 } from "./components";
+import { AddInventoryComponent, InventoryPanel } from "./inventory";
 import {
   useBarcodes,
   useCreateBarcode,
@@ -84,6 +85,7 @@ const formSchema = createRecordSchema
 type FormSchema = z.infer<typeof formSchema>;
 
 export default function Item({ params: { id } }: { params: { id: string } }) {
+  const [activeTab, setActiveTab] = useState<string | null>("prices");
   const { isLoading, isError, data } = useItem(id, { enabled: isNumber(id) });
 
   if (!isNumber(id)) {
@@ -103,13 +105,21 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
             <DeleteComponent id={id} />
           </Group>
           <Group>
-            <BarcodeComponent id={id} />
-
-            <AddComponent id={id} />
+            {activeTab === "prices" && (
+              <>
+                <BarcodeComponent id={id} />
+                <AddComponent id={id} />
+              </>
+            )}
+            {activeTab === "inventory" && <AddInventoryComponent id={id} />}
           </Group>
         </Group>
 
-        <Tabs defaultValue="prices">
+        <Tabs
+          value={activeTab}
+          onChange={setActiveTab}
+          styles={{ panel: { paddingTop: "8px" } }}
+        >
           <TabsList>
             <TabsTab value="prices">Prices</TabsTab>
             <TabsTab value="inventory">Inventory</TabsTab>
@@ -120,7 +130,7 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
           </TabsPanel>
 
           <TabsPanel value="inventory">
-            <InventoryPanel />
+            <InventoryPanel id={id} />
           </TabsPanel>
         </Tabs>
       </Stack>
@@ -185,118 +195,6 @@ const TitleComponent = ({ title, id }: { title: string; id: string }) => {
     );
 };
 
-// const FormLayout = ({
-//   form,
-//   enableQueries,
-//   submitButton,
-//   create,
-// }: {
-//   form: UseFormReturn<FormSchema>;
-//   enableQueries: boolean;
-//   submitButton: ReactNode;
-//   create?: boolean;
-// }) => {
-//   const { control, setValue } = form;
-//   const customUnit = useWatch({ control, name: "customUnit" });
-
-//   const customUnitEnabled = typeof customUnit === "string";
-
-//   const unitTypes = useUnitTypesData({
-//     queryOptions: { enabled: enableQueries },
-//   });
-//   const stores = useStoresData({ queryOptions: { enabled: enableQueries } });
-
-//   useEffect(() => {
-//     if (unitTypes.isSuccess && create) {
-//       const gram = unitTypes.data.body.find((ut) => ut.label === "g");
-//       if (gram) form.setValue("unitTypeId", gram.value);
-//     }
-//   }, [unitTypes.isSuccess]);
-
-//   return (
-//     <Stack>
-//       <SelectFormField
-//         control={control}
-//         name="storeId"
-//         data={stores.data?.body}
-//         loading={stores.isLoading}
-//         label="Store"
-//         rules={{ required: "Required" }}
-//         searchable
-//         withAsterisk
-//         //eslint-disable-next-line
-//         //@ts-expect-error Mantine types doesn't pass additional object propertis to item
-//         renderOption={renderStoreSelectOption}
-//       />
-
-//       <NumberFormField
-//         control={control}
-//         name="price"
-//         rules={{ required: "Required" }}
-//         label="Price"
-//         withAsterisk
-//         min={0}
-//         prefix="$"
-//         decimalScale={2}
-//         thousandSeparator=","
-//         rightSection={
-//           <CalculatorInput onEnter={(value) => setValue("price", value)} />
-//         }
-//         rightSectionWidth={36}
-//       />
-
-//       <Switch
-//         label="Custom Unit"
-//         checked={customUnitEnabled}
-//         onClick={({ currentTarget: { checked } }) => {
-//           form.setValue("customUnit", checked ? "" : null);
-//           form.setValue("unitTypeId", checked ? null : "");
-//         }}
-//       />
-
-//       {customUnitEnabled ? (
-//         <TextFormField
-//           control={control}
-//           name="customUnit"
-//           label="Custom Unit"
-//           rules={{ required: "Required" }}
-//           withAsterisk
-//         />
-//       ) : (
-//         <SelectFormField
-//           control={control}
-//           name="unitTypeId"
-//           data={unitTypes.data?.body}
-//           loading={unitTypes.isLoading}
-//           label="Unit Type"
-//           rules={{ required: "Required" }}
-//           searchable
-//           withAsterisk
-//         />
-//       )}
-
-//       <NumberFormField
-//         control={control}
-//         name="amount"
-//         rules={{ required: "Required" }}
-//         label="Amount"
-//         withAsterisk
-//         min={0.01}
-//         decimalScale={2}
-//         thousandSeparator=","
-//         rightSection={
-//           <CalculatorInput onEnter={(value) => setValue("amount", value)} />
-//         }
-//         rightSectionWidth={36}
-//       />
-
-//       <TextFormField control={control} name="description" label="Description" />
-
-//       {submitButton}
-//     </Stack>
-//   );
-// };
-
 const AddComponent = ({ id }: { id: string }) => {
   const { data } = useSession();
   const [opened, { open, close }] = useDisclosure(false);
@@ -321,7 +219,15 @@ const AddComponent = ({ id }: { id: string }) => {
 
     const result = createRecordSchema.safeParse(submitData);
     if (result.success) {
-      createRecord.mutate({ body: result.data }, { onSuccess: () => close() });
+      createRecord.mutate(
+        { body: result.data },
+        {
+          onSuccess: () => {
+            close();
+            form.reset({ itemId: Number(id) });
+          },
+        },
+      );
     } else {
       toast.error("Error occured when creating");
     }
@@ -667,13 +573,5 @@ const RecordCard = (record: Record) => {
         </Stack>
       </Group>
     </Card>
-  );
-};
-
-const InventoryPanel = () => {
-  return (
-    <>
-      <></>
-    </>
   );
 };

@@ -4,9 +4,9 @@ import { Spotlight, spotlight } from "@mantine/spotlight";
 import { IconSearch } from "@tabler/icons-react";
 
 import { useDebouncedValue } from "@mantine/hooks";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useGlobalSearch } from "./query";
+import { useRouter } from "next13-progressbar";
 
 export default function GlobalSearch() {
   const router = useRouter();

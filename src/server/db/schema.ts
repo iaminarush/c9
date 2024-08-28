@@ -6,3 +6,4 @@ export * from "./schema/records";
 export * from "./schema/stores";
 export * from "./schema/unitTypes";
 export * from "./schema/unitFamilies";
+export * from "./schema/inventory";
