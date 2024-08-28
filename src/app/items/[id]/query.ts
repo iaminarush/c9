@@ -211,17 +211,29 @@ export const useUnitTypesFromFamily = (id: number) =>
         body.map((b) => ({ value: `${b.id}`, label: b.name })),
     },
   );
-  
-type InventoriesResponse = ServerInferResponses<typeof inventoryContract.getInventories, 200>
 
-export const useCreateInventory = () => {
-  const queryClient = useQueryClient()
+type InventoriesResponse = ServerInferResponses<
+  typeof inventoryContract.getInventories,
+  200
+>;
+
+export const useCreateInventory = (id: string) => {
+  const queryClient = useQueryClient();
 
   return client.inventory.createInventory.useMutation({
-    //TODO
-    // onSuccess: ({body}) => {
-    //   queryClient.setQueryData<InventoriesResponse>
-    // }
+    onSuccess: ({ body }) => {
+      queryClient.setQueryData<InventoriesResponse>(
+        keys.inventories(id),
+        (oldData) => {
+          if (!oldData) return undefined;
+
+          const newData = produce(oldData, (draft) => {
+            draft.body.push(body);
+          });
+          return newData;
+        },
+      );
+    },
   });
 };
 
@@ -229,3 +241,30 @@ export const useInventories = (id: string) =>
   client.inventory.getInventories.useQuery(keys.inventories(id), {
     query: { item: Number(id) },
   });
+
+export const useDeleteInventory = () => {
+  const queryClient = useQueryClient();
+
+  return client.inventory.deleteInventory.useMutation({
+    onSuccess: ({ body }) => {
+      queryClient.setQueryData<InventoriesResponse>(
+        keys.inventories(`${body.itemId}`),
+        (oldData) => {
+          if (!oldData) return undefined;
+
+          const index = oldData.body.findIndex((i) => i.id === body.id);
+
+          if (index !== -1) {
+            const newData = produce(oldData, (draft) => {
+              draft.body.splice(index, 1);
+            });
+
+            return newData;
+          }
+
+          return oldData;
+        },
+      );
+    },
+  });
+};

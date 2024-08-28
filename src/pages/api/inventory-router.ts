@@ -32,4 +32,19 @@ export const inventoryRouter = createNextRoute(contract.inventory, {
     }
     return { status: 404, body: null };
   },
+  deleteInventory: async (args) => {
+    const token = await getToken({ req: args.req });
+
+    if (!token?.admin)
+      return { status: 403, body: { message: "No Permission" } };
+
+    const [deletedInventory] = await db
+      .delete(inventory)
+      .where(eq(inventory.id, Number(args.params.id)))
+      .returning();
+
+    return deletedInventory
+      ? { status: 200, body: deletedInventory }
+      : { status: 404, body: { message: "Error" } };
+  },
 });

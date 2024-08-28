@@ -16,24 +16,26 @@ import {
   Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconHomePlus, IconTrack, IconTrash } from "@tabler/icons-react";
+import { IconEdit, IconHomePlus, IconTrash } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import { ReactNode } from "react";
 import { SubmitHandler, useForm, UseFormReturn } from "react-hook-form";
-import { z } from "zod";
-import { useCreateInventory, useInventories } from "./query";
 import toast from "react-hot-toast";
-import { IconEdit } from "@tabler/icons-react";
+import { z } from "zod";
+import {
+  useCreateInventory,
+  useDeleteInventory,
+  useInventories,
+} from "./query";
 
 export const AddInventoryComponent = ({ id }: { id: string }) => {
   const { data } = useSession();
   const [opened, { open, close }] = useDisclosure(false);
 
-  const createInventory = useCreateInventory();
+  const createInventory = useCreateInventory(id);
 
   const onSubmit: SubmitHandler<AddFormSchema> = (data) => {
     const submitData = { ...data, quantity: `${data.quantity}` };
-    console.log(submitData);
 
     createInventory.mutate(
       { body: submitData },
@@ -144,7 +146,7 @@ const InventoryCard = (inventory: Inventory) => {
   return (
     <Card p="xs">
       <Group justify="space-between">
-        <Group>
+        <Group gap="xl">
           <Stack gap="xs">
             <Text fw={700}>Quantity</Text>
             <Text>{inventory.quantity}</Text>
@@ -157,15 +159,55 @@ const InventoryCard = (inventory: Inventory) => {
         </Group>
 
         <Group>
-          <ActionIcon disabled>
-            <IconEdit />
-          </ActionIcon>
+          <Stack>
+            <ActionIcon disabled>
+              <IconEdit />
+            </ActionIcon>
 
-          <ActionIcon color="red" variant="filled" disabled>
-            <IconTrash />
-          </ActionIcon>
+            <DeleteComponent id={inventory.id} />
+          </Stack>
         </Group>
       </Group>
     </Card>
+  );
+};
+
+const DeleteComponent = ({ id }: { id: number }) => {
+  const [opened, { open, close }] = useDisclosure(false);
+  const { data } = useSession();
+
+  const { mutate, isLoading } = useDeleteInventory();
+
+  const handleClick = () => {
+    mutate(
+      { params: { id: `${id}` }, body: null },
+      { onSuccess: () => close() },
+    );
+  };
+
+  return (
+    <>
+      <ActionIcon
+        color="red"
+        variant="filled"
+        onClick={open}
+        disabled={!data?.user.admin}
+      >
+        <IconTrash />
+      </ActionIcon>
+
+      <Modal opened={opened} onClose={close} title="Delete this item?" centered>
+        <Stack>
+          <Button
+            color="red"
+            variant="filled"
+            onClick={handleClick}
+            loading={isLoading}
+          >
+            Delete
+          </Button>
+        </Stack>
+      </Modal>
+    </>
   );
 };

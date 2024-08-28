@@ -30,4 +30,15 @@ export const inventoryContract = c.router({
       item: z.number(),
     }),
   },
+  deleteInventory: {
+    method: "DELETE",
+    path: "/inventory/:id",
+    body: z.any(),
+    responses: {
+      200: inventorySchema,
+      403: z.object({ message: z.string() }),
+      404: z.object({ message: z.string() }),
+    },
+    summary: "Delete a record",
+  },
 });
