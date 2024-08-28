@@ -113,6 +113,7 @@ const FormLayout = ({
         rules={{ required: "Required" }}
         label="Expiry Date"
         withAsterisk
+        defaultLevel="year"
       />
 
       {submitButton}
