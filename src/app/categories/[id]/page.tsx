@@ -33,7 +33,6 @@ import {
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { ComponentPropsWithRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -46,6 +45,7 @@ import {
   useDeleteCategory,
   useUpdateCategory,
 } from "./query";
+import { useRouter } from "next13-progressbar";
 
 export default function Category({
   params: { id },

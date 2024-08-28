@@ -4,9 +4,9 @@ import { client } from "@/contracts/contract";
 import { ActionIcon, LoadingOverlay, Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconBarcode } from "@tabler/icons-react";
-import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import BarcodeScanner from "../barcodeScanner";
+import { useRouter } from "next13-progressbar";
 
 const useSearchItemByBarcode = () => {
   return client.items.searchItemByBarcode.useMutation();

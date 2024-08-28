@@ -35,14 +35,13 @@ import {
   IconBarcode,
   IconDeviceFloppy,
   IconEdit,
-  IconHomePlus,
   IconPhoto,
   IconPlus,
-  IconTrash,
+  IconTrash
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import NextImage from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next13-progressbar";
 import { useState } from "react";
 import Barcode from "react-barcode";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -54,6 +53,7 @@ import {
   EditRecordComponent,
   FormLayout,
 } from "./components";
+import { AddInventoryComponent, InventoryPanel } from "./inventory";
 import {
   useBarcodes,
   useCreateBarcode,
@@ -65,7 +65,6 @@ import {
   useUpdateItem,
 } from "./query";
 import StandardUnitGroups from "./standard-unit-groups";
-import { AddInventoryComponent } from "./inventory";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -127,7 +126,7 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
           </TabsPanel>
 
           <TabsPanel value="inventory">
-            <InventoryPanel />
+            <InventoryPanel id={id} />
           </TabsPanel>
         </Tabs>
       </Stack>
@@ -565,10 +564,3 @@ const RecordCard = (record: Record) => {
   );
 };
 
-const InventoryPanel = () => {
-  return (
-    <>
-      <div>WIP</div>
-    </>
-  );
-};
