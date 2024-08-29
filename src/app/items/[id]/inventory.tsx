@@ -7,19 +7,22 @@ import {
 } from "@/server/db/schema/inventory";
 import {
   ActionIcon,
+  Badge,
   Button,
   Card,
   Group,
   Modal,
   Skeleton,
   Stack,
-  Text,
+  Text
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconEdit, IconHomePlus, IconTrash } from "@tabler/icons-react";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import { useSession } from "next-auth/react";
 import { ReactNode } from "react";
-import { SubmitHandler, useForm, UseFormReturn } from "react-hook-form";
+import { SubmitHandler, UseFormReturn, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 import {
@@ -27,8 +30,6 @@ import {
   useDeleteInventory,
   useInventories,
 } from "./query";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 
 dayjs.extend(relativeTime);
 
@@ -155,7 +156,7 @@ type Inventory = z.infer<typeof inventorySchema>;
 
 const InventoryCard = (inventory: Inventory) => {
   const expiryDate = dayjs(inventory.expiryDate);
-  const today = new Date();
+  const today = dayjs();
 
   const timeLeft = expiryDate.isSame(today, "day")
     ? "Expiring today!"
@@ -163,10 +164,12 @@ const InventoryCard = (inventory: Inventory) => {
     ? "Expired :("
     : `Expiring ${expiryDate.fromNow()}`;
 
+  const difference = expiryDate.diff(today, "day");
+
   return (
     <Card p="xs">
-      <Group justify="space-between">
-        <Group gap="xl">
+      <Group justify="space-between" wrap="nowrap" gap={"xs"}>
+        <Group>
           <Stack gap="xs">
             <Text fw={700}>Quantity</Text>
             <Text>{inventory.quantity}</Text>
@@ -174,9 +177,14 @@ const InventoryCard = (inventory: Inventory) => {
 
           <Stack gap="xs">
             <Text fw={700}>Expiry</Text>
-            <Text>{`${dayjs(inventory.expiryDate).format(
-              "YYYY-MM-DD",
-            )} ${timeLeft}`}</Text>
+            <Text>{dayjs(inventory.expiryDate).format("YYYY-MM-DD")}</Text>
+            <Text>
+              {difference <= 3 && difference >= 0 ? (
+                <Badge color='red'>{timeLeft}</Badge>
+              ) : (
+                timeLeft
+              )}
+            </Text>
           </Stack>
         </Group>
 
