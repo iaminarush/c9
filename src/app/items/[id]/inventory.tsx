@@ -14,9 +14,9 @@ import {
   Modal,
   Skeleton,
   Stack,
-  Text
+  Text,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconEdit, IconHomePlus, IconTrash } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -155,6 +155,7 @@ export const InventoryPanel = ({ id }: { id: string }) => {
 type Inventory = z.infer<typeof inventorySchema>;
 
 const InventoryCard = (inventory: Inventory) => {
+  const matches = useMediaQuery("(min-width: 36em)");
   const expiryDate = dayjs(inventory.expiryDate);
   const today = dayjs();
 
@@ -171,20 +172,18 @@ const InventoryCard = (inventory: Inventory) => {
       <Group justify="space-between" wrap="nowrap" gap={"xs"}>
         <Group>
           <Stack gap="xs">
-            <Text fw={700}>Quantity</Text>
+            <Text fw={700}>{matches ? "Quantity" : "Qty"}</Text>
             <Text>{inventory.quantity}</Text>
           </Stack>
 
           <Stack gap="xs">
             <Text fw={700}>Expiry</Text>
             <Text>{dayjs(inventory.expiryDate).format("YYYY-MM-DD")}</Text>
-            <Text>
-              {difference <= 3 && difference >= 0 ? (
-                <Badge color='red'>{timeLeft}</Badge>
-              ) : (
-                timeLeft
-              )}
-            </Text>
+            {difference <= 3 && difference >= 0 ? (
+              <Badge color="red">{timeLeft}</Badge>
+            ) : (
+              <Text>timeLeft</Text>
+            )}
           </Stack>
         </Group>
 
