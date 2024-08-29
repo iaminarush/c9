@@ -27,6 +27,10 @@ import {
   useDeleteInventory,
   useInventories,
 } from "./query";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 
 export const AddInventoryComponent = ({ id }: { id: string }) => {
   const { data } = useSession();
@@ -35,7 +39,11 @@ export const AddInventoryComponent = ({ id }: { id: string }) => {
   const createInventory = useCreateInventory(id);
 
   const onSubmit: SubmitHandler<AddFormSchema> = (data) => {
-    const submitData = { ...data, quantity: `${data.quantity}` };
+    const submitData = {
+      ...data,
+      quantity: `${data.quantity}`,
+      expiryDate: data.expiryDate.toISOString(),
+    };
 
     createInventory.mutate(
       { body: submitData },
@@ -75,7 +83,9 @@ export const AddInventoryComponent = ({ id }: { id: string }) => {
   );
 };
 
-const addFormSchema = createInventorySchema;
+const addFormSchema = createInventorySchema.merge(
+  z.object({ expiryDate: z.date() }),
+);
 
 type AddFormSchema = z.infer<typeof addFormSchema>;
 
@@ -144,6 +154,15 @@ export const InventoryPanel = ({ id }: { id: string }) => {
 type Inventory = z.infer<typeof inventorySchema>;
 
 const InventoryCard = (inventory: Inventory) => {
+  const expiryDate = dayjs(inventory.expiryDate);
+  const today = new Date();
+
+  const timeLeft = expiryDate.isSame(today, "day")
+    ? "Expiring today!"
+    : expiryDate.isBefore(today, "day")
+    ? "Expired :("
+    : expiryDate.fromNow();
+
   return (
     <Card p="xs">
       <Group justify="space-between">
@@ -155,7 +174,12 @@ const InventoryCard = (inventory: Inventory) => {
 
           <Stack gap="xs">
             <Text fw={700}>Expiry</Text>
-            <Text>{inventory.expiryDate}</Text>
+            <Text>{dayjs(inventory.expiryDate).format("YYYY-MM-DD")}</Text>
+          </Stack>
+
+          <Stack gap="xs">
+            <Text fw={700}>Time Left</Text>
+            <Text>{timeLeft}</Text>
           </Stack>
         </Group>
 
