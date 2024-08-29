@@ -161,7 +161,7 @@ const InventoryCard = (inventory: Inventory) => {
     ? "Expiring today!"
     : expiryDate.isBefore(today, "day")
     ? "Expired :("
-    : expiryDate.fromNow();
+    : `Expiring ${expiryDate.fromNow()}`;
 
   return (
     <Card p="xs">
@@ -174,12 +174,9 @@ const InventoryCard = (inventory: Inventory) => {
 
           <Stack gap="xs">
             <Text fw={700}>Expiry</Text>
-            <Text>{dayjs(inventory.expiryDate).format("YYYY-MM-DD")}</Text>
-          </Stack>
-
-          <Stack gap="xs">
-            <Text fw={700}>Time Left</Text>
-            <Text>{timeLeft}</Text>
+            <Text>{`${dayjs(inventory.expiryDate).format(
+              "YYYY-MM-DD",
+            )} ${timeLeft}`}</Text>
           </Stack>
         </Group>
 
