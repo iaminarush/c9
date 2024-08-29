@@ -1,6 +1,7 @@
 import {
   createInventorySchema,
   inventorySchema,
+  updateInventorySchema,
 } from "@/server/db/schema/inventory";
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
@@ -29,6 +30,17 @@ export const inventoryContract = c.router({
     query: z.object({
       item: z.number(),
     }),
+  },
+  editInventory: {
+    method: "PATCH",
+    path: "/inventory/:id",
+    responses: {
+      200: inventorySchema,
+      400: z.object({ message: z.string() }),
+      403: z.object({ message: z.string() }),
+    },
+    body: updateInventorySchema,
+    summary: "Update inventory",
   },
   deleteInventory: {
     method: "DELETE",

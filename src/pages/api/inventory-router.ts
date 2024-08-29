@@ -32,6 +32,22 @@ export const inventoryRouter = createNextRoute(contract.inventory, {
     }
     return { status: 404, body: null };
   },
+  editInventory: async (args) => {
+    const token = await getToken({ req: args.req });
+
+    if (!token?.admin)
+      return { status: 403, body: { message: "No Permission" } };
+
+    const updatedInventories = await db
+      .update(inventory)
+      .set(args.body)
+      .where(eq(inventory.id, Number(args.params.id)))
+      .returning();
+
+    return updatedInventories[0]
+      ? { status: 200, body: updatedInventories[0] }
+      : { status: 400, body: { message: "Error" } };
+  },
   deleteInventory: async (args) => {
     const token = await getToken({ req: args.req });
 

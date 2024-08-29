@@ -268,3 +268,12 @@ export const useDeleteInventory = () => {
     },
   });
 };
+
+export const useEditInventory = () => {
+  const queryClient = useQueryClient();
+
+  return client.inventory.editInventory.useMutation({
+    //TODO
+    onSuccess: ({ body }) => {},
+  });
+};

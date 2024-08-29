@@ -4,6 +4,7 @@ import NumberFormField from "@/components/hook-form/NumberFormField";
 import {
   createInventorySchema,
   inventorySchema,
+  updateInventorySchema,
 } from "@/server/db/schema/inventory";
 import {
   ActionIcon,
@@ -17,7 +18,13 @@ import {
   Text,
 } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
-import { IconEdit, IconHomePlus, IconTrash } from "@tabler/icons-react";
+import {
+  IconCheck,
+  IconEdit,
+  IconHomePlus,
+  IconTrash,
+  IconX,
+} from "@tabler/icons-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useSession } from "next-auth/react";
@@ -28,6 +35,7 @@ import { z } from "zod";
 import {
   useCreateInventory,
   useDeleteInventory,
+  useEditInventory,
   useInventories,
 } from "./query";
 
@@ -155,9 +163,11 @@ export const InventoryPanel = ({ id }: { id: string }) => {
 type Inventory = z.infer<typeof inventorySchema>;
 
 const InventoryCard = (inventory: Inventory) => {
+  const [edit, { open, close }] = useDisclosure(false);
   const matches = useMediaQuery("(min-width: 36em)");
   const expiryDate = dayjs(inventory.expiryDate);
   const today = dayjs();
+  const { data } = useSession();
 
   const timeLeft = expiryDate.isSame(today, "day")
     ? "Expiring today!"
@@ -169,34 +179,38 @@ const InventoryCard = (inventory: Inventory) => {
 
   return (
     <Card p="xs">
-      <Group justify="space-between" wrap="nowrap" gap={"xs"}>
-        <Group>
-          <Stack gap="xs">
-            <Text fw={700}>{matches ? "Quantity" : "Qty"}</Text>
-            <Text>{inventory.quantity}</Text>
-          </Stack>
+      {!edit ? (
+        <Group justify="space-between" wrap="nowrap" gap={"xs"}>
+          <Group>
+            <Stack gap="xs">
+              <Text fw={700}>{matches ? "Quantity" : "Qty"}</Text>
+              <Text>{inventory.quantity}</Text>
+            </Stack>
 
-          <Stack gap="xs">
-            <Text fw={700}>Expiry</Text>
-            <Text>{dayjs(inventory.expiryDate).format("YYYY-MM-DD")}</Text>
-            {difference <= 3 && difference >= 0 ? (
-              <Badge color="red">{timeLeft}</Badge>
-            ) : (
-              <Text>timeLeft</Text>
-            )}
-          </Stack>
+            <Stack gap="xs">
+              <Text fw={700}>Expiry</Text>
+              <Text>{dayjs(inventory.expiryDate).format("YYYY-MM-DD")}</Text>
+              {difference <= 3 && difference >= 0 ? (
+                <Badge color="red">{timeLeft}</Badge>
+              ) : (
+                <Text>{timeLeft}</Text>
+              )}
+            </Stack>
+          </Group>
+
+          <Group>
+            <Stack>
+              <ActionIcon onClick={open} disabled={!data?.user.admin}>
+                <IconEdit />
+              </ActionIcon>
+
+              <DeleteComponent id={inventory.id} />
+            </Stack>
+          </Group>
         </Group>
-
-        <Group>
-          <Stack>
-            <ActionIcon disabled>
-              <IconEdit />
-            </ActionIcon>
-
-            <DeleteComponent id={inventory.id} />
-          </Stack>
-        </Group>
-      </Group>
+      ) : (
+        <EditForm {...inventory} close={close} />
+      )}
     </Card>
   );
 };
@@ -238,5 +252,62 @@ const DeleteComponent = ({ id }: { id: number }) => {
         </Stack>
       </Modal>
     </>
+  );
+};
+
+const editFormSchema = updateInventorySchema.merge(
+  z.object({ expiryDate: z.date() }),
+);
+
+type EditFormSchema = z.infer<typeof editFormSchema>;
+
+const EditForm = ({
+  close,
+  ...inventory
+}: Inventory & { close: () => void }) => {
+  const { control, handleSubmit } = useForm<EditFormSchema>({
+    defaultValues: {
+      ...inventory,
+      expiryDate: dayjs(inventory.expiryDate).toDate(),
+    },
+  });
+  const { mutate, isLoading } = useEditInventory();
+
+  const onSubmit: SubmitHandler<EditFormSchema> = (data) => {
+    const submitData = {
+      quantity: `${data.quantity}`,
+      expiryDate: data.expiryDate.toISOString(),
+    };
+
+    mutate(
+      { body: submitData, params: { id: `${inventory.id}` } },
+      { onSuccess: () => close() },
+    );
+  };
+
+  return (
+    <Group justify="space-between">
+      <Group>
+        <NumberFormField control={control} name="quantity" label="Quantity" />
+        <DateFormField control={control} name="expiryDate" label="Expiry" />
+      </Group>
+      <Stack>
+        <ActionIcon
+          variant="filled"
+          color="red"
+          onClick={close}
+          loading={isLoading}
+        >
+          <IconX />
+        </ActionIcon>
+        <ActionIcon
+          variant="filled"
+          onClick={handleSubmit(onSubmit)}
+          loading={isLoading}
+        >
+          <IconCheck />
+        </ActionIcon>
+      </Stack>
+    </Group>
   );
 };
