@@ -14,7 +14,7 @@ const keys = {
   record: (itemId: string) => ["record", itemId] as const,
   barcodes: (id: number) => [...keys.all, "barcodes", id],
   unitTypes: (id: number) => ["unit types by family", id],
-  inventories: (id: string) => ["inventories", id],
+  inventories: (itemId: string) => ["inventories", itemId],
 };
 
 type RecordsResponse = ServerInferResponses<
@@ -250,6 +250,7 @@ export const useDeleteInventory = () => {
       queryClient.setQueryData<InventoriesResponse>(
         keys.inventories(`${body.itemId}`),
         (oldData) => {
+          console.log(oldData);
           if (!oldData) return undefined;
 
           const index = oldData.body.findIndex((i) => i.id === body.id);
@@ -273,7 +274,25 @@ export const useEditInventory = () => {
   const queryClient = useQueryClient();
 
   return client.inventory.editInventory.useMutation({
-    //TODO
-    onSuccess: ({ body }) => {},
+    onSuccess: ({ body }) => {
+      queryClient.setQueryData<InventoriesResponse>(
+        keys.inventories(`${body.itemId}`),
+        (oldData) => {
+          if (!oldData) return undefined;
+
+          const index = oldData.body.findIndex((i) => i.id === body.id);
+
+          if (index !== -1) {
+            const newData = produce(oldData, (draft) => {
+              draft.body[index] = body;
+            });
+
+            return newData;
+          }
+
+          return oldData;
+        },
+      );
+    },
   });
 };

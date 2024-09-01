@@ -29,7 +29,12 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useSession } from "next-auth/react";
 import { ReactNode } from "react";
-import { SubmitHandler, UseFormReturn, useForm } from "react-hook-form";
+import {
+  SubmitHandler,
+  UseFormReturn,
+  useForm,
+  useWatch,
+} from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 import {
@@ -256,7 +261,7 @@ const DeleteComponent = ({ id }: { id: number }) => {
 };
 
 const editFormSchema = updateInventorySchema.merge(
-  z.object({ expiryDate: z.date() }),
+  z.object({ expiryDate: z.date(), quantity: z.number() }),
 );
 
 type EditFormSchema = z.infer<typeof editFormSchema>;
@@ -268,6 +273,7 @@ const EditForm = ({
   const { control, handleSubmit } = useForm<EditFormSchema>({
     defaultValues: {
       ...inventory,
+      quantity: Number(inventory.quantity),
       expiryDate: dayjs(inventory.expiryDate).toDate(),
     },
   });
@@ -284,6 +290,9 @@ const EditForm = ({
       { onSuccess: () => close() },
     );
   };
+
+  const watch = useWatch({ control, name: "quantity" });
+  console.log(watch);
 
   return (
     <Group justify="space-between">
