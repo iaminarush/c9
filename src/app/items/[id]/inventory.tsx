@@ -186,13 +186,13 @@ const InventoryCard = (inventory: Inventory) => {
     <Card p="xs">
       {!edit ? (
         <Group justify="space-between" wrap="nowrap" gap={"xs"}>
-          <Group>
+          <Group align="flex-start">
             <Stack gap="xs">
               <Text fw={700}>{matches ? "Quantity" : "Qty"}</Text>
               <Text>{inventory.quantity}</Text>
             </Stack>
 
-            <Stack gap="xs">
+            <Stack gap="xs" justify="flex-start">
               <Text fw={700}>Expiry</Text>
               <Text>{dayjs(inventory.expiryDate).format("YYYY-MM-DD")}</Text>
               {difference <= 3 && difference >= 0 ? (
