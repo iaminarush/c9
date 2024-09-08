@@ -1,3 +1,4 @@
+import { itemSchema } from "@/server/db/schema";
 import {
   createInventorySchema,
   inventorySchema,
@@ -7,6 +8,10 @@ import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 
 const c = initContract();
+
+export const inventoryDetailSchema = inventorySchema.merge(
+  z.object({ item: itemSchema }),
+);
 
 export const inventoryContract = c.router({
   createInventory: {
@@ -52,5 +57,13 @@ export const inventoryContract = c.router({
       404: z.object({ message: z.string() }),
     },
     summary: "Delete a record",
+  },
+  getAllInventory: {
+    method: "GET",
+    path: "/all-inventory",
+    responses: {
+      200: inventoryDetailSchema.array(),
+      404: z.null(),
+    },
   },
 });
