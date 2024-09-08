@@ -63,4 +63,16 @@ export const inventoryRouter = createNextRoute(contract.inventory, {
       ? { status: 200, body: deletedInventory }
       : { status: 404, body: { message: "Error" } };
   },
+  getAllInventory: async () => {
+    const result = await db.query.inventory.findMany({
+      orderBy: (inventory, { asc }) => [asc(inventory.expiryDate)],
+      with: { item: true },
+    });
+
+    if (result) {
+      return { status: 200, body: result };
+    }
+
+    return { status: 404, body: null };
+  },
 });
