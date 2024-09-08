@@ -42,7 +42,10 @@ export const SearchByBarcode = () => {
                 mutate(
                   { body: { barcode } },
                   {
-                    onSuccess: ({ body }) => router.push(`/items/${body.id}`),
+                    onSuccess: ({ body }) => {
+                      router.push(`/items/${body.id}`);
+                      handlers.close();
+                    },
                     onError: () =>
                       toast.error(`Barcode ${barcode} not found for any items`),
                   },
