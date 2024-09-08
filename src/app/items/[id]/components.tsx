@@ -34,6 +34,7 @@ import NumberFormField from "@/components/hook-form/NumberFormField";
 import CalculatorInput from "@/components/calculator-input";
 import TextFormField from "@/components/hook-form/TextFormField";
 import NextImage from "next/image";
+import { roundTo } from "@/lib/utils";
 
 export const EditRecordComponent = ({ record }: { record: Record }) => {
   const [opened, handlers] = useDisclosure(false);
@@ -202,6 +203,9 @@ export const FormLayout = ({
   });
   const stores = useStoresData({ queryOptions: { enabled: enableQueries } });
 
+  const watch = useWatch({ control, name: "price" });
+  console.log(watch);
+
   useEffect(() => {
     if (unitTypes.isSuccess && create && !customUnitEnabled) {
       const gram = unitTypes.data.body.find((ut) => ut.label === "g");
@@ -236,7 +240,9 @@ export const FormLayout = ({
         decimalScale={2}
         thousandSeparator=","
         rightSection={
-          <CalculatorInput onEnter={(value) => setValue("price", value)} />
+          <CalculatorInput
+            onEnter={(value) => setValue("price", roundTo(value))}
+          />
         }
         rightSectionWidth={36}
       />
@@ -281,7 +287,9 @@ export const FormLayout = ({
         decimalScale={2}
         thousandSeparator=","
         rightSection={
-          <CalculatorInput onEnter={(value) => setValue("amount", value)} />
+          <CalculatorInput
+            onEnter={(value) => setValue("amount", roundTo(value))}
+          />
         }
         rightSectionWidth={36}
       />

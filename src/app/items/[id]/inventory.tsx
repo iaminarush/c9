@@ -43,6 +43,7 @@ import {
   useEditInventory,
   useInventories,
 } from "./query";
+import { roundTo } from "@/lib/utils";
 
 dayjs.extend(relativeTime);
 
@@ -125,8 +126,10 @@ const FormLayout = ({
         thousandSeparator=","
         rightSection={
           //eslint-disable-next-line
-          //@ts-expect-error Mantine types doesn't pass additional object propertis to item
-          <CalculatorInput onEnter={(value) => setValue("quantity", value)} />
+          <CalculatorInput
+            //@ts-expect-error Mantine types doesn't pass additional object propertis to item
+            onEnter={(value) => setValue("quantity", roundTo(value))}
+          />
         }
         rightSectionWidth={36}
       />
