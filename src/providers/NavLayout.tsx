@@ -31,9 +31,6 @@ import { RouteType } from "next/dist/lib/load-custom-routes";
 
 export default function NavLayout({ children }: { children: ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
-  const pathname = usePathname();
-
-  const initialPath = pathname?.split("/")?.[1];
 
   return (
     <AppShell
@@ -51,30 +48,7 @@ export default function NavLayout({ children }: { children: ReactNode }) {
           <Group justify="flex-end" style={{ flex: 1 }}>
             {/* Desktop */}
             <Group ml="xl" gap={0} visibleFrom="sm">
-              <LinkButton
-                href="/categories"
-                selected={initialPath === "categories"}
-              >
-                Category
-              </LinkButton>
-
-              <LinkButton
-                href="/comparison"
-                selected={initialPath === "comparison"}
-              >
-                Comparison
-              </LinkButton>
-
-              <LinkButton href="/stores" selected={initialPath === "stores"}>
-                Stores
-              </LinkButton>
-
-              <LinkButton
-                href="/management"
-                selected={initialPath === "management"}
-              >
-                Management
-              </LinkButton>
+              <Links toggle={toggle} />
 
               <LogoutButton />
               <Space w="xs" />
@@ -89,37 +63,7 @@ export default function NavLayout({ children }: { children: ReactNode }) {
       {/* Mobile */}
       <AppShellNavbar py="md" px={4}>
         <AppShellSection grow component={ScrollArea}>
-          <LinkButton
-            href="/categories"
-            onClick={toggle}
-            selected={initialPath === "categories"}
-          >
-            Category
-          </LinkButton>
-
-          <LinkButton
-            href="/comparison"
-            onClick={toggle}
-            selected={initialPath === "comparison"}
-          >
-            Comparison (WIP)
-          </LinkButton>
-
-          <LinkButton
-            href="/stores"
-            onClick={toggle}
-            selected={initialPath === "stores"}
-          >
-            Stores
-          </LinkButton>
-
-          <LinkButton
-            href="/management"
-            onClick={toggle}
-            selected={initialPath === "management"}
-          >
-            Management
-          </LinkButton>
+          <Links toggle={toggle} />
         </AppShellSection>
 
         <Group justify="space-between" px="sm">
@@ -134,6 +78,55 @@ export default function NavLayout({ children }: { children: ReactNode }) {
     </AppShell>
   );
 }
+
+const Links = ({ toggle }: { toggle: () => void }) => {
+  const pathname = usePathname();
+  const initialPath = pathname?.split("/")?.[1];
+
+  return (
+    <>
+      <LinkButton
+        href="/categories"
+        onClick={toggle}
+        selected={initialPath === "categories"}
+      >
+        Category
+      </LinkButton>
+
+      <LinkButton
+        href="/inventory"
+        selected={initialPath === "inventory"}
+        onClick={toggle}
+      >
+        Inventory
+      </LinkButton>
+
+      <LinkButton
+        href="/comparison"
+        onClick={toggle}
+        selected={initialPath === "comparison"}
+      >
+        Comparison (WIP)
+      </LinkButton>
+
+      <LinkButton
+        href="/stores"
+        onClick={toggle}
+        selected={initialPath === "stores"}
+      >
+        Stores
+      </LinkButton>
+
+      <LinkButton
+        href="/management"
+        onClick={toggle}
+        selected={initialPath === "management"}
+      >
+        Management
+      </LinkButton>
+    </>
+  );
+};
 
 const LogoutButton = () => {
   const { status } = useSession();
