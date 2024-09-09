@@ -7,7 +7,9 @@ import { createItemSchema } from "@/server/db/schema/items";
 import { DisclosureHandlers } from "@/util/commonTypes";
 import {
   ActionIcon,
+  Anchor,
   Box,
+  Breadcrumbs,
   Button,
   ButtonProps,
   Card,
@@ -46,6 +48,7 @@ import {
   useUpdateCategory,
 } from "./query";
 import { useRouter } from "next13-progressbar";
+import { Route } from "next";
 
 export default function Category({
   params: { id },
@@ -179,6 +182,13 @@ export default function Category({
 const CategoryTitle = ({ id }: { id: string }) => {
   const [edit, handlers] = useDisclosure(false);
   const category = useCategory(id, { enabled: isNumber(id) });
+  const parentCategory = useCategory(
+    category.data?.body.parentId ? `${category.data.body.parentId}` : "",
+    {
+      enabled: !!category.data?.body.parentId,
+    },
+  );
+
   const [value, setValue] = useState(category.data?.body.name || "");
   const { mutate, isLoading } = useUpdateCategory();
   const { data } = useSession();
@@ -197,20 +207,45 @@ const CategoryTitle = ({ id }: { id: string }) => {
     );
   };
 
+  if (category.isLoading) return <Skeleton h={250} />;
+
+  if (category.isError) return <Text>Error</Text>;
+
   if (!edit)
     return (
       <>
-        <Group gap="xs">
-          <Text>Category: {category.data?.body.name}</Text>
-          <ActionIcon
-            disabled={!category.isSuccess || !data?.user.admin}
-            onClick={handlers.open}
-          >
-            <IconEdit />
-          </ActionIcon>
+        {category.data.body.parentId ? (
+          <Group>
+            <Breadcrumbs>
+              {parentCategory.isSuccess ? (
+                <Anchor
+                  component={Link}
+                  href={`/categories/${category.data.body.parentId}` as Route}
+                >
+                  {parentCategory.data?.body.name}
+                </Anchor>
+              ) : (
+                <Skeleton w={48} h={16} />
+              )}
+              <Text fw={700}>{category.data.body.name}</Text>
+            </Breadcrumbs>
 
-          <DeleteComponent id={id} />
-        </Group>
+            <ActionIcon disabled={!data?.user.admin} onClick={handlers.open}>
+              <IconEdit />
+            </ActionIcon>
+
+            <DeleteComponent id={id} />
+          </Group>
+        ) : (
+          <Group gap="xs">
+            <Text>Category: {category.data.body.name}</Text>
+            <ActionIcon disabled={!data?.user.admin} onClick={handlers.open}>
+              <IconEdit />
+            </ActionIcon>
+
+            <DeleteComponent id={id} />
+          </Group>
+        )}
       </>
     );
 

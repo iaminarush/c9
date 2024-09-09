@@ -170,7 +170,7 @@ export const InventoryPanel = ({ id }: { id: string }) => {
 
 type Inventory = z.infer<typeof inventorySchema>;
 
-export const InventoryCard = ({
+const InventoryCard = ({
   item,
   ...inventory
 }: Inventory & { item?: ReactNode }) => {
