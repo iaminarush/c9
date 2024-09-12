@@ -10,6 +10,8 @@ import {
 } from "@/server/db/schema";
 import {
   ActionIcon,
+  Anchor,
+  Breadcrumbs,
   Button,
   Card,
   Group,
@@ -65,6 +67,9 @@ import {
   useUpdateItem,
 } from "./query";
 import StandardUnitGroups from "./standard-unit-groups";
+import { useCategory } from "@/app/categories/[id]/query";
+import Link from "next/link";
+import { Route } from "next";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -87,6 +92,7 @@ type FormSchema = z.infer<typeof formSchema>;
 export default function Item({ params: { id } }: { params: { id: string } }) {
   const [activeTab, setActiveTab] = useState<string | null>("prices");
   const { isLoading, isError, data } = useItem(id, { enabled: isNumber(id) });
+  console.log(data);
 
   if (!isNumber(id)) {
     return <Text>Item Id must be a number</Text>;
@@ -101,7 +107,11 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
       <Stack gap="xs">
         <Group justify="space-between">
           <Group align="center">
-            <TitleComponent title={data.body.name} id={id} />
+            <TitleComponent
+              title={data.body.name}
+              categoryId={data.body.category}
+              id={id}
+            />
             <DeleteComponent id={id} />
           </Group>
           <Group>
@@ -138,11 +148,22 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
   );
 }
 
-const TitleComponent = ({ title, id }: { title: string; id: string }) => {
+const TitleComponent = ({
+  title,
+  id,
+  categoryId,
+}: {
+  title: string;
+  id: string;
+  categoryId: number | null;
+}) => {
   const [edit, handlers] = useDisclosure(false);
   const [value, setValue] = useState(title);
   const { mutate, isLoading } = useUpdateItem();
   const { data } = useSession();
+  const category = useCategory(categoryId ? `${categoryId}` : "", {
+    enabled: !!categoryId,
+  });
 
   const handleUpdate = () => {
     mutate(
@@ -155,13 +176,37 @@ const TitleComponent = ({ title, id }: { title: string; id: string }) => {
     );
   };
 
+  if (category.isLoading) return <Skeleton w={48} h={16} />;
+
+  if (category.isError) return <Text>Error</Text>;
+
   if (!edit)
     return (
       <>
-        <Title order={3}>{title}</Title>
-        <ActionIcon onClick={handlers.open} disabled={!data?.user.admin}>
-          <IconEdit />
-        </ActionIcon>
+        {categoryId ? (
+          <Group>
+            <Breadcrumbs>
+              <Anchor
+                component={Link}
+                href={`/categories/${categoryId}` as Route}
+              >
+                {category.data.body.name}
+              </Anchor>
+              <Text fw={700}>{title}</Text>
+            </Breadcrumbs>
+
+            <ActionIcon onClick={handlers.open} disabled={!data?.user.admin}>
+              <IconEdit />
+            </ActionIcon>
+          </Group>
+        ) : (
+          <>
+            <Title order={3}>{title}</Title>
+            <ActionIcon onClick={handlers.open} disabled={!data?.user.admin}>
+              <IconEdit />
+            </ActionIcon>
+          </>
+        )}
       </>
     );
 
