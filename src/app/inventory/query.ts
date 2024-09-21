@@ -53,7 +53,7 @@ export const useEditInventory = () => {
 
         if (index !== -1) {
           const newData = produce(oldData, (draft) => {
-            draft.body[index] = body;
+            draft.body[index] = { ...draft.body[index]!, ...body };
           });
 
           return newData;

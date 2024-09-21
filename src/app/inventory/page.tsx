@@ -22,7 +22,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useSession } from "next-auth/react";
 import { ReactNode } from "react";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useAllInventory, useDeleteInventory, useEditInventory } from "./query";
 
@@ -113,7 +113,7 @@ const InventoryCard = ({
           </Group>
         </Stack>
       ) : (
-        <EditForm {...inventory} close={close} />
+        <EditForm {...inventory} close={close} item={item} />
       )}
     </Card>
   );
@@ -167,8 +167,9 @@ type EditFormSchema = z.infer<typeof editFormSchema>;
 
 const EditForm = ({
   close,
+  item,
   ...inventory
-}: Inventory & { close: () => void }) => {
+}: Inventory & { close: () => void; item: ReactNode }) => {
   const { control, handleSubmit } = useForm<EditFormSchema>({
     defaultValues: {
       ...inventory,
@@ -190,32 +191,32 @@ const EditForm = ({
     );
   };
 
-  const watch = useWatch({ control, name: "quantity" });
-  console.log(watch);
-
   return (
-    <Group justify="space-between">
-      <Group>
-        <NumberFormField control={control} name="quantity" label="Quantity" />
-        <DateFormField control={control} name="expiryDate" label="Expiry" />
+    <Stack>
+      {item}
+      <Group justify="space-between">
+        <Group>
+          <NumberFormField control={control} name="quantity" label="Quantity" />
+          <DateFormField control={control} name="expiryDate" label="Expiry" />
+        </Group>
+        <Stack>
+          <ActionIcon
+            variant="filled"
+            color="red"
+            onClick={close}
+            loading={isLoading}
+          >
+            <IconX />
+          </ActionIcon>
+          <ActionIcon
+            variant="filled"
+            onClick={handleSubmit(onSubmit)}
+            loading={isLoading}
+          >
+            <IconCheck />
+          </ActionIcon>
+        </Stack>
       </Group>
-      <Stack>
-        <ActionIcon
-          variant="filled"
-          color="red"
-          onClick={close}
-          loading={isLoading}
-        >
-          <IconX />
-        </ActionIcon>
-        <ActionIcon
-          variant="filled"
-          onClick={handleSubmit(onSubmit)}
-          loading={isLoading}
-        >
-          <IconCheck />
-        </ActionIcon>
-      </Stack>
-    </Group>
+    </Stack>
   );
 };
