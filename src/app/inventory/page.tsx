@@ -15,13 +15,20 @@ import {
   Skeleton,
   Stack,
   Text,
+  TextInput,
 } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
-import { IconCheck, IconEdit, IconTrash, IconX } from "@tabler/icons-react";
+import {
+  IconCheck,
+  IconEdit,
+  IconSearch,
+  IconTrash,
+  IconX,
+} from "@tabler/icons-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useSession } from "next-auth/react";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useAllInventory, useDeleteInventory, useEditInventory } from "./query";
@@ -30,6 +37,7 @@ dayjs.extend(relativeTime);
 
 export default function Inventory() {
   const inventory = useAllInventory();
+  const [filter, setFilter] = useState("");
 
   if (inventory.isLoading) {
     return <Skeleton h={250} />;
@@ -39,9 +47,30 @@ export default function Inventory() {
     return <Text>Error</Text>;
   }
 
+  const filtered = inventory.data.body.filter((i) =>
+    i.item.name.includes(filter),
+  );
+
   return (
     <Stack>
-      {inventory.data.body.map(({ item, ...inv }) => (
+      <TextInput
+        value={filter}
+        onChange={(e) => setFilter(e.currentTarget.value)}
+        leftSection={<IconSearch size={20} />}
+        rightSection={
+          filter && (
+            <ActionIcon
+              color="red"
+              variant="filled"
+              size={20}
+              onClick={() => setFilter("")}
+            >
+              <IconX />
+            </ActionIcon>
+          )
+        }
+      />
+      {filtered.map(({ item, ...inv }) => (
         <InventoryCard
           {...inv}
           item={
