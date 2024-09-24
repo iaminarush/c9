@@ -149,7 +149,12 @@ const FormLayout = ({
 };
 
 export const InventoryPanel = ({ id }: { id: string }) => {
+  const { data } = useSession();
   const inventories = useInventories(id);
+
+  if (!data?.user) {
+    return <Text>Please login</Text>;
+  }
 
   if (inventories.isLoading) return <Skeleton />;
 

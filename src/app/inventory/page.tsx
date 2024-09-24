@@ -38,6 +38,11 @@ dayjs.extend(relativeTime);
 export default function Inventory() {
   const inventory = useAllInventory();
   const [filter, setFilter] = useState("");
+  const { data } = useSession();
+  
+  if (!data?.user) {
+    return <Text>Please login</Text>
+  }
 
   if (inventory.isLoading) {
     return <Skeleton h={250} />;
