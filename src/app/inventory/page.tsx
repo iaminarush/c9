@@ -36,12 +36,12 @@ import { useAllInventory, useDeleteInventory, useEditInventory } from "./query";
 dayjs.extend(relativeTime);
 
 export default function Inventory() {
-  const inventory = useAllInventory();
-  const [filter, setFilter] = useState("");
   const { data } = useSession();
-  
+  const inventory = useAllInventory(!!data?.user);
+  const [filter, setFilter] = useState("");
+
   if (!data?.user) {
-    return <Text>Please login</Text>
+    return <Text>Please login</Text>;
   }
 
   if (inventory.isLoading) {

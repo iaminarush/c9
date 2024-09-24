@@ -237,10 +237,14 @@ export const useCreateInventory = (id: string) => {
   });
 };
 
-export const useInventories = (id: string) =>
-  client.inventory.getInventories.useQuery(keys.inventories(id), {
-    query: { item: Number(id) },
-  });
+export const useInventories = (id: string, enabled: boolean) =>
+  client.inventory.getInventories.useQuery(
+    keys.inventories(id),
+    {
+      query: { item: Number(id) },
+    },
+    { enabled },
+  );
 
 export const useDeleteInventory = () => {
   const queryClient = useQueryClient();

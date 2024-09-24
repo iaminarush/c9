@@ -8,8 +8,8 @@ const keys = {
   all: ["inventory"],
 };
 
-export const useAllInventory = () =>
-  client.inventory.getAllInventory.useQuery(keys.all);
+export const useAllInventory = (enabled: boolean) =>
+  client.inventory.getAllInventory.useQuery(keys.all, {}, { enabled });
 
 type InventoriesResponse = ServerInferResponses<
   typeof inventoryContract.getInventories,
