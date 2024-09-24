@@ -1,4 +1,5 @@
 import {
+  boolean,
   decimal,
   integer,
   pgTable,
@@ -17,6 +18,7 @@ export const inventory = pgTable("inventory", {
   }).notNull(),
   itemId: integer("item_id").notNull(),
   quantity: decimal("quantity").notNull(),
+  complete: boolean("complete").notNull().default(false),
 });
 
 export const inventoryRelations = relations(inventory, ({ one }) => ({
