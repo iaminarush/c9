@@ -12,6 +12,9 @@ import {
   Card,
   Group,
   Modal,
+  Popover,
+  PopoverDropdown,
+  PopoverTarget,
   Skeleton,
   Stack,
   Text,
@@ -32,28 +35,29 @@ import { ReactNode, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useAllInventory, useDeleteInventory, useEditInventory } from "./query";
+import { useIsAdmin, useIsAuthenticated } from "@/util/hooks";
 
 dayjs.extend(relativeTime);
 
 export default function Inventory() {
-  const { data } = useSession();
-  const inventory = useAllInventory(!!data?.user);
+  const isAuth = useIsAuthenticated();
+  const inventory = useAllInventory(isAuth);
   const [filter, setFilter] = useState("");
-
-  if (!data?.user) {
-    return <Text>Please login</Text>;
-  }
 
   if (inventory.isLoading) {
     return <Skeleton h={250} />;
+  }
+
+  if (!isAuth) {
+    return <Text>Please login</Text>;
   }
 
   if (inventory.isError) {
     return <Text>Error</Text>;
   }
 
-  const filtered = inventory.data.body.filter((i) =>
-    i.item.name.includes(filter),
+  const filtered = inventory.data.body.filter(
+    (i) => i.item.name.includes(filter) && !i.complete,
   );
 
   return (
@@ -142,6 +146,8 @@ const InventoryCard = ({
                 </ActionIcon>
 
                 <DeleteComponent id={inventory.id} />
+
+                <CompleteComponent id={inventory.id} />
               </Stack>
             </Group>
           </Group>
@@ -150,6 +156,35 @@ const InventoryCard = ({
         <EditForm {...inventory} close={close} item={item} />
       )}
     </Card>
+  );
+};
+
+const CompleteComponent = ({ id }: { id: number }) => {
+  const isAdmin = useIsAdmin();
+  const [opened, setOpened] = useState(false);
+  const { mutate, isLoading } = useEditInventory();
+
+  const handleConfirm = () => {
+    mutate(
+      { body: { complete: true }, params: { id: `${id}` } },
+      { onSuccess: () => setOpened(false) },
+    );
+  };
+
+  return (
+    <Popover opened={opened} withArrow onChange={setOpened}>
+      <PopoverTarget>
+        <ActionIcon disabled={!isAdmin} onClick={() => setOpened((o) => !o)}>
+          <IconCheck />
+        </ActionIcon>
+      </PopoverTarget>
+
+      <PopoverDropdown>
+        <Button onClick={handleConfirm} loading={isLoading}>
+          Confirm
+        </Button>
+      </PopoverDropdown>
+    </Popover>
   );
 };
 
