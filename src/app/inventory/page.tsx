@@ -7,6 +7,7 @@ import {
 } from "@/server/db/schema/inventory";
 import {
   ActionIcon,
+  Anchor,
   Badge,
   Button,
   Card,
@@ -36,6 +37,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useAllInventory, useDeleteInventory, useEditInventory } from "./query";
 import { useIsAdmin, useIsAuthenticated } from "@/util/hooks";
+import Link from "next/link";
+import { Route } from "next";
 
 dayjs.extend(relativeTime);
 
@@ -84,9 +87,14 @@ export default function Inventory() {
           {...inv}
           item={
             <>
-              <Text fw={700} fz="lg">
+              <Anchor
+                component={Link}
+                href={`/items/${item.id}` as Route}
+                fw={700}
+                fz="lg"
+              >
                 {item.name}
-              </Text>
+              </Anchor>
             </>
           }
           key={inv.id}
