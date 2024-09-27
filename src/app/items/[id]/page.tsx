@@ -92,7 +92,6 @@ type FormSchema = z.infer<typeof formSchema>;
 export default function Item({ params: { id } }: { params: { id: string } }) {
   const [activeTab, setActiveTab] = useState<string | null>("prices");
   const { isLoading, isError, data } = useItem(id, { enabled: isNumber(id) });
-  console.log(data);
 
   if (!isNumber(id)) {
     return <Text>Item Id must be a number</Text>;
