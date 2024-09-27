@@ -14,6 +14,9 @@ import {
   Card,
   Group,
   Modal,
+  Popover,
+  PopoverDropdown,
+  PopoverTarget,
   Skeleton,
   Stack,
   Text,
@@ -29,7 +32,7 @@ import {
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useSession } from "next-auth/react";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import {
   SubmitHandler,
   UseFormReturn,
@@ -44,6 +47,7 @@ import {
   useEditInventory,
   useInventories,
 } from "./query";
+import { useIsAdmin } from "@/util/hooks";
 
 dayjs.extend(relativeTime);
 
@@ -160,13 +164,15 @@ export const InventoryPanel = ({ id }: { id: string }) => {
 
   if (inventories.isError) return <Text>Error</Text>;
 
-  if (inventories.data.body.length === 0) {
+  const filtered = inventories.data.body.filter((i) => !i.complete);
+
+  if (filtered.length === 0) {
     return <Text>{"No inventory :("}</Text>;
   }
 
   return (
     <Stack>
-      {inventories.data.body.map((i) => (
+      {filtered.map((i) => (
         <InventoryCard key={i.id} {...i} />
       ))}
     </Stack>
@@ -223,6 +229,8 @@ const InventoryCard = ({
                 </ActionIcon>
 
                 <DeleteComponent id={inventory.id} />
+
+                <CompleteComponent id={inventory.id} />
               </Stack>
             </Group>
           </Group>
@@ -231,6 +239,35 @@ const InventoryCard = ({
         <EditForm {...inventory} close={close} />
       )}
     </Card>
+  );
+};
+
+const CompleteComponent = ({ id }: { id: number }) => {
+  const isAdmin = useIsAdmin();
+  const [opened, setOpened] = useState(false);
+  const { mutate, isLoading } = useEditInventory();
+
+  const handleConfirm = () => {
+    mutate(
+      { body: { complete: true }, params: { id: `${id}` } },
+      { onSuccess: () => setOpened(false) },
+    );
+  };
+
+  return (
+    <Popover opened={opened} withArrow onChange={setOpened}>
+      <PopoverTarget>
+        <ActionIcon disabled={!isAdmin} onClick={() => setOpened((o) => !o)}>
+          <IconCheck />
+        </ActionIcon>
+      </PopoverTarget>
+
+      <PopoverDropdown>
+        <Button onClick={handleConfirm} loading={isLoading}>
+          Confirm
+        </Button>
+      </PopoverDropdown>
+    </Popover>
   );
 };
 
