@@ -29,9 +29,9 @@ import {
   Text,
   TextInput,
   Title,
-  Tooltip
+  Tooltip,
 } from "@mantine/core";
-import { useDisclosure, useInputState } from "@mantine/hooks";
+import { useDisclosure, useElementSize, useInputState } from "@mantine/hooks";
 import {
   IconBan,
   IconBarcode,
@@ -69,6 +69,8 @@ import {
   useUpdateItem,
 } from "./query";
 import StandardUnitGroups from "./standard-unit-groups";
+import { useTextWidth } from "@tag0/use-text-width";
+import Marquee from "react-fast-marquee";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -91,6 +93,7 @@ type FormSchema = z.infer<typeof formSchema>;
 export default function Item({ params: { id } }: { params: { id: string } }) {
   const [activeTab, setActiveTab] = useState<string | null>("prices");
   const { isLoading, isError, data } = useItem(id, { enabled: isNumber(id) });
+  const { ref, width } = useElementSize();
 
   if (!isNumber(id)) {
     return <Text>Item Id must be a number</Text>;
@@ -102,13 +105,14 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
 
   return (
     <>
-      <Stack gap="xs">
-        <Group justify="space-between">
+      <Stack gap="xs" ref={ref}>
+        <Group justify="space-between" gap={8}>
           <TitleComponent
             title={data.body.name}
             categoryId={data.body.category}
             id={id}
             activeTab={activeTab}
+            parentWidth={width}
           />
         </Group>
 
@@ -140,11 +144,13 @@ const TitleComponent = ({
   id,
   categoryId,
   activeTab,
+  parentWidth,
 }: {
   title: string;
   id: string;
   categoryId: number | null;
   activeTab: string | null;
+  parentWidth: number;
 }) => {
   const [edit, handlers] = useDisclosure(false);
   const [value, setValue] = useState(title);
@@ -153,6 +159,12 @@ const TitleComponent = ({
   const category = useCategory(categoryId ? `${categoryId}` : "", {
     enabled: !!categoryId,
   });
+  const { ref, width } = useElementSize();
+  const titleWidth = useTextWidth({ text: title, font: "16px bold Inter" });
+
+  const isOverflow = 8 + width + titleWidth > parentWidth;
+
+  console.log(isOverflow);
 
   const handleUpdate = () => {
     mutate(
@@ -172,9 +184,12 @@ const TitleComponent = ({
   if (!edit)
     return (
       <>
-        <Group gap={8}>
+        <Group
+          gap={isOverflow ? 8 : 0}
+          wrap={isOverflow ? "nowrap" : undefined}
+        >
           {!!categoryId && (
-            <>
+            <Group gap={8} ref={ref} wrap="nowrap">
               <Anchor
                 component={Link}
                 href={`/categories/${categoryId}` as Route}
@@ -182,10 +197,21 @@ const TitleComponent = ({
                 {category.data.body.name}
               </Anchor>
               <Text>/</Text>
-            </>
+            </Group>
           )}
 
-          <Text fw={700}>{title}</Text>
+          {isOverflow ? (
+            <Marquee>
+              <Text fw={700} px={8}>
+                {title}
+              </Text>
+            </Marquee>
+          ) : (
+            <Text fw={700}>{title}</Text>
+          )}
+          {/* <Text fw={700} display="none" ref={ref}>
+            {title}
+          </Text> */}
         </Group>
 
         <Group justify="space-between" style={{ flexGrow: 1 }}>
