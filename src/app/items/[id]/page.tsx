@@ -1,5 +1,6 @@
 "use client";
 
+import { useCategory } from "@/app/categories/[id]/query";
 import BarcodeScanner from "@/components/barcodeScanner";
 import { recordDetailSchema } from "@/contracts/contract-record";
 import { isNumber } from "@/lib/utils";
@@ -11,7 +12,6 @@ import {
 import {
   ActionIcon,
   Anchor,
-  Breadcrumbs,
   Button,
   Card,
   Group,
@@ -29,7 +29,7 @@ import {
   Text,
   TextInput,
   Title,
-  Tooltip,
+  Tooltip
 } from "@mantine/core";
 import { useDisclosure, useInputState } from "@mantine/hooks";
 import {
@@ -41,8 +41,10 @@ import {
   IconPlus,
   IconTrash,
 } from "@tabler/icons-react";
+import { Route } from "next";
 import { useSession } from "next-auth/react";
 import NextImage from "next/image";
+import Link from "next/link";
 import { useRouter } from "next13-progressbar";
 import { useState } from "react";
 import Barcode from "react-barcode";
@@ -67,9 +69,6 @@ import {
   useUpdateItem,
 } from "./query";
 import StandardUnitGroups from "./standard-unit-groups";
-import { useCategory } from "@/app/categories/[id]/query";
-import Link from "next/link";
-import { Route } from "next";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -105,23 +104,12 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
     <>
       <Stack gap="xs">
         <Group justify="space-between">
-          <Group align="center">
-            <TitleComponent
-              title={data.body.name}
-              categoryId={data.body.category}
-              id={id}
-            />
-            <DeleteComponent id={id} />
-          </Group>
-          <Group>
-            {activeTab === "prices" && (
-              <>
-                <BarcodeComponent id={id} />
-                <AddComponent id={id} />
-              </>
-            )}
-            {activeTab === "inventory" && <AddInventoryComponent id={id} />}
-          </Group>
+          <TitleComponent
+            title={data.body.name}
+            categoryId={data.body.category}
+            id={id}
+            activeTab={activeTab}
+          />
         </Group>
 
         <Tabs
@@ -151,10 +139,12 @@ const TitleComponent = ({
   title,
   id,
   categoryId,
+  activeTab,
 }: {
   title: string;
   id: string;
   categoryId: number | null;
+  activeTab: string | null;
 }) => {
   const [edit, handlers] = useDisclosure(false);
   const [value, setValue] = useState(title);
@@ -182,30 +172,40 @@ const TitleComponent = ({
   if (!edit)
     return (
       <>
-        {categoryId ? (
-          <Group>
-            <Breadcrumbs>
+        <Group gap={8}>
+          {!!categoryId && (
+            <>
               <Anchor
                 component={Link}
                 href={`/categories/${categoryId}` as Route}
               >
                 {category.data.body.name}
               </Anchor>
-              <Text fw={700}>{title}</Text>
-            </Breadcrumbs>
+              <Text>/</Text>
+            </>
+          )}
 
+          <Text fw={700}>{title}</Text>
+        </Group>
+
+        <Group justify="space-between" style={{ flexGrow: 1 }}>
+          <Group>
             <ActionIcon onClick={handlers.open} disabled={!data?.user.admin}>
               <IconEdit />
             </ActionIcon>
+            <DeleteComponent id={id} />
           </Group>
-        ) : (
-          <>
-            <Title order={3}>{title}</Title>
-            <ActionIcon onClick={handlers.open} disabled={!data?.user.admin}>
-              <IconEdit />
-            </ActionIcon>
-          </>
-        )}
+
+          <Group>
+            {activeTab === "prices" && (
+              <>
+                <BarcodeComponent id={id} />
+                <AddComponent id={id} />
+              </>
+            )}
+            {activeTab === "inventory" && <AddInventoryComponent id={id} />}
+          </Group>
+        </Group>
       </>
     );
 
@@ -580,12 +580,6 @@ const RecordCard = (record: Record) => {
               <IconPhoto size={48} />
             )}
             <Text>{record.store.name}</Text>
-            {/* {!!record.description && (
-              <>
-                &nbsp;
-                <Text> - {record.store.name}</Text>
-              </>
-            )} */}
           </Group>
 
           <Group justify="space-between">
