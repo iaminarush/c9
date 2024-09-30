@@ -41,6 +41,9 @@ importers:
       '@tabler/icons-react':
         specifier: ^2.34.0
         version: 2.34.0(react@18.2.0)
+      '@tag0/use-text-width':
+        specifier: ^1.2.0
+        version: 1.2.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@tanstack/react-query':
         specifier: 4.36.1
         version: 4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -98,6 +101,9 @@ importers:
       eslint-config-next:
         specifier: 14.1.0
         version: 14.1.0(eslint@8.47.0)(typescript@5.1.6)
+      get-text-width:
+        specifier: ^1.0.3
+        version: 1.0.3
       immer:
         specifier: ^10.0.2
         version: 10.0.2
@@ -972,6 +978,12 @@ packages:
 
   '@tabler/icons@2.34.0':
     resolution: {integrity: sha512-65GsJsT4ZBETWcdrNxbsjsbRoZvbVk3CcU2SafaElrzP1wpOeuAn9aELVEbxhdyZyP9dg2SCfgH6iAArJgp7lw==}
+
+  '@tag0/use-text-width@1.2.0':
+    resolution: {integrity: sha512-4R6FKpxrqbHNo3Z0/if4iKRaXsw4BBadty2vCFudOUnE8oW33JvPZiEHZpKqCav+lLsCEAjflUASqO1nyP9NJw==}
+    peerDependencies:
+      react: '>=16.x || >=17.x'
+      react-dom: '>=16.x || >=17.x'
 
   '@tanstack/match-sorter-utils@8.8.4':
     resolution: {integrity: sha512-rKH8LjZiszWEvmi01NR72QWZ8m4xmXre0OOwlRGnjU01Eqz/QnN+cqpty2PJ0efHblq09+KilvyR7lsbzmXVEw==}
@@ -1967,6 +1979,9 @@ packages:
   get-symbol-description@1.0.2:
     resolution: {integrity: sha512-g0QYk1dZBxGwk+Ngc+ltRH2IBp2f7zBkBMBJZCDerh6EhlhSR6+9irMCuT/09zD6qkarHUSn529sK/yL4S27mg==}
     engines: {node: '>= 0.4'}
+
+  get-text-width@1.0.3:
+    resolution: {integrity: sha512-kv1MaexPcR/qaZ4kN8sUDjG5pRp5ptHvxcDGDBTeGld1cmo7MnlCMH22jevyvs/VV7Ran203o7qAOq2+kWw9cA==}
 
   get-tsconfig@4.7.2:
     resolution: {integrity: sha512-wuMsz4leaj5hbGgg4IvDU0bqJagpftG5l5cXIAvo8uZrqn0NJqwtfupTN00VnkQJPcIRrxYrm1Ue24btpCha2A==}
@@ -4045,6 +4060,11 @@ snapshots:
 
   '@tabler/icons@2.34.0': {}
 
+  '@tag0/use-text-width@1.2.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+
   '@tanstack/match-sorter-utils@8.8.4':
     dependencies:
       remove-accents: 0.4.2
@@ -5115,6 +5135,8 @@ snapshots:
       call-bind: 1.0.7
       es-errors: 1.3.0
       get-intrinsic: 1.2.4
+
+  get-text-width@1.0.3: {}
 
   get-tsconfig@4.7.2:
     dependencies:
