@@ -31,13 +31,7 @@ import {
   Title,
   Tooltip,
 } from "@mantine/core";
-import {
-  useDisclosure,
-  useElementSize,
-  useInputState,
-  useResizeObserver,
-  useViewportSize,
-} from "@mantine/hooks";
+import { useDisclosure, useInputState, useViewportSize } from "@mantine/hooks";
 import {
   IconBan,
   IconBarcode,
@@ -52,12 +46,13 @@ import { useSession } from "next-auth/react";
 import NextImage from "next/image";
 import Link from "next/link";
 import { useRouter } from "next13-progressbar";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import Barcode from "react-barcode";
 import Marquee from "react-fast-marquee";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import * as R from "remeda";
+import useResizeObserver from "use-resize-observer";
 import { z } from "zod";
 import {
   DeleteRecordComponent,
@@ -162,13 +157,12 @@ const TitleComponent = ({
   });
   const { width: viewportWidth } = useViewportSize();
   const parentWidth = viewportWidth === 0 ? 0 : viewportWidth - 32;
-  // const [ref, { width }] = useResizeObserver();
-  const { ref, width } = useElementSize();
-  const [titleRef, { width: titleWidth }] = useResizeObserver();
+
+  const { ref, width = 0 } = useResizeObserver();
+
+  const { ref: titleRef, width: titleWidth = 0 } = useResizeObserver();
 
   const isOverflow = 16 + width + titleWidth > parentWidth;
-
-  console.log({ title, width, titleWidth, parentWidth, isOverflow });
 
   const handleUpdate = () => {
     mutate(
@@ -201,24 +195,11 @@ const TitleComponent = ({
             </Group>
           )}
 
-          <Marquee play={isOverflow}>
-            <Text fw={700} ref={titleRef} px={isOverflow ? 8 : 0}>
+          <MarqueeWrapper display={isOverflow}>
+            <Text fw={700} ref={titleRef} px={isOverflow ? 8 : undefined}>
               {title}
             </Text>
-          </Marquee>
-
-          {/* {isOverflow ? (
-            <Marquee>
-              <Text fw={700} px={8}>
-                {title}
-              </Text>
-            </Marquee>
-          ) : (
-            <Text fw={700}>{title}</Text>
-          )} */}
-          {/* <Text fw={700} display="none" ref={ref}>
-            {title}
-          </Text> */}
+          </MarqueeWrapper>
         </Group>
 
         <Group justify="space-between" style={{ flexGrow: 1 }}>
@@ -270,6 +251,18 @@ const TitleComponent = ({
         </ActionIcon>
       </Group>
     );
+};
+
+const MarqueeWrapper = ({
+  children,
+  display,
+}: {
+  children: ReactNode;
+  display: boolean;
+}) => {
+  if (display) return <Marquee>{children}</Marquee>;
+
+  return children;
 };
 
 const AddComponent = ({ id }: { id: string }) => {
