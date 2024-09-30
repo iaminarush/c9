@@ -31,7 +31,7 @@ import {
   Title,
   Tooltip,
 } from "@mantine/core";
-import { useDisclosure, useElementSize, useInputState } from "@mantine/hooks";
+import { useDisclosure, useInputState, useViewportSize } from "@mantine/hooks";
 import {
   IconBan,
   IconBarcode,
@@ -46,11 +46,13 @@ import { useSession } from "next-auth/react";
 import NextImage from "next/image";
 import Link from "next/link";
 import { useRouter } from "next13-progressbar";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import Barcode from "react-barcode";
+import Marquee from "react-fast-marquee";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import * as R from "remeda";
+import useResizeObserver from "use-resize-observer";
 import { z } from "zod";
 import {
   DeleteRecordComponent,
@@ -69,8 +71,6 @@ import {
   useUpdateItem,
 } from "./query";
 import StandardUnitGroups from "./standard-unit-groups";
-import { useTextWidth } from "@tag0/use-text-width";
-import Marquee from "react-fast-marquee";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -93,7 +93,6 @@ type FormSchema = z.infer<typeof formSchema>;
 export default function Item({ params: { id } }: { params: { id: string } }) {
   const [activeTab, setActiveTab] = useState<string | null>("prices");
   const { isLoading, isError, data } = useItem(id, { enabled: isNumber(id) });
-  const { ref, width } = useElementSize();
 
   if (!isNumber(id)) {
     return <Text>Item Id must be a number</Text>;
@@ -105,14 +104,13 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
 
   return (
     <>
-      <Stack gap="xs" ref={ref}>
+      <Stack gap="xs">
         <Group justify="space-between" gap={8}>
           <TitleComponent
             title={data.body.name}
             categoryId={data.body.category}
             id={id}
             activeTab={activeTab}
-            parentWidth={width}
           />
         </Group>
 
@@ -144,13 +142,11 @@ const TitleComponent = ({
   id,
   categoryId,
   activeTab,
-  parentWidth,
 }: {
   title: string;
   id: string;
   categoryId: number | null;
   activeTab: string | null;
-  parentWidth: number;
 }) => {
   const [edit, handlers] = useDisclosure(false);
   const [value, setValue] = useState(title);
@@ -159,12 +155,14 @@ const TitleComponent = ({
   const category = useCategory(categoryId ? `${categoryId}` : "", {
     enabled: !!categoryId,
   });
-  const { ref, width } = useElementSize();
-  const titleWidth = useTextWidth({ text: title, font: "16px bold Inter" });
+  const { width: viewportWidth } = useViewportSize();
+  const parentWidth = viewportWidth === 0 ? 0 : viewportWidth - 32;
 
-  const isOverflow = 8 + width + titleWidth > parentWidth;
+  const { ref, width = 0 } = useResizeObserver();
 
-  console.log(isOverflow);
+  const { ref: titleRef, width: titleWidth = 0 } = useResizeObserver();
+
+  const isOverflow = 16 + width + titleWidth > parentWidth;
 
   const handleUpdate = () => {
     mutate(
@@ -184,10 +182,7 @@ const TitleComponent = ({
   if (!edit)
     return (
       <>
-        <Group
-          gap={isOverflow ? 8 : 0}
-          wrap={isOverflow ? "nowrap" : undefined}
-        >
+        <Group gap={8} wrap={isOverflow ? "nowrap" : undefined}>
           {!!categoryId && (
             <Group gap={8} ref={ref} wrap="nowrap">
               <Anchor
@@ -200,18 +195,11 @@ const TitleComponent = ({
             </Group>
           )}
 
-          {isOverflow ? (
-            <Marquee>
-              <Text fw={700} px={8}>
-                {title}
-              </Text>
-            </Marquee>
-          ) : (
-            <Text fw={700}>{title}</Text>
-          )}
-          {/* <Text fw={700} display="none" ref={ref}>
-            {title}
-          </Text> */}
+          <MarqueeWrapper display={isOverflow}>
+            <Text fw={700} ref={titleRef} px={isOverflow ? 8 : undefined}>
+              {title}
+            </Text>
+          </MarqueeWrapper>
         </Group>
 
         <Group justify="space-between" style={{ flexGrow: 1 }}>
@@ -263,6 +251,18 @@ const TitleComponent = ({
         </ActionIcon>
       </Group>
     );
+};
+
+const MarqueeWrapper = ({
+  children,
+  display,
+}: {
+  children: ReactNode;
+  display: boolean;
+}) => {
+  if (display) return <Marquee>{children}</Marquee>;
+
+  return children;
 };
 
 const AddComponent = ({ id }: { id: string }) => {
