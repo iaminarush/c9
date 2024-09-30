@@ -71,11 +71,6 @@ import {
   useUpdateItem,
 } from "./query";
 import StandardUnitGroups from "./standard-unit-groups";
-<<<<<<< HEAD
-=======
-import { useTextWidth } from "@tag0/use-text-width";
-import { getTextWidth } from "get-text-width";
->>>>>>> marquee
 
 type FormData = z.infer<typeof createRecordSchema>;
 
