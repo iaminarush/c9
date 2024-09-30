@@ -3,7 +3,7 @@
 import { useCategory } from "@/app/categories/[id]/query";
 import BarcodeScanner from "@/components/barcodeScanner";
 import { recordDetailSchema } from "@/contracts/contract-record";
-import { isNumber } from "@/lib/utils";
+import { isNumber, measureTextWidth } from "@/lib/utils";
 import {
   createRecordSchema,
   unitFamilySchema,
@@ -71,6 +71,11 @@ import {
   useUpdateItem,
 } from "./query";
 import StandardUnitGroups from "./standard-unit-groups";
+<<<<<<< HEAD
+=======
+import { useTextWidth } from "@tag0/use-text-width";
+import { getTextWidth } from "get-text-width";
+>>>>>>> marquee
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -188,6 +193,7 @@ const TitleComponent = ({
               <Anchor
                 component={Link}
                 href={`/categories/${categoryId}` as Route}
+                lineClamp={1}
               >
                 {category.data.body.name}
               </Anchor>
@@ -195,11 +201,12 @@ const TitleComponent = ({
             </Group>
           )}
 
-          <MarqueeWrapper display={isOverflow}>
-            <Text fw={700} ref={titleRef} px={isOverflow ? 8 : undefined}>
+          <Text ref={titleRef}>{title}</Text>
+          {/* <MarqueeWrapper display={isOverflow}>
+            <Text fw={700} ref={titleRef}>
               {title}
             </Text>
-          </MarqueeWrapper>
+          </MarqueeWrapper> */}
         </Group>
 
         <Group justify="space-between" style={{ flexGrow: 1 }}>

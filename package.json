@@ -44,6 +44,7 @@
     "drizzle-zod": "^0.5.1",
     "eslint": "8.47.0",
     "eslint-config-next": "14.1.0",
+    "get-text-width": "^1.0.3",
     "immer": "^10.0.2",
     "klona": "^2.0.6",
     "next": "^14.2.5",
