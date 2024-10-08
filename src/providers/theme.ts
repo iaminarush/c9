@@ -8,24 +8,13 @@ import {
   TextInput,
   createTheme,
 } from "@mantine/core";
+import { Inter } from "next/font/google";
 
-const fontFamily = [
-  "Inter",
-  "Open Sans",
-  "-apple-system",
-  "BlinkMacSystemFont",
-  "Segoe UI",
-  "Roboto",
-  "Helvetica Neue",
-  "Arial",
-  "sans-serif",
-  "Apple Color Emoji",
-  "Segoe UI Emoji",
-  "Segoe UI Symbol",
-].join(",");
+const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const mantineTheme = createTheme({
-  fontFamily,
+  fontFamily: inter.style.fontFamily,
+  headings: { fontFamily: inter.style.fontFamily },
   components: {
     Button: Button.extend({
       defaultProps: {

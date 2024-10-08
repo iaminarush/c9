@@ -6,11 +6,8 @@ import "@uploadthing/react/styles.css";
 import Providers from "@/providers";
 import { ColorSchemeScript } from "@mantine/core";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import { Suspense } from "react";
 import Loading from "./loading";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "C9",
@@ -23,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.className}>
+    <html lang="en">
       <head>
         <ColorSchemeScript defaultColorScheme="auto" />
       </head>
