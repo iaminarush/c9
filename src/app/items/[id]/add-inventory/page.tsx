@@ -106,6 +106,7 @@ const FormLayout = ({
         label="Expiry Date"
         withAsterisk
         defaultLevel="year"
+        inputMode="none"
       />
 
       {submitButton}
