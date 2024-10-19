@@ -3,7 +3,7 @@
 import { useCategory } from "@/app/categories/[id]/query";
 import BarcodeScanner from "@/components/barcodeScanner";
 import { recordDetailSchema } from "@/contracts/contract-record";
-import { isNumber, measureTextWidth } from "@/lib/utils";
+import { isNumber } from "@/lib/utils";
 import {
   createRecordSchema,
   unitFamilySchema,
@@ -46,9 +46,8 @@ import { useSession } from "next-auth/react";
 import NextImage from "next/image";
 import Link from "next/link";
 import { useRouter } from "next13-progressbar";
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import Barcode from "react-barcode";
-import Marquee from "react-fast-marquee";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import * as R from "remeda";
@@ -197,11 +196,6 @@ const TitleComponent = ({
           )}
 
           <Text ref={titleRef}>{title}</Text>
-          {/* <MarqueeWrapper display={isOverflow}>
-            <Text fw={700} ref={titleRef}>
-              {title}
-            </Text>
-          </MarqueeWrapper> */}
         </Group>
 
         <Group justify="space-between" style={{ flexGrow: 1 }}>
@@ -255,17 +249,17 @@ const TitleComponent = ({
     );
 };
 
-const MarqueeWrapper = ({
-  children,
-  display,
-}: {
-  children: ReactNode;
-  display: boolean;
-}) => {
-  if (display) return <Marquee>{children}</Marquee>;
-
-  return children;
-};
+// const MarqueeWrapper = ({
+//   children,
+//   display,
+// }: {
+//   children: ReactNode;
+//   display: boolean;
+// }) => {
+//   if (display) return <Marquee>{children}</Marquee>;
+//
+//   return children;
+// };
 
 const AddComponent = ({ id }: { id: string }) => {
   const { data } = useSession();
