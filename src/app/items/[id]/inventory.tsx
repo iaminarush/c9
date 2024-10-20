@@ -1,6 +1,8 @@
+import CalculatorInput from "@/components/calculator-input";
 import DateFormField from "@/components/hook-form/DateFormField";
 import NumberFormField from "@/components/hook-form/NumberFormField";
 import {
+  createInventorySchema,
   inventorySchema,
   updateInventorySchema,
 } from "@/server/db/schema/inventory";
@@ -29,68 +31,124 @@ import {
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { Route } from "next";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { ReactNode, useState } from "react";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import {
+  SubmitHandler,
+  UseFormReturn,
+  useForm,
+  useWatch,
+} from "react-hook-form";
+import { toast } from "react-hot-toast";
 import { z } from "zod";
-import { useDeleteInventory, useEditInventory, useInventories } from "./query";
+import {
+  useCreateInventory,
+  useDeleteInventory,
+  useEditInventory,
+  useInventories,
+} from "./query";
 
 dayjs.extend(relativeTime);
 
+const addFormSchema = createInventorySchema.merge(
+  z.object({ expiryDate: z.date() }),
+);
+
+type AddFormSchema = z.infer<typeof addFormSchema>;
+
 export const AddInventoryComponent = ({ id }: { id: string }) => {
   const isAdmin = useIsAdmin();
-  // const [opened, { open, close }] = useDisclosure(false);
-  //
-  // const createInventory = useCreateInventory(id);
-  //
-  // const onSubmit: SubmitHandler<AddFormSchema> = (data) => {
-  //   const submitData = {
-  //     ...data,
-  //     quantity: `${data.quantity}`,
-  //     expiryDate: data.expiryDate.toISOString(),
-  //   };
-  //
-  //   createInventory.mutate(
-  //     { body: submitData },
-  //     {
-  //       onSuccess: () => {
-  //         close(), form.reset({ itemId: Number(id) });
-  //       },
-  //       onError: () => toast.error("Error"),
-  //     },
-  //   );
-  // };
-  //
-  // const form = useForm<AddFormSchema>({
-  //   defaultValues: { itemId: Number(id) },
-  // });
-  //
+  const [opened, { open, close }] = useDisclosure(false);
+
+  const createInventory = useCreateInventory(id);
+
+  const onSubmit: SubmitHandler<AddFormSchema> = (data) => {
+    const submitData = {
+      ...data,
+      quantity: `${data.quantity}`,
+      expiryDate: data.expiryDate.toISOString(),
+    };
+
+    createInventory.mutate(
+      { body: submitData },
+      {
+        onSuccess: () => {
+          close(), form.reset({ itemId: Number(id) });
+        },
+        onError: () => toast.error("Error"),
+      },
+    );
+  };
+
+  const form = useForm<AddFormSchema>({
+    defaultValues: { itemId: Number(id) },
+  });
+
   return (
     <>
-      <ActionIcon
-        disabled={!isAdmin}
-        component={Link}
-        href={`/items/${id}/add-inventory` as Route}
-      >
+      <ActionIcon disabled={!isAdmin} onClick={open}>
         <IconHomePlus />
       </ActionIcon>
 
-      {/* <Modal opened={opened} onClose={close} title="Add inventory" centered> */}
-      {/*   <FormLayout */}
-      {/*     form={form} */}
-      {/*     submitButton={ */}
-      {/*       <Button */}
-      {/*         onClick={form.handleSubmit(onSubmit)} */}
-      {/*         loading={createInventory.isLoading} */}
-      {/*       > */}
-      {/*         Add Inventory */}
-      {/*       </Button> */}
-      {/*     } */}
-      {/*   /> */}
-      {/* </Modal> */}
+      <Modal opened={opened} onClose={close} title="Add inventory" centered>
+        <FormLayout
+          form={form}
+          submitButton={
+            <Button
+              onClick={form.handleSubmit(onSubmit)}
+              loading={createInventory.isLoading}
+            >
+              Add Inventory
+            </Button>
+          }
+        />
+      </Modal>
     </>
+  );
+};
+
+const FormLayout = ({
+  form,
+  submitButton,
+}: {
+  form: UseFormReturn<AddFormSchema>;
+  submitButton: ReactNode;
+}) => {
+  const { control, setValue } = form;
+
+  return (
+    <Stack>
+      <NumberFormField
+        control={control}
+        name="quantity"
+        rules={{ required: "Required" }}
+        label="Quantity"
+        withAsterisk
+        min={0}
+        decimalScale={2}
+        thousandSeparator=","
+        rightSection={
+          //eslint-disable-next-line
+          <CalculatorInput
+            //@ts-expect-error Mantine types doesn't pass additional object propertis to item
+            onEnter={(value) => setValue("quantity", roundTo(value))}
+          />
+        }
+        rightSectionWidth={36}
+      />
+
+      <DateFormField
+        control={control}
+        name="expiryDate"
+        rules={{ required: "Required" }}
+        label="Expiry Date"
+        withAsterisk
+        defaultLevel="year"
+        inputMode="none"
+      />
+
+      {submitButton}
+    </Stack>
   );
 };
 
