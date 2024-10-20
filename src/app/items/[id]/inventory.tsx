@@ -51,7 +51,7 @@ import {
 dayjs.extend(relativeTime);
 
 const addFormSchema = createInventorySchema.merge(
-  z.object({ expiryDate: z.date() }),
+  z.object({ expiryDate: z.date().nullable() }),
 );
 
 type AddFormSchema = z.infer<typeof addFormSchema>;
@@ -66,7 +66,7 @@ export const AddInventoryComponent = ({ id }: { id: string }) => {
     const submitData = {
       ...data,
       quantity: `${data.quantity}`,
-      expiryDate: data.expiryDate.toISOString(),
+      expiryDate: data.expiryDate?.toISOString() || null,
     };
 
     createInventory.mutate(
@@ -140,7 +140,6 @@ const FormLayout = ({
       <DateFormField
         control={control}
         name="expiryDate"
-        rules={{ required: "Required" }}
         label="Expiry Date"
         withAsterisk
         defaultLevel="year"
@@ -189,9 +188,9 @@ const InventoryCard = ({
   const matches = useMediaQuery("(min-width: 36em)");
   const expiryDate = dayjs(inventory.expiryDate);
   const today = dayjs();
-  const { data } = useSession();
+  const isAdmin = useIsAdmin();
 
-  const timeLeft = expiryDate.isSame(today, "day")
+  const timeLeft = inventory.expiryDate
     ? "Expiring today!"
     : expiryDate.isBefore(today, "day")
     ? "Expired :("
@@ -213,18 +212,26 @@ const InventoryCard = ({
 
               <Stack gap="xs" justify="flex-start">
                 <Text fw={700}>Expiry</Text>
-                <Text>{dayjs(inventory.expiryDate).format("YYYY-MM-DD")}</Text>
-                {difference <= 3 && difference >= 0 ? (
-                  <Badge color="red">{timeLeft}</Badge>
+                {inventory.expiryDate ? (
+                  <>
+                    <Text>
+                      {dayjs(inventory.expiryDate).format("YYYY-MM-DD")}
+                    </Text>
+                    {difference <= 3 && difference >= 0 ? (
+                      <Badge color="red">{timeLeft}</Badge>
+                    ) : (
+                      <Text>{timeLeft}</Text>
+                    )}
+                  </>
                 ) : (
-                  <Text>{timeLeft}</Text>
+                  <Text>No expiry date</Text>
                 )}
               </Stack>
             </Group>
 
             <Group>
               <Stack>
-                <ActionIcon onClick={open} disabled={!data?.user.admin}>
+                <ActionIcon onClick={open} disabled={!isAdmin}>
                   <IconEdit />
                 </ActionIcon>
 
@@ -312,7 +319,7 @@ const DeleteComponent = ({ id }: { id: number }) => {
 };
 
 const editFormSchema = updateInventorySchema.merge(
-  z.object({ expiryDate: z.date(), quantity: z.number() }),
+  z.object({ expiryDate: z.date().nullable(), quantity: z.number() }),
 );
 
 type EditFormSchema = z.infer<typeof editFormSchema>;
@@ -325,7 +332,9 @@ const EditForm = ({
     defaultValues: {
       ...inventory,
       quantity: Number(inventory.quantity),
-      expiryDate: dayjs(inventory.expiryDate).toDate(),
+      expiryDate: inventory.expiryDate
+        ? dayjs(inventory.expiryDate).toDate()
+        : null,
     },
   });
   const { mutate, isLoading } = useEditInventory();
@@ -333,7 +342,7 @@ const EditForm = ({
   const onSubmit: SubmitHandler<EditFormSchema> = (data) => {
     const submitData = {
       quantity: `${data.quantity}`,
-      expiryDate: data.expiryDate.toISOString(),
+      expiryDate: data.expiryDate ? data.expiryDate.toISOString() : null,
     };
 
     mutate(
