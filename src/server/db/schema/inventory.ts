@@ -15,7 +15,7 @@ export const inventory = pgTable("inventory", {
   expiryDate: timestamp("expiry_date", {
     mode: "string",
     withTimezone: true,
-  }).notNull(),
+  }),
   itemId: integer("item_id").notNull(),
   quantity: decimal("quantity").notNull(),
   complete: boolean("complete").notNull().default(false),
