@@ -15,10 +15,12 @@ import {
   Card,
   Center,
   Group,
+  Loader,
   Modal,
   Popover,
   PopoverDropdown,
   PopoverTarget,
+  Select,
   Skeleton,
   Stack,
   Text,
@@ -28,6 +30,7 @@ import { useDisclosure } from "@mantine/hooks";
 import {
   IconDeviceFloppy,
   IconEdit,
+  IconFolders,
   IconGripHorizontal,
   IconPlus,
   IconTrash,
@@ -49,6 +52,7 @@ import {
 } from "./query";
 import { useRouter } from "next13-progressbar";
 import { Route } from "next";
+import { client } from "@/contracts/contract";
 
 export default function Category({
   params: { id },
@@ -182,6 +186,7 @@ export default function Category({
 const CategoryTitle = ({ id }: { id: string }) => {
   const [edit, handlers] = useDisclosure(false);
   const category = useCategory(id, { enabled: isNumber(id) });
+  //TODO: Update on parent category patch
   const parentCategory = useCategory(
     category.data?.body.parentId ? `${category.data.body.parentId}` : "",
     {
@@ -211,43 +216,53 @@ const CategoryTitle = ({ id }: { id: string }) => {
 
   if (category.isError) return <Text>Error</Text>;
 
-  if (!edit)
-    return (
-      <>
-        {category.data.body.parentId ? (
-          <Group>
-            <Breadcrumbs>
-              {parentCategory.isSuccess ? (
-                <Anchor
-                  component={Link}
-                  href={`/categories/${category.data.body.parentId}` as Route}
-                >
-                  {parentCategory.data?.body.name}
-                </Anchor>
-              ) : (
-                <Skeleton w={48} h={16} />
-              )}
-              <Text fw={700}>{category.data.body.name}</Text>
-            </Breadcrumbs>
+  if (!edit) console.log(category.data);
+  return (
+    <>
+      {category.data.body.parentId ? (
+        <Group>
+          <Breadcrumbs>
+            {parentCategory.isSuccess ? (
+              <Anchor
+                component={Link}
+                href={`/categories/${category.data.body.parentId}` as Route}
+              >
+                {parentCategory.data?.body.name}
+              </Anchor>
+            ) : (
+              <Skeleton w={48} h={16} />
+            )}
+            <Text fw={700}>{category.data.body.name}</Text>
+          </Breadcrumbs>
 
-            <ActionIcon disabled={!data?.user.admin} onClick={handlers.open}>
-              <IconEdit />
-            </ActionIcon>
+          <ActionIcon disabled={!data?.user.admin} onClick={handlers.open}>
+            <IconEdit />
+          </ActionIcon>
 
-            <DeleteComponent id={id} />
-          </Group>
-        ) : (
-          <Group gap="xs">
-            <Text>Category: {category.data.body.name}</Text>
-            <ActionIcon disabled={!data?.user.admin} onClick={handlers.open}>
-              <IconEdit />
-            </ActionIcon>
+          <DeleteComponent id={id} />
 
-            <DeleteComponent id={id} />
-          </Group>
-        )}
-      </>
-    );
+          <ManageCategory
+            id={id}
+            parentId={category.data.body.parentId || null}
+          />
+        </Group>
+      ) : (
+        <Group gap="xs">
+          <Text>Category: {category.data.body.name}</Text>
+          <ActionIcon disabled={!data?.user.admin} onClick={handlers.open}>
+            <IconEdit />
+          </ActionIcon>
+
+          <DeleteComponent id={id} />
+
+          <ManageCategory
+            id={id}
+            parentId={category.data.body.parentId || null}
+          />
+        </Group>
+      )}
+    </>
+  );
 
   if (edit)
     return (
@@ -444,5 +459,67 @@ const ItemModal = ({
         </Button>
       </Stack>
     </Modal>
+  );
+};
+
+const ManageCategory = ({
+  parentId,
+  id,
+}: {
+  parentId: number | null;
+  id: string;
+}) => {
+  const [opened, handlers] = useDisclosure();
+  const [value, setValue] = useState(parentId ? `${parentId}` : null);
+  const { data, isFetching } = client.categories.getAllCategories.useQuery(
+    ["all categories"],
+    {},
+    {
+      enabled: opened,
+      select: ({ body }) =>
+        body.map((c) => ({ value: `${c.id}`, label: c.name })),
+    },
+  );
+  const { mutate, isLoading } = useUpdateCategory();
+
+  const handleUpdate = () =>
+    mutate(
+      {
+        body: { parentId: value ? Number(value) : null },
+        params: { id },
+      },
+      { onSuccess: () => handlers.close() },
+    );
+
+  return (
+    <>
+      <ActionIcon onClick={handlers.open}>
+        <IconFolders />
+      </ActionIcon>
+      <Modal
+        opened={opened}
+        onClose={handlers.close}
+        centered
+        title="Move category"
+      >
+        <Stack>
+          <Select
+            data={data}
+            onChange={setValue}
+            value={value}
+            rightSection={isFetching ? <Loader size={16} /> : null}
+            searchable
+          />
+
+          <Button
+            disabled={value === `${parentId}`}
+            onClick={handleUpdate}
+            loading={isLoading}
+          >
+            Update
+          </Button>
+        </Stack>
+      </Modal>
+    </>
   );
 };
