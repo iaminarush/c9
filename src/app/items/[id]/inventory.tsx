@@ -357,7 +357,7 @@ const EditForm = ({
   console.log(watch);
 
   return (
-    <Group justify="space-between">
+    <Group justify="space-between" wrap="nowrap">
       <Group>
         <NumberFormField control={control} name="quantity" label="Quantity" />
         <DateFormField control={control} name="expiryDate" label="Expiry" />
