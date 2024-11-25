@@ -79,6 +79,7 @@ export const useUpdateCategory = () => {
 
           const newData = produce(oldData, (draft) => {
             draft.body.name = body.name;
+            draft.body.parentId = body.parentId;
           });
 
           return newData;

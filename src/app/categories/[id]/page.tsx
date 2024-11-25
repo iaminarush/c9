@@ -186,7 +186,6 @@ export default function Category({
 const CategoryTitle = ({ id }: { id: string }) => {
   const [edit, handlers] = useDisclosure(false);
   const category = useCategory(id, { enabled: isNumber(id) });
-  //TODO: Update on parent category patch
   const parentCategory = useCategory(
     category.data?.body.parentId ? `${category.data.body.parentId}` : "",
     {
