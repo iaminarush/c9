@@ -85,6 +85,10 @@ export const useUpdateCategory = () => {
           return newData;
         },
       );
+
+      //TODO: Update parent category's data
+
+      // queryClient.setQueryData(keys.category(`${body.parentId}`))
     },
   });
 };
