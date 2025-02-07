@@ -215,53 +215,53 @@ const CategoryTitle = ({ id }: { id: string }) => {
 
   if (category.isError) return <Text>Error</Text>;
 
-  if (!edit) console.log(category.data);
-  return (
-    <>
-      {category.data.body.parentId ? (
-        <Group>
-          <Breadcrumbs>
-            {parentCategory.isSuccess ? (
-              <Anchor
-                component={Link}
-                href={`/categories/${category.data.body.parentId}` as Route}
-              >
-                {parentCategory.data?.body.name}
-              </Anchor>
-            ) : (
-              <Skeleton w={48} h={16} />
-            )}
-            <Text fw={700}>{category.data.body.name}</Text>
-          </Breadcrumbs>
+  if (!edit)
+    return (
+      <>
+        {category.data.body.parentId ? (
+          <Group>
+            <Breadcrumbs>
+              {parentCategory.isSuccess ? (
+                <Anchor
+                  component={Link}
+                  href={`/categories/${category.data.body.parentId}` as Route}
+                >
+                  {parentCategory.data?.body.name}
+                </Anchor>
+              ) : (
+                <Skeleton w={48} h={16} />
+              )}
+              <Text fw={700}>{category.data.body.name}</Text>
+            </Breadcrumbs>
 
-          <ActionIcon disabled={!data?.user.admin} onClick={handlers.open}>
-            <IconEdit />
-          </ActionIcon>
+            <ActionIcon disabled={!data?.user.admin} onClick={handlers.open}>
+              <IconEdit />
+            </ActionIcon>
 
-          <DeleteComponent id={id} />
+            <DeleteComponent id={id} />
 
-          <ManageCategory
-            id={id}
-            parentId={category.data.body.parentId || null}
-          />
-        </Group>
-      ) : (
-        <Group gap="xs">
-          <Text>Category: {category.data.body.name}</Text>
-          <ActionIcon disabled={!data?.user.admin} onClick={handlers.open}>
-            <IconEdit />
-          </ActionIcon>
+            <ManageCategory
+              id={id}
+              parentId={category.data.body.parentId || null}
+            />
+          </Group>
+        ) : (
+          <Group gap="xs">
+            <Text>Category: {category.data.body.name}</Text>
+            <ActionIcon disabled={!data?.user.admin} onClick={handlers.open}>
+              <IconEdit />
+            </ActionIcon>
 
-          <DeleteComponent id={id} />
+            <DeleteComponent id={id} />
 
-          <ManageCategory
-            id={id}
-            parentId={category.data.body.parentId || null}
-          />
-        </Group>
-      )}
-    </>
-  );
+            <ManageCategory
+              id={id}
+              parentId={category.data.body.parentId || null}
+            />
+          </Group>
+        )}
+      </>
+    );
 
   if (edit)
     return (
