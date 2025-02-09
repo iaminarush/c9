@@ -86,9 +86,24 @@ export const useUpdateCategory = () => {
         },
       );
 
-      //TODO: Update parent category's data
+      queryClient.setQueryData<CategoryResponse>(
+        keys.category(`${body.parentId}`),
+        (oldData) => {
+          if (!oldData) return undefined;
 
-      // queryClient.setQueryData(keys.category(`${body.parentId}`))
+          const index = oldData.body.subCategories.findIndex(
+            (c) => c.id === body.id,
+          );
+
+          if (index === -1) return oldData;
+
+          const newData = produce(oldData, (draft) => {
+            draft.body.subCategories[index] = body;
+          });
+
+          return newData;
+        },
+      );
     },
   });
 };
