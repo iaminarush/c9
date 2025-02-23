@@ -9,7 +9,7 @@ export const useGlobalSearch = (keyword: string, router: AppRouterInstance) => {
       query: { keyword },
     },
     {
-      enabled: keyword.length > 2,
+      enabled: keyword.length > 0,
       staleTime: 30000,
     },
   );

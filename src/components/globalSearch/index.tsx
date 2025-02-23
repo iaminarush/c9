@@ -42,7 +42,7 @@ export default function GlobalSearch() {
         nothingFound={
           searchResults.data
             ? "Couldn't find what you were looking for"
-            : "Type at least 3 letters to start searching"
+            : "Type something to start searching"
         }
       />
     </>
