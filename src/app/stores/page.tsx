@@ -16,7 +16,7 @@ import {
   Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconPhotoOff, IconPlus } from "@tabler/icons-react";
+import { IconPhotoOff, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import { ReactNode, useState } from "react";
 import {
@@ -43,6 +43,7 @@ export default function Stores() {
   const [storeId, setStoreId] = useState<number | null>(null);
   const { mutate, isLoading } = useUpdateStore();
   const { data } = useSession();
+  const [isUploading, setIsUploading] = useState(false);
 
   const onSubmit: SubmitHandler<FormSchema> = (data) => {
     if (storeId) {
@@ -86,18 +87,22 @@ export default function Stores() {
       </Stack>
       <Modal
         opened={!!storeId}
-        onClose={() => setStoreId(null)}
+        onClose={() => {
+          setStoreId(null);
+          setIsUploading(false);
+        }}
         centered
         title="Update Store"
       >
         <FormLayout
           control={control}
           setValue={setValue}
+          setIsUploading={setIsUploading}
           submitButton={
             <Button
               loading={isLoading}
               onClick={handleSubmit(onSubmit)}
-              disabled={!data?.user.admin}
+              disabled={!data?.user.admin || isUploading}
             >
               Update
             </Button>
@@ -115,6 +120,7 @@ const AddStore = () => {
   const { control, handleSubmit, setValue, reset } = useForm<FormSchema>();
   const { data } = useSession();
   const { mutate, isLoading } = useAddStore();
+  const [isUploading, setIsUploading] = useState(false);
 
   const onSubmit: SubmitHandler<FormSchema> = (data) => {
     mutate(
@@ -137,18 +143,22 @@ const AddStore = () => {
 
       <Modal
         opened={opened}
-        onClose={handlers.close}
+        onClose={() => {
+          handlers.close();
+          setIsUploading(false);
+        }}
         title="Add Store"
         centered
       >
         <FormLayout
           control={control}
           setValue={setValue}
+          setIsUploading={setIsUploading}
           submitButton={
             <Button
               onClick={handleSubmit(onSubmit)}
               loading={isLoading}
-              disabled={!data?.user.admin}
+              disabled={!data?.user.admin || isUploading}
             >
               Add
             </Button>
@@ -163,10 +173,12 @@ const FormLayout = ({
   control,
   setValue,
   submitButton,
+  setIsUploading,
 }: {
   control: Control<FormSchema>;
   setValue: UseFormSetValue<FormSchema>;
   submitButton: ReactNode;
+  setIsUploading: (value: boolean) => void;
 }) => {
   const image = useWatch({ control, name: "image" });
   const { data } = useSession();
@@ -187,15 +199,25 @@ const FormLayout = ({
         <Stack>
           <Text>Logo</Text>
           {image ? (
-            <Image
-              component={NextImage}
-              style={{ objectFit: "contain" }}
-              height={200}
-              width={200}
-              src={image}
-              radius="sm"
-              alt="Logo"
-            />
+            <Group>
+              <Image
+                component={NextImage}
+                style={{ objectFit: "contain" }}
+                height={200}
+                width={200}
+                src={image}
+                radius="sm"
+                alt="Logo"
+              />
+              {/* TODO: Delete on cdn */}
+              <ActionIcon
+                color="red"
+                variant="filled"
+                onClick={() => setValue("image", null)}
+              >
+                <IconTrash />
+              </ActionIcon>
+            </Group>
           ) : (
             <Image
               style={{ objectFit: "contain" }}
@@ -211,6 +233,7 @@ const FormLayout = ({
       {!!data?.user.admin && (
         <UploadButton
           endpoint="imageUploader"
+          onUploadBegin={() => setIsUploading(true)}
           onClientUploadComplete={(res) => {
             if (res[0]?.url) {
               toast.success("Upload Completed");
@@ -218,13 +241,14 @@ const FormLayout = ({
             } else {
               toast.error("Unknown error");
             }
+            setIsUploading(false);
           }}
           onUploadError={(error) => {
             toast.error(`Error: ${error.message}`);
+            setIsUploading(false);
           }}
         />
       )}
-
       {submitButton}
     </Stack>
   );
