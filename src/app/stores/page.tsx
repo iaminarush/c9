@@ -16,7 +16,12 @@ import {
   Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconPhotoOff, IconPlus, IconTrash } from "@tabler/icons-react";
+import {
+  IconPhotoOff,
+  IconPlus,
+  IconStar,
+  IconTrash,
+} from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import { ReactNode, useState } from "react";
 import {
@@ -284,7 +289,11 @@ const StoreButton = ({
           <IconPhotoOff width={40} />
         )
       }
-      rightSection={<span />}
+      rightSection={
+        <ActionIcon>
+          <IconStar />
+        </ActionIcon>
+      }
       onClick={() => {
         reset({ name: store.name, image: store.image, remark: store.remark });
         setStoreId(store.id);
