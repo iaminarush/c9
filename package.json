@@ -47,7 +47,7 @@
     "get-text-width": "^1.0.3",
     "immer": "^10.0.2",
     "klona": "^2.0.6",
-    "next": "^14.2.5",
+    "next": "^14.2.26",
     "next-auth": "^4.24.6",
     "next13-progressbar": "^1.2.1",
     "postgres": "^3.3.5",
