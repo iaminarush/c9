@@ -14,6 +14,7 @@ import {
   Skeleton,
   Stack,
   Text,
+  useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -268,6 +269,9 @@ const StoreButton = ({
   setStoreId: (id: number) => void;
   reset: UseFormReset<FormSchema>;
 }) => {
+  const theme = useMantineTheme();
+  const { mutate } = useUpdateStore();
+
   return (
     <Button
       size="lg"
@@ -290,8 +294,20 @@ const StoreButton = ({
         )
       }
       rightSection={
-        <ActionIcon>
-          <IconStar />
+        <ActionIcon
+          variant="subtle"
+          color="yellow.5"
+          onClick={(e) => {
+            e.stopPropagation();
+            mutate({
+              params: { id: `${store.id}` },
+              body: { favourite: !store.favourite },
+            });
+          }}
+        >
+          <IconStar
+            fill={store.favourite ? `${theme.colors.yellow[5]}` : "transparent"}
+          />
         </ActionIcon>
       }
       onClick={() => {
