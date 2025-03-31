@@ -270,6 +270,7 @@ const StoreButton = ({
   reset: UseFormReset<FormSchema>;
 }) => {
   const theme = useMantineTheme();
+  // TODO: Add optimistic update
   const { mutate } = useUpdateStore();
 
   return (
