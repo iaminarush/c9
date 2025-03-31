@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { records } from "./records";
 
@@ -10,6 +10,7 @@ export const stores = pgTable("stores", {
   updatedAt: timestamp("updated_at"),
   createdAt: timestamp("created_at").defaultNow(),
   image: text("image"),
+  favourite: boolean("favourite").notNull().default(false),
 });
 
 export const storesRelations = relations(stores, ({ many }) => ({

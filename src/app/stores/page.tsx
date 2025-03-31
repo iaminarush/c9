@@ -14,9 +14,15 @@ import {
   Skeleton,
   Stack,
   Text,
+  useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconPhotoOff, IconPlus, IconTrash } from "@tabler/icons-react";
+import {
+  IconPhotoOff,
+  IconPlus,
+  IconStar,
+  IconTrash,
+} from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import { ReactNode, useState } from "react";
 import {
@@ -263,6 +269,9 @@ const StoreButton = ({
   setStoreId: (id: number) => void;
   reset: UseFormReset<FormSchema>;
 }) => {
+  const theme = useMantineTheme();
+  const { mutate } = useUpdateStore();
+
   return (
     <Button
       size="lg"
@@ -284,7 +293,23 @@ const StoreButton = ({
           <IconPhotoOff width={40} />
         )
       }
-      rightSection={<span />}
+      rightSection={
+        <ActionIcon
+          variant="subtle"
+          color="yellow.5"
+          onClick={(e) => {
+            e.stopPropagation();
+            mutate({
+              params: { id: `${store.id}` },
+              body: { favourite: !store.favourite },
+            });
+          }}
+        >
+          <IconStar
+            fill={store.favourite ? `${theme.colors.yellow[5]}` : "transparent"}
+          />
+        </ActionIcon>
+      }
       onClick={() => {
         reset({ name: store.name, image: store.image, remark: store.remark });
         setStoreId(store.id);

@@ -3,12 +3,14 @@ import { isNumber } from "@/lib/utils";
 import { db } from "@/server/db/db";
 import { stores } from "@/server/db/schema";
 import { createNextRoute } from "@ts-rest/next";
-import { eq } from "drizzle-orm";
+import { asc, desc, eq } from "drizzle-orm";
 import { getToken } from "next-auth/jwt";
 
 export const storeRouter = createNextRoute(contract.stores, {
   getStores: async () => {
-    const result = await db.query.stores.findMany();
+    const result = await db.query.stores.findMany({
+      orderBy: [desc(stores.favourite), asc(stores.name)],
+    });
 
     if (result) {
       return { status: 200, body: result };
@@ -20,7 +22,9 @@ export const storeRouter = createNextRoute(contract.stores, {
     }
   },
   getStoresFormatted: async () => {
-    const result = await db.query.stores.findMany();
+    const result = await db.query.stores.findMany({
+      orderBy: [desc(stores.favourite), asc(stores.name)],
+    });
 
     if (result) {
       return {
