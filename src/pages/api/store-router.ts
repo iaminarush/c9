@@ -9,7 +9,7 @@ import { getToken } from "next-auth/jwt";
 export const storeRouter = createNextRoute(contract.stores, {
   getStores: async () => {
     const result = await db.query.stores.findMany({
-      orderBy: [desc(stores.favourite), asc(stores.id)],
+      orderBy: [desc(stores.favourite), asc(stores.name)],
     });
 
     if (result) {
@@ -23,7 +23,7 @@ export const storeRouter = createNextRoute(contract.stores, {
   },
   getStoresFormatted: async () => {
     const result = await db.query.stores.findMany({
-      orderBy: [desc(stores.favourite), asc(stores.id)],
+      orderBy: [desc(stores.favourite), asc(stores.name)],
     });
 
     if (result) {
