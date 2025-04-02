@@ -33,6 +33,7 @@ export const storeRouter = createNextRoute(contract.stores, {
           value: `${s.id}`,
           label: s.name,
           image: s.image,
+          favourite: s.favourite,
         })),
       };
     } else {
