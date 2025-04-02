@@ -2,6 +2,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { Record } from "./page";
 import {
   ActionIcon,
+  Box,
   Button,
   ComboboxLikeRenderOptionInput,
   Group,
@@ -10,11 +11,13 @@ import {
   Stack,
   Switch,
   Tooltip,
+  useMantineTheme,
 } from "@mantine/core";
 import {
   IconCheck,
   IconEdit,
   IconPhotoOff,
+  IconStar,
   IconTrash,
 } from "@tabler/icons-react";
 import { useDeleteRecord, useEditRecord } from "./query";
@@ -203,9 +206,6 @@ export const FormLayout = ({
   });
   const stores = useStoresData({ queryOptions: { enabled: enableQueries } });
 
-  const watch = useWatch({ control, name: "price" });
-  console.log(watch);
-
   useEffect(() => {
     if (unitTypes.isSuccess && create && !customUnitEnabled) {
       const gram = unitTypes.data.body.find((ut) => ut.label === "g");
@@ -308,24 +308,44 @@ const renderStoreSelectOption = ({
   value: string;
   label: string;
   image: string | null;
+  favourite: boolean;
 }>) => {
   return (
     <Group flex="1" gap="xs">
       {option.image ? (
-        <Image
-          component={NextImage}
-          height={24}
-          width={24}
-          h={24}
-          w={24}
-          src={option.image}
-          fallbackSrc="/noImage.svg"
-          alt="Logo"
-          fit="contain"
-          style={{ objectFit: "contain" }}
-        />
+        <Box pos="relative">
+          <Image
+            component={NextImage}
+            height={24}
+            width={24}
+            h={24}
+            w={24}
+            src={option.image}
+            fallbackSrc="/noImage.svg"
+            alt="Logo"
+            fit="contain"
+            style={{ objectFit: "contain" }}
+          />
+
+          {option.favourite && (
+            <IconStar
+              size={12}
+              fill="var(--mantine-color-yellow-5)"
+              style={{ position: "absolute", top: "-6px", left: "-6px" }}
+            />
+          )}
+        </Box>
       ) : (
-        <IconPhotoOff size={24} />
+        <Box pos="relative">
+          {option.favourite && (
+            <IconStar
+              size={12}
+              fill="var(--mantine-color-yellow-5)"
+              style={{ position: "absolute", top: "-6px", left: "-6px" }}
+            />
+          )}
+          <IconPhotoOff size={24} />
+        </Box>
       )}
       {option.label}
       {checked && (
