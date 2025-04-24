@@ -62,7 +62,7 @@
     "react-resizable-panels": "^2.0.16",
     "react-webcam": "^7.2.0",
     "remeda": "^1.61.0",
-    "typescript": "5.1.6",
+    "typescript": "^5.8.3",
     "uploadthing": "^6.9.0",
     "use-resize-observer": "^9.1.0",
     "zod": "^3.22.4"
