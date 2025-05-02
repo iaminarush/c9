@@ -1,5 +1,6 @@
 "use client";
 
+import BarcodeScanner from "@/components/barcodeScanner";
 import TextFormField from "@/components/hook-form/TextFormField";
 import { UploadButton } from "@/components/util/uploadthing";
 import { createQrcodeSchema } from "@/server/db/schema";
@@ -16,7 +17,12 @@ import {
   Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconPhotoOff, IconPlus, IconTrash } from "@tabler/icons-react";
+import {
+  IconPhotoOff,
+  IconPlus,
+  IconQrcode,
+  IconTrash,
+} from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import NextImage from "next/image";
 import { ReactNode, useState } from "react";
@@ -36,7 +42,6 @@ import {
   useQrcodes,
   useUpdateQrcode,
 } from "./query";
-import BarcodeScanner from "@/components/barcodeScanner";
 
 export default function Qrcodes() {
   const qrcodes = useQrcodes();
@@ -205,6 +210,31 @@ const FormLayout = ({
 
       <TextFormField control={control} name="remark" label="Remarks" />
 
+      <TextFormField
+        control={control}
+        name="data"
+        label="Qrcode Data"
+        rightSection={
+          <ActionIcon
+            onClick={handlers.toggle}
+            variant="subtle"
+            color={opened ? "blue" : "white"}
+          >
+            <IconQrcode />
+          </ActionIcon>
+        }
+      />
+
+      {opened && (
+        <BarcodeScanner
+          handleScan={(e) => {
+            setValue("data", e);
+            handlers.close();
+          }}
+          formats={["qr_code"]}
+        />
+      )}
+
       <Center>
         <Stack>
           <Text>Logo</Text>
@@ -260,8 +290,6 @@ const FormLayout = ({
         />
       )}
       {submitButton}
-      <Button onClick={handlers.open}>Scanner</Button>
-      {opened && <BarcodeScanner handleScan={() => {}} formats={["qr_code"]} />}
     </Stack>
   );
 };
