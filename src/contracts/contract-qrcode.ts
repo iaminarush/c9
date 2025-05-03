@@ -19,7 +19,7 @@ export const qrcodeContract = c.router({
   },
   getQrcode: {
     method: "GET",
-    path: "/qrcode/:id",
+    path: "/qrcodes/:id",
     responses: {
       200: qrcodeSchema,
       404: null,
@@ -27,7 +27,7 @@ export const qrcodeContract = c.router({
   },
   updateQrcode: {
     method: "PATCH",
-    path: "/qrcode/:id",
+    path: "/qrcodes/:id",
     responses: {
       200: qrcodeSchema,
       403: z.object({ message: z.string() }),
@@ -38,13 +38,13 @@ export const qrcodeContract = c.router({
   },
   addQrcode: {
     method: "POST",
-    path: "/stores",
+    path: "/qrcodes",
     responses: {
       201: qrcodeSchema,
       400: z.object({ message: z.string() }),
       403: z.object({ message: z.string() }),
     },
     body: createQrcodeSchema,
-    summary: "Add a store",
+    summary: "Add a Qrcode",
   },
 });
