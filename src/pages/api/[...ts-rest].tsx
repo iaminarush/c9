@@ -10,6 +10,7 @@ import { unitFamilyRouter } from "./unit-family-router";
 import { searchRouter } from "./search-router";
 import { barcodeRouter } from "./barcode-router";
 import { inventoryRouter } from "./inventory-router";
+import { qrcodeRouter } from "./qrcodes-router";
 
 const router = createNextRoute(contract, {
   categories: categoryRouter,
@@ -21,6 +22,7 @@ const router = createNextRoute(contract, {
   search: searchRouter,
   barcodes: barcodeRouter,
   inventory: inventoryRouter,
+  qrcodes: qrcodeRouter,
 });
 
 export default createNextRouter(contract, router, {

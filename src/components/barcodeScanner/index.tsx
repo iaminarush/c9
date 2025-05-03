@@ -12,13 +12,15 @@ const BarcodeScannerPolyfilled = dynamic(
 
 export default function BarcodeScanner({
   handleScan,
+  formats = ["ean_13"],
 }: {
   handleScan: (code: string) => void;
+  formats?: string[];
 }) {
   return (
     <BarcodeScannerPolyfilled
       onCapture={({ rawValue }) => handleScan(rawValue)}
-      options={{ formats: ["ean_13"], delay: 1000 }}
+      options={{ formats, delay: 1000 }}
     />
   );
 }

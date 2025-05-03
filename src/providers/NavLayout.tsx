@@ -42,6 +42,7 @@ export default function NavLayout({ children }: { children: ReactNode }) {
       }}
       padding="md"
     >
+      {/* TODO: header overflow on certain width */}
       <AppShellHeader>
         <Group h="100%" px="md">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
@@ -106,7 +107,7 @@ const Links = ({ toggle }: { toggle: () => void }) => {
         onClick={toggle}
         selected={initialPath === "comparison"}
       >
-        Comparison (WIP)
+        Comparison
       </LinkButton>
 
       <LinkButton
@@ -115,6 +116,14 @@ const Links = ({ toggle }: { toggle: () => void }) => {
         selected={initialPath === "stores"}
       >
         Stores
+      </LinkButton>
+
+      <LinkButton
+        href="/qrcode"
+        onClick={toggle}
+        selected={initialPath === "qrcode"}
+      >
+        Qrcode
       </LinkButton>
 
       <LinkButton
