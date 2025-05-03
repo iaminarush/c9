@@ -18,6 +18,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
+  IconLink,
   IconPhotoOff,
   IconPlus,
   IconQrcode,
@@ -55,6 +56,7 @@ export default function Qrcodes() {
     defaultValues: {
       name: "",
       image: "",
+      data: "",
     },
   });
 
@@ -214,6 +216,8 @@ const FormLayout = ({
         control={control}
         name="data"
         label="Qrcode Data"
+        rules={{ required: "Required" }}
+        required
         rightSection={
           <ActionIcon
             onClick={handlers.toggle}
@@ -331,9 +335,21 @@ const QrcodeButton = ({
           name: qrcode.name,
           image: qrcode.image,
           remark: qrcode.remark,
+          data: qrcode.data,
         });
         setQrcodeId(qrcode.id);
       }}
+      rightSection={
+        <ActionIcon
+          variant="subtle"
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open(qrcode.data, "_blank");
+          }}
+        >
+          <IconLink />
+        </ActionIcon>
+      }
     >
       {qrcode.name}
     </Button>
