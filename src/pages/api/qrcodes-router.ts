@@ -58,10 +58,10 @@ export const qrcodeRouter = createNextRoute(contract.qrcodes, {
     if (!token?.admin)
       return { status: 403, body: { message: "No Permission" } };
 
-    const [newStore] = await db.insert(qrcodes).values(args.body).returning();
+    const [newQrcode] = await db.insert(qrcodes).values(args.body).returning();
 
-    return newStore
-      ? { status: 201, body: newStore }
+    return newQrcode
+      ? { status: 201, body: newQrcode }
       : { status: 400, body: { message: "Error" } };
   },
 });
