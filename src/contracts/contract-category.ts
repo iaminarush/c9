@@ -1,3 +1,4 @@
+import { selectSchema } from "@/lib/zodScehmas";
 import {
   categoryDetailsSchema,
   categorySchema,
@@ -60,6 +61,14 @@ export const categoryContract = c.router({
       limit: z.number(),
       offset: z.number(),
     }),
+  },
+  getCategoriesFormatted: {
+    method: "GET",
+    path: "/categories-formatted",
+    responses: {
+      200: selectSchema.array(),
+      404: z.null(),
+    },
   },
   createSubCategory: {
     method: "POST",

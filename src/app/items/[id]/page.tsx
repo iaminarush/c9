@@ -1,7 +1,9 @@
 "use client";
 
 import { useCategory } from "@/app/categories/[id]/query";
+import { useCategoriesFormatted } from "@/app/categories/query";
 import BarcodeScanner from "@/components/barcodeScanner";
+import { itemContract } from "@/contracts/contract-item";
 import { recordDetailSchema } from "@/contracts/contract-record";
 import { isNumber } from "@/lib/utils";
 import {
@@ -20,6 +22,10 @@ import {
   Modal,
   NumberFormatter,
   NumberInput,
+  Popover,
+  PopoverDropdown,
+  PopoverTarget,
+  Select,
   Skeleton,
   Stack,
   Tabs,
@@ -41,6 +47,8 @@ import {
   IconPlus,
   IconTrash,
 } from "@tabler/icons-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { ServerInferResponses } from "@ts-rest/core";
 import { Route } from "next";
 import { useSession } from "next-auth/react";
 import NextImage from "next/image";
@@ -60,6 +68,7 @@ import {
 } from "./components";
 import { AddInventoryComponent, InventoryPanel } from "./inventory";
 import {
+  itemKeys,
   useBarcodes,
   useCreateBarcode,
   useCreateRecord,
@@ -148,12 +157,15 @@ const TitleComponent = ({
   activeTab: string | null;
 }) => {
   const [edit, handlers] = useDisclosure(false);
+  const [categoryOpened, categoryHandlers] = useDisclosure(false);
+  const [popoverOpened, popoverHandlers] = useDisclosure(false);
   const [value, setValue] = useState(title);
   const { mutate, isLoading } = useUpdateItem();
   const { data } = useSession();
   const category = useCategory(categoryId ? `${categoryId}` : "", {
     enabled: !!categoryId,
   });
+
   const { width: viewportWidth } = useViewportSize();
   const parentWidth = viewportWidth === 0 ? 0 : viewportWidth - 32;
 
@@ -174,7 +186,7 @@ const TitleComponent = ({
     );
   };
 
-  if (category.isLoading) return <Skeleton w={48} h={16} />;
+  if (category.isInitialLoading) return <Skeleton w={48} h={16} />;
 
   if (category.isError) return <Text>Error</Text>;
 
@@ -189,7 +201,7 @@ const TitleComponent = ({
                 href={`/categories/${categoryId}` as Route}
                 lineClamp={1}
               >
-                {category.data.body.name}
+                {category.data?.body.name}
               </Anchor>
               <Text>/</Text>
             </Group>
@@ -200,9 +212,32 @@ const TitleComponent = ({
 
         <Group justify="space-between" style={{ flexGrow: 1 }}>
           <Group>
-            <ActionIcon onClick={handlers.open} disabled={!data?.user.admin}>
-              <IconEdit />
-            </ActionIcon>
+            <Popover opened={popoverOpened} onClose={popoverHandlers.close}>
+              <PopoverTarget>
+                <ActionIcon
+                  disabled={!data?.user.admin}
+                  onClick={popoverHandlers.open}
+                >
+                  <IconEdit />
+                </ActionIcon>
+              </PopoverTarget>
+
+              <PopoverDropdown>
+                <Stack>
+                  <Button onClick={handlers.open} disabled={!data?.user.admin}>
+                    Edit Name
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      popoverHandlers.close();
+                      categoryHandlers.open();
+                    }}
+                  >
+                    Edit Parent Category
+                  </Button>
+                </Stack>
+              </PopoverDropdown>
+            </Popover>
             <DeleteComponent id={id} />
           </Group>
 
@@ -216,6 +251,19 @@ const TitleComponent = ({
             {activeTab === "inventory" && <AddInventoryComponent id={id} />}
           </Group>
         </Group>
+
+        <Modal
+          opened={categoryOpened}
+          onClose={categoryHandlers.close}
+          title="Edit Parent Category"
+          centered
+        >
+          <ParentCategoryComponent
+            onClose={categoryHandlers.close}
+            itemId={id}
+            categoryId={`${categoryId}`}
+          />
+        </Modal>
       </>
     );
 
@@ -249,17 +297,63 @@ const TitleComponent = ({
     );
 };
 
-// const MarqueeWrapper = ({
-//   children,
-//   display,
-// }: {
-//   children: ReactNode;
-//   display: boolean;
-// }) => {
-//   if (display) return <Marquee>{children}</Marquee>;
-//
-//   return children;
-// };
+type ItemResponse = ServerInferResponses<typeof itemContract.getItem, 200>;
+
+const ParentCategoryComponent = ({
+  onClose,
+  itemId,
+  categoryId,
+}: {
+  onClose: () => void;
+  itemId: string;
+  categoryId: string;
+}) => {
+  const categories = useCategoriesFormatted();
+  const { mutate, isLoading } = useUpdateItem();
+  const queryClient = useQueryClient();
+
+  const [value, setValue] = useState<string | null>(categoryId);
+
+  if (categories.isLoading) return <Skeleton />;
+
+  if (categories.isError) return <Text>Error</Text>;
+
+  return (
+    <Stack>
+      <Select
+        searchable
+        data={categories.data?.body}
+        value={value}
+        onChange={setValue}
+        limit={100}
+      />
+
+      <Button
+        onClick={() =>
+          mutate(
+            { body: { category: Number(value) }, params: { id: itemId } },
+            {
+              onSuccess: (data) => {
+                queryClient.setQueryData<ItemResponse>(
+                  itemKeys.item(itemId),
+                  (oldData) => {
+                    if (!oldData) return undefined;
+
+                    return { ...oldData, body: data.body };
+                  },
+                );
+                onClose();
+              },
+            },
+          )
+        }
+        loading={isLoading}
+      >
+        Save
+      </Button>
+    </Stack>
+  );
+};
 
 const AddComponent = ({ id }: { id: string }) => {
   const { data } = useSession();

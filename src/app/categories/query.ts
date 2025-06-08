@@ -6,6 +6,7 @@ import { produce } from "immer";
 
 const keys = {
   all: ["categories"],
+  formatted: ["categories", "formatted"],
 };
 
 export type CategoriesResponse = ServerInferResponses<
@@ -17,6 +18,9 @@ export const useCategories = () =>
   client.categories.getCategories.useQuery(keys.all, {
     query: { limit: 100, offset: 0 },
   });
+
+export const useCategoriesFormatted = () =>
+  client.categories.getCategoriesFormatted.useQuery(keys.formatted);
 
 export const useCreateCategory = () => {
   const queryClient = useQueryClient();
