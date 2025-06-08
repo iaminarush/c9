@@ -17,6 +17,8 @@ const keys = {
   inventories: (itemId: string) => ["inventories", itemId],
 };
 
+export { keys as itemKeys };
+
 type RecordsResponse = ServerInferResponses<
   typeof recordContract.getRecords,
   200

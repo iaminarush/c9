@@ -87,6 +87,15 @@ export const categoryRouter = createNextRoute(contract.categories, {
       };
     } else return { status: 404, body: null };
   },
+  getCategoriesFormatted: async () => {
+    const result = await db.select().from(categories);
+    if (result) {
+      return {
+        status: 200,
+        body: result.map((c) => ({ value: `${c.id}`, label: c.name })),
+      };
+    } else return { status: 404, body: null };
+  },
   createSubCategory: async (args) => {
     const token = await getToken({ req: args.req });
 
