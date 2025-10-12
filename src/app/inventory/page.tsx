@@ -60,14 +60,14 @@ export default function Inventory() {
   }
 
   const filtered = inventory.data.body.filter(
-    (i) => i.item.name.includes(filter) && !i.complete,
+    (i) => i.item.name.toLowerCase().includes(filter) && !i.complete,
   );
 
   return (
     <Stack>
       <TextInput
         value={filter}
-        onChange={(e) => setFilter(e.currentTarget.value)}
+        onChange={(e) => setFilter(e.currentTarget.value.toLowerCase())}
         leftSection={<IconSearch size={20} />}
         rightSection={
           filter && (
