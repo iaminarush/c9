@@ -78,7 +78,8 @@ import {
   useRecords,
   useUpdateItem,
 } from "./query";
-import StandardUnitGroups from "./standard-unit-groups";
+import StandardUnitGroups, { RecordUpdatedText } from "./standard-unit-groups";
+import dayjs from "dayjs";
 
 type FormData = z.infer<typeof createRecordSchema>;
 
@@ -628,12 +629,21 @@ const RecordList = ({ itemId }: { itemId: string }) => {
     if (data.body.length === 0) {
       return <Text>No Records</Text>;
     } else {
-      const customUnitRecords = data.body.filter(
-        (r) => !!r.customUnit,
-      ) as CustomUnitRecord[];
-      const standardUnitRecords = data.body.filter(
-        (r) => !!r.unitType,
-      ) as StandardUnitRecord[];
+      const customUnitRecords = data.body
+        .filter((r) => !!r.customUnit)
+        .sort(
+          (a, b) =>
+            Number(a.price) / Number(a.amount) -
+            Number(b.price) / Number(b.amount),
+        ) as CustomUnitRecord[];
+
+      const standardUnitRecords = data.body
+        .filter((r) => !!r.unitType)
+        .sort(
+          (a, b) =>
+            Number(a.price) / Number(a.amount) -
+            Number(b.price) / Number(b.amount),
+        ) as StandardUnitRecord[];
 
       const uniqueUnitFamilies = R.uniqueBy(
         standardUnitRecords,
@@ -675,7 +685,11 @@ const RecordCard = (record: Record) => {
   const unitLabel = record.unitType ? record.unitType.name : record.customUnit;
 
   return (
-    <Card p="xs">
+    <Card p="xs" style={{ position: "relative" }} pb="lg">
+      <RecordUpdatedText
+        updatedAt={record.updatedAt}
+        createdAt={record.createdAt}
+      />
       <Group style={{ flexGrow: 1 }} justify="space-between" wrap="nowrap">
         <Stack gap="xs">
           <Group gap="md">

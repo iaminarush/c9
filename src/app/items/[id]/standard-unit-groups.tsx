@@ -14,11 +14,12 @@ import {
 import { IconPhoto } from "@tabler/icons-react";
 import convert, { Unit } from "convert";
 import NextImage from "next/image";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { z } from "zod";
 import { StandardUnitRecord } from "./page";
 import { useUnitTypesFromFamily } from "./query";
 import { DeleteRecordComponent, EditRecordComponent } from "./components";
+import dayjs from "dayjs";
 
 type UnitFamily = z.infer<typeof unitFamilySchema>;
 
@@ -92,7 +93,11 @@ const RecordCard = ({
   const unitLabel = record.unitType ? record.unitType.name : record.customUnit;
 
   return (
-    <Card p="xs">
+    <Card p="xs" pos="relative" pb="lg">
+      <RecordUpdatedText
+        updatedAt={record.updatedAt}
+        createdAt={record.createdAt}
+      />
       <Group style={{ flexGrow: 1 }} justify="space-between" wrap="nowrap">
         <Stack gap="xs">
           <Group gap="md">
@@ -154,6 +159,32 @@ const RecordCard = ({
         </Stack>
       </Group>
     </Card>
+  );
+};
+
+const DATE_FORMAT = "DD/MM/YYYY";
+
+export const RecordUpdatedText = ({
+  createdAt,
+  updatedAt,
+}: {
+  createdAt: Date | null;
+  updatedAt: Date | null;
+}) => {
+  if (updatedAt)
+    return <DateText>{dayjs(updatedAt).format(DATE_FORMAT)}</DateText>;
+
+  if (createdAt)
+    return <DateText>{dayjs(createdAt).format(DATE_FORMAT)}</DateText>;
+
+  return null;
+};
+
+const DateText = ({ children }: { children: ReactNode }) => {
+  return (
+    <Text style={{ position: "absolute", bottom: 4, left: 8 }} size="xs">
+      Last updated: {children}
+    </Text>
   );
 };
 
