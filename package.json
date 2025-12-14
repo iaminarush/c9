@@ -34,7 +34,7 @@
     "@types/node": "20.5.4",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
-    "@uploadthing/react": "^6.4.4",
+    "@uploadthing/react": "^7.3.3",
     "@zxing/library": "^0.20.0",
     "bcrypt": "^5.1.1",
     "clsx": "^2.0.0",
@@ -63,7 +63,7 @@
     "react-webcam": "^7.2.0",
     "remeda": "^1.61.0",
     "typescript": "^5.8.3",
-    "uploadthing": "^6.9.0",
+    "uploadthing": "^7.7.4",
     "use-resize-observer": "^9.1.0",
     "zod": "^3.22.4"
   },
