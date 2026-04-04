@@ -14,6 +14,7 @@ import {
   Skeleton,
   Stack,
   Text,
+  TextInput,
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -37,6 +38,8 @@ import toast from "react-hot-toast";
 import { z } from "zod";
 import { Store, useAddStore, useStores, useUpdateStore } from "./query";
 import NextImage from "next/image";
+import { useMutation } from "@tanstack/react-query";
+import { uploadImageByUrl } from "../actions/upload-image-by-url";
 
 export default function Stores() {
   const stores = useStores();
@@ -234,6 +237,8 @@ const FormLayout = ({
               alt="Logo placeholder"
             />
           )}
+
+          <UploadByUrl setValue={setValue} />
         </Stack>
       </Center>
       {!!data?.user.admin && (
@@ -241,9 +246,9 @@ const FormLayout = ({
           endpoint="imageUploader"
           onUploadBegin={() => setIsUploading(true)}
           onClientUploadComplete={(res) => {
-            if (res[0]?.url) {
+            if (res[0]?.ufsUrl) {
               toast.success("Upload Completed");
-              setValue("image", res[0].url);
+              setValue("image", res[0].ufsUrl);
             } else {
               toast.error("Unknown error");
             }
@@ -257,6 +262,30 @@ const FormLayout = ({
       )}
       {submitButton}
     </Stack>
+  );
+};
+
+const UploadByUrl = ({
+  setValue,
+}: {
+  setValue: UseFormSetValue<FormSchema>;
+}) => {
+  const [url, setUrl] = useState("");
+  const mutation = useMutation({
+    mutationFn: () => uploadImageByUrl(url),
+    onSuccess: (data) => setValue("image", data.data.ufsUrl),
+  });
+  return (
+    <>
+      <TextInput
+        value={url}
+        onChange={(e) => setUrl(e.currentTarget.value)}
+        label="Image URL"
+      />
+      <Button onClick={() => mutation.mutate()} disabled={!url}>
+        <Text>Upload via URL</Text>
+      </Button>
+    </>
   );
 };
 

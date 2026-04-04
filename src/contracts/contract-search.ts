@@ -15,7 +15,7 @@ export const searchContract = c.router({
         items: actions,
       }),
     },
-    query: z.object({ keyword: z.string() }),
+    query: z.object({ keyword: z.coerce.string() }),
     summary: "Get a list of categories and items",
   },
 });

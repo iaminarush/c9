@@ -5,7 +5,7 @@ export const env = createEnv({
   server: {
     DATABASE_URL: z.string().url(),
     NEXTAUTH_SECRET: z.string(),
-    UPLOADTHING_SECRET: z.string(),
+    UPLOADTHING_TOKEN: z.string(),
   },
   client: {},
   experimental__runtimeEnv: {},
