@@ -44,13 +44,28 @@ import { useIsAdmin, useIsAuthenticated } from "@/util/hooks";
 import Link from "next/link";
 import { Route } from "next";
 import { useFuzzySearchList } from "@nozbe/microfuzz/react";
+import { inventoryDetailSchema } from "@/contracts/contract-inventory";
 
 dayjs.extend(relativeTime);
+
+type CurrentInventory = z.infer<typeof inventoryDetailSchema>;
+
+function getText(inventory: CurrentInventory) {
+  return [inventory.item.name, inventory.item.category?.name || ""];
+}
+
+function mapResultItem() {}
 
 export default function Inventory() {
   const isAuth = useIsAuthenticated();
   const inventory = useCurrentInventory(isAuth);
   const [filter, setFilter] = useState("");
+  const filteredList = useFuzzySearchList({
+    list: inventory.data?.body || [],
+    queryText: filter,
+    getText,
+    mapResultItem,
+  });
 
   if (inventory.isLoading) {
     return <Skeleton h={250} />;
@@ -67,8 +82,6 @@ export default function Inventory() {
   const filtered = inventory.data.body.filter((i) =>
     i.item.name.toLowerCase().includes(filter),
   );
-
-  // const filteredList = useFuzzySearchList();
 
   return (
     <Stack>
