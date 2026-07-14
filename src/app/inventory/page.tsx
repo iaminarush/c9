@@ -59,8 +59,8 @@ export default function Inventory() {
     return <Text>Error</Text>;
   }
 
-  const filtered = inventory.data.body.filter(
-    (i) => i.item.name.toLowerCase().includes(filter) && !i.complete,
+  const filtered = inventory.data.body.filter((i) =>
+    i.item.name.toLowerCase().includes(filter),
   );
 
   return (
