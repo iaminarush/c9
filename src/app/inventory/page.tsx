@@ -35,7 +35,11 @@ import { useSession } from "next-auth/react";
 import { ReactNode, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
-import { useAllInventory, useDeleteInventory, useEditInventory } from "./query";
+import {
+  useCurrentInventory,
+  useDeleteInventory,
+  useEditInventory,
+} from "./query";
 import { useIsAdmin, useIsAuthenticated } from "@/util/hooks";
 import Link from "next/link";
 import { Route } from "next";
@@ -44,7 +48,7 @@ dayjs.extend(relativeTime);
 
 export default function Inventory() {
   const isAuth = useIsAuthenticated();
-  const inventory = useAllInventory(isAuth);
+  const inventory = useCurrentInventory(isAuth);
   const [filter, setFilter] = useState("");
 
   if (inventory.isLoading) {
