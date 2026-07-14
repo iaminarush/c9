@@ -43,6 +43,7 @@ import {
 import { useIsAdmin, useIsAuthenticated } from "@/util/hooks";
 import Link from "next/link";
 import { Route } from "next";
+import { useFuzzySearchList } from "@nozbe/microfuzz/react";
 
 dayjs.extend(relativeTime);
 
@@ -67,6 +68,8 @@ export default function Inventory() {
     i.item.name.toLowerCase().includes(filter),
   );
 
+  // const filteredList = useFuzzySearchList();
+
   return (
     <Stack>
       <TextInput
@@ -90,7 +93,7 @@ export default function Inventory() {
         <InventoryCard
           {...inv}
           item={
-            <>
+            <Stack gap={2}>
               <Anchor
                 component={Link}
                 href={`/items/${item.id}` as Route}
@@ -99,7 +102,18 @@ export default function Inventory() {
               >
                 {item.name}
               </Anchor>
-            </>
+
+              {!!item.category && (
+                <Anchor
+                  component={Link}
+                  href={`/categories/${item.category.id}` as Route}
+                  fw={700}
+                  fz="xs"
+                >
+                  {item.category.name}
+                </Anchor>
+              )}
+            </Stack>
           }
           key={inv.id}
         />

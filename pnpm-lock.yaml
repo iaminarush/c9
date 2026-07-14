@@ -32,6 +32,9 @@ importers:
       '@next/bundle-analyzer':
         specifier: ^14.2.2
         version: 14.2.2
+      '@nozbe/microfuzz':
+        specifier: ^1.0.0
+        version: 1.0.0
       '@paralleldrive/cuid2':
         specifier: ^2.2.2
         version: 2.2.2
@@ -957,6 +960,9 @@ packages:
   '@nodelib/fs.walk@1.2.8':
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
+
+  '@nozbe/microfuzz@1.0.0':
+    resolution: {integrity: sha512-XKIg/guk+s1tkPTkHch9hfGOWgsKojT7BqSQddXTppOfVr3SWQhhTCqbgQaPTbppf9gc2kFeG0gpBZZ612UXHA==}
 
   '@opentelemetry/api@1.6.0':
     resolution: {integrity: sha512-OWlrQAnWn9577PhVgqjUvMr1pg57Bc4jv0iL4w0PRuOSRvq67rvHW9Ie/dZVMvCzhSCB+UxhcY/PmCmFj33Q+g==}
@@ -4088,6 +4094,8 @@ snapshots:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
+
+  '@nozbe/microfuzz@1.0.0': {}
 
   '@opentelemetry/api@1.6.0': {}
 
