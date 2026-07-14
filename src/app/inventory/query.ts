@@ -5,14 +5,14 @@ import { ServerInferResponses } from "@ts-rest/core";
 import { produce } from "immer";
 
 const keys = {
-  all: ["inventory"],
+  current: ["inventory", "current"],
 };
 
 export const useAllInventory = (enabled: boolean) =>
-  client.inventory.getAllInventory.useQuery(keys.all, {}, { enabled });
+  client.inventory.getCurrentInventory.useQuery(keys.current, {}, { enabled });
 
 type InventoriesResponse = ServerInferResponses<
-  typeof inventoryContract.getInventories,
+  typeof inventoryContract.getCurrentInventory,
   200
 >;
 
@@ -21,7 +21,7 @@ export const useDeleteInventory = () => {
 
   return client.inventory.deleteInventory.useMutation({
     onSuccess: ({ body }) => {
-      queryClient.setQueryData<InventoriesResponse>(keys.all, (oldData) => {
+      queryClient.setQueryData<InventoriesResponse>(keys.current, (oldData) => {
         console.log(oldData);
         if (!oldData) return undefined;
 
@@ -46,7 +46,7 @@ export const useEditInventory = () => {
 
   return client.inventory.editInventory.useMutation({
     onSuccess: ({ body }) => {
-      queryClient.setQueryData<InventoriesResponse>(keys.all, (oldData) => {
+      queryClient.setQueryData<InventoriesResponse>(keys.current, (oldData) => {
         if (!oldData) return undefined;
 
         const index = oldData.body.findIndex((i) => i.id === body.id);

@@ -58,7 +58,7 @@ export const inventoryContract = c.router({
     },
     summary: "Delete a record",
   },
-  getAllInventory: {
+  getCurrentInventory: {
     method: "GET",
     path: "/all-inventory",
     responses: {
