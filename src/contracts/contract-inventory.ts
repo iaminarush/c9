@@ -1,4 +1,4 @@
-import { itemSchema } from "@/server/db/schema";
+import { categorySchema, itemSchema } from "@/server/db/schema";
 import {
   createInventorySchema,
   inventorySchema,
@@ -10,7 +10,7 @@ import { z } from "zod";
 const c = initContract();
 
 export const inventoryDetailSchema = inventorySchema.merge(
-  z.object({ item: itemSchema }),
+  z.object({ item: itemSchema.merge(z.object({ category: categorySchema.nullable() })) }),
 );
 
 export const inventoryContract = c.router({

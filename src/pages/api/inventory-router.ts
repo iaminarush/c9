@@ -67,7 +67,7 @@ export const inventoryRouter = createNextRoute(contract.inventory, {
     const result = await db.query.inventory.findMany({
       orderBy: (inventory, { asc }) => [asc(inventory.expiryDate)],
       where: (inventory, { eq }) => eq(inventory.complete, false),
-      with: { item: true },
+      with: { item: { with: { category: true } } },
     });
 
     if (result) {

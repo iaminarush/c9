@@ -8,7 +8,7 @@ const keys = {
   current: ["inventory", "current"],
 };
 
-export const useAllInventory = (enabled: boolean) =>
+export const useCurrentInventory = (enabled: boolean) =>
   client.inventory.getCurrentInventory.useQuery(keys.current, {}, { enabled });
 
 type InventoriesResponse = ServerInferResponses<
