@@ -22,6 +22,7 @@
     "@mantine/spotlight": "^7.13.1",
     "@neondatabase/serverless": "^0.6.0",
     "@next/bundle-analyzer": "^14.2.2",
+    "@nozbe/microfuzz": "^1.0.0",
     "@paralleldrive/cuid2": "^2.2.2",
     "@t3-oss/env-nextjs": "^0.6.1",
     "@tabler/icons-react": "^2.34.0",

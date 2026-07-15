@@ -1,10 +1,12 @@
 "use client";
 import DateFormField from "@/components/hook-form/DateFormField";
 import NumberFormField from "@/components/hook-form/NumberFormField";
+import { inventoryDetailSchema } from "@/contracts/contract-inventory";
 import {
   inventorySchema,
   updateInventorySchema,
 } from "@/server/db/schema/inventory";
+import { useIsAdmin, useIsAuthenticated } from "@/util/hooks";
 import {
   ActionIcon,
   Anchor,
@@ -22,6 +24,8 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
+import { FuzzyResult } from "@nozbe/microfuzz";
+import { Highlight, useFuzzySearchList } from "@nozbe/microfuzz/react";
 import {
   IconCheck,
   IconEdit,
@@ -31,7 +35,9 @@ import {
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { Route } from "next";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { ReactNode, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -40,16 +46,29 @@ import {
   useDeleteInventory,
   useEditInventory,
 } from "./query";
-import { useIsAdmin, useIsAuthenticated } from "@/util/hooks";
-import Link from "next/link";
-import { Route } from "next";
 
 dayjs.extend(relativeTime);
+
+type CurrentInventory = z.infer<typeof inventoryDetailSchema>;
+
+function getText(inventory: CurrentInventory) {
+  return [inventory.item.name, inventory.item.category?.name || ""];
+}
+
+function mapResultItem({ item, matches }: FuzzyResult<CurrentInventory>) {
+  return { item, matches };
+}
 
 export default function Inventory() {
   const isAuth = useIsAuthenticated();
   const inventory = useCurrentInventory(isAuth);
   const [filter, setFilter] = useState("");
+  const filteredList = useFuzzySearchList({
+    list: inventory.data?.body || [],
+    queryText: filter,
+    getText,
+    mapResultItem,
+  });
 
   if (inventory.isLoading) {
     return <Skeleton h={250} />;
@@ -62,10 +81,6 @@ export default function Inventory() {
   if (inventory.isError) {
     return <Text>Error</Text>;
   }
-
-  const filtered = inventory.data.body.filter((i) =>
-    i.item.name.toLowerCase().includes(filter),
-  );
 
   return (
     <Stack>
@@ -86,20 +101,35 @@ export default function Inventory() {
           )
         }
       />
-      {filtered.map(({ item, ...inv }) => (
+
+      {filteredList.map(({ item: { item, ...inv }, matches }) => (
         <InventoryCard
           {...inv}
           item={
-            <>
+            <Stack gap={2}>
               <Anchor
                 component={Link}
                 href={`/items/${item.id}` as Route}
                 fw={700}
                 fz="lg"
               >
-                {item.name}
+                <Highlight text={item.name} ranges={matches[0] || null} />
               </Anchor>
-            </>
+
+              {!!item.category && (
+                <Anchor
+                  component={Link}
+                  href={`/categories/${item.category.id}` as Route}
+                  fw={700}
+                  fz="xs"
+                >
+                  <Highlight
+                    text={item.category.name}
+                    ranges={matches[1] || null}
+                  />
+                </Anchor>
+              )}
+            </Stack>
           }
           key={inv.id}
         />
@@ -115,7 +145,7 @@ const InventoryCard = ({
   ...inventory
 }: Inventory & { item?: ReactNode }) => {
   const [edit, { open, close }] = useDisclosure(false);
-  const matches = useMediaQuery("(min-width: 36em)");
+  const match = useMediaQuery("(min-width: 36em)");
   const expiryDate = dayjs(inventory.expiryDate);
   const today = dayjs();
   const { data } = useSession();
@@ -136,7 +166,7 @@ const InventoryCard = ({
           <Group justify="space-between" wrap="nowrap" gap={"xs"}>
             <Group align="flex-start">
               <Stack gap="xs">
-                <Text fw={700}>{matches ? "Quantity" : "Qty"}</Text>
+                <Text fw={700}>{match ? "Quantity" : "Qty"}</Text>
                 <Text>{inventory.quantity}</Text>
               </Stack>
 
