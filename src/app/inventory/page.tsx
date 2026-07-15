@@ -1,10 +1,12 @@
 "use client";
 import DateFormField from "@/components/hook-form/DateFormField";
 import NumberFormField from "@/components/hook-form/NumberFormField";
+import { inventoryDetailSchema } from "@/contracts/contract-inventory";
 import {
   inventorySchema,
   updateInventorySchema,
 } from "@/server/db/schema/inventory";
+import { useIsAdmin, useIsAuthenticated } from "@/util/hooks";
 import {
   ActionIcon,
   Anchor,
@@ -22,6 +24,8 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
+import { FuzzyResult } from "@nozbe/microfuzz";
+import { Highlight, useFuzzySearchList } from "@nozbe/microfuzz/react";
 import {
   IconCheck,
   IconEdit,
@@ -31,7 +35,9 @@ import {
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { Route } from "next";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { ReactNode, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -40,11 +46,6 @@ import {
   useDeleteInventory,
   useEditInventory,
 } from "./query";
-import { useIsAdmin, useIsAuthenticated } from "@/util/hooks";
-import Link from "next/link";
-import { Route } from "next";
-import { useFuzzySearchList } from "@nozbe/microfuzz/react";
-import { inventoryDetailSchema } from "@/contracts/contract-inventory";
 
 dayjs.extend(relativeTime);
 
@@ -54,7 +55,9 @@ function getText(inventory: CurrentInventory) {
   return [inventory.item.name, inventory.item.category?.name || ""];
 }
 
-function mapResultItem() {}
+function mapResultItem({ item, matches }: FuzzyResult<CurrentInventory>) {
+  return { item, matches };
+}
 
 export default function Inventory() {
   const isAuth = useIsAuthenticated();
@@ -79,10 +82,6 @@ export default function Inventory() {
     return <Text>Error</Text>;
   }
 
-  const filtered = inventory.data.body.filter((i) =>
-    i.item.name.toLowerCase().includes(filter),
-  );
-
   return (
     <Stack>
       <TextInput
@@ -102,7 +101,8 @@ export default function Inventory() {
           )
         }
       />
-      {filtered.map(({ item, ...inv }) => (
+
+      {filteredList.map(({ item: { item, ...inv }, matches }) => (
         <InventoryCard
           {...inv}
           item={
@@ -113,7 +113,7 @@ export default function Inventory() {
                 fw={700}
                 fz="lg"
               >
-                {item.name}
+                <Highlight text={item.name} ranges={matches[0] || null} />
               </Anchor>
 
               {!!item.category && (
@@ -123,7 +123,10 @@ export default function Inventory() {
                   fw={700}
                   fz="xs"
                 >
-                  {item.category.name}
+                  <Highlight
+                    text={item.category.name}
+                    ranges={matches[1] || null}
+                  />
                 </Anchor>
               )}
             </Stack>
@@ -142,7 +145,7 @@ const InventoryCard = ({
   ...inventory
 }: Inventory & { item?: ReactNode }) => {
   const [edit, { open, close }] = useDisclosure(false);
-  const matches = useMediaQuery("(min-width: 36em)");
+  const match = useMediaQuery("(min-width: 36em)");
   const expiryDate = dayjs(inventory.expiryDate);
   const today = dayjs();
   const { data } = useSession();
@@ -163,7 +166,7 @@ const InventoryCard = ({
           <Group justify="space-between" wrap="nowrap" gap={"xs"}>
             <Group align="flex-start">
               <Stack gap="xs">
-                <Text fw={700}>{matches ? "Quantity" : "Qty"}</Text>
+                <Text fw={700}>{match ? "Quantity" : "Qty"}</Text>
                 <Text>{inventory.quantity}</Text>
               </Stack>
 
