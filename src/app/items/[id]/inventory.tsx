@@ -191,8 +191,6 @@ const InventoryCard = ({
   const today = dayjs();
   const isAdmin = useIsAdmin();
 
-  console.log(inventory.expiryDate);
-
   const timeLeft = expiryDate.isSame(today, "day")
     ? "Expiring today!"
     : expiryDate.isBefore(today, "day")
