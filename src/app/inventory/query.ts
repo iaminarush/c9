@@ -22,7 +22,6 @@ export const useDeleteInventory = () => {
   return client.inventory.deleteInventory.useMutation({
     onSuccess: ({ body }) => {
       queryClient.setQueryData<InventoriesResponse>(keys.current, (oldData) => {
-        console.log(oldData);
         if (!oldData) return undefined;
 
         const index = oldData.body.findIndex((i) => i.id === body.id);
@@ -52,11 +51,17 @@ export const useEditInventory = () => {
         const index = oldData.body.findIndex((i) => i.id === body.id);
 
         if (index !== -1) {
-          const newData = produce(oldData, (draft) => {
-            draft.body[index] = { ...draft.body[index]!, ...body };
-          });
-
-          return newData;
+          if (body.complete) {
+            const newData = produce(oldData, (draft) => {
+              draft.body.splice(index, 1);
+            });
+            return newData;
+          } else {
+            const newData = produce(oldData, (draft) => {
+              draft.body[index] = { ...draft.body[index]!, ...body };
+            });
+            return newData;
+          }
         }
 
         return oldData;
