@@ -5,7 +5,7 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 export const barcodes = pgTable("barcodes", {
   id: serial("id").primaryKey(),
-  barcode: varchar("barcode", { length: 13 }).notNull(),
+  barcode: varchar("barcode").notNull(),
   itemId: integer("item_id").notNull(),
 });
 

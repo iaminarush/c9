@@ -6,11 +6,7 @@ import BarcodeScanner from "@/components/barcodeScanner";
 import { itemContract } from "@/contracts/contract-item";
 import { recordDetailSchema } from "@/contracts/contract-record";
 import { isNumber } from "@/lib/utils";
-import {
-  createRecordSchema,
-  unitFamilySchema,
-  unitTypesSchema,
-} from "@/server/db/schema";
+import { createRecordSchema, unitFamilySchema, unitTypesSchema } from "@/server/db/schema";
 import {
   ActionIcon,
   Anchor,
@@ -61,11 +57,7 @@ import { toast } from "react-hot-toast";
 import * as R from "remeda";
 import useResizeObserver from "use-resize-observer";
 import { z } from "zod";
-import {
-  DeleteRecordComponent,
-  EditRecordComponent,
-  FormLayout,
-} from "./components";
+import { DeleteRecordComponent, EditRecordComponent, FormLayout } from "./components";
 import { AddInventoryComponent, InventoryPanel } from "./inventory";
 import {
   itemKeys,
@@ -123,11 +115,7 @@ export default function Item({ params: { id } }: { params: { id: string } }) {
           />
         </Group>
 
-        <Tabs
-          value={activeTab}
-          onChange={setActiveTab}
-          styles={{ panel: { paddingTop: "8px" } }}
-        >
+        <Tabs value={activeTab} onChange={setActiveTab} styles={{ panel: { paddingTop: "8px" } }}>
           <TabsList>
             <TabsTab value="prices">Prices</TabsTab>
             <TabsTab value="inventory">Inventory</TabsTab>
@@ -197,11 +185,7 @@ const TitleComponent = ({
         <Group gap={8} wrap={isOverflow ? "nowrap" : undefined}>
           {!!categoryId && (
             <Group gap={8} ref={ref} wrap="nowrap">
-              <Anchor
-                component={Link}
-                href={`/categories/${categoryId}` as Route}
-                lineClamp={1}
-              >
+              <Anchor component={Link} href={`/categories/${categoryId}` as Route} lineClamp={1}>
                 {category.data?.body.name}
               </Anchor>
               <Text>/</Text>
@@ -215,10 +199,7 @@ const TitleComponent = ({
           <Group>
             <Popover opened={popoverOpened} onClose={popoverHandlers.close}>
               <PopoverTarget>
-                <ActionIcon
-                  disabled={!data?.user.admin}
-                  onClick={popoverHandlers.open}
-                >
+                <ActionIcon disabled={!data?.user.admin} onClick={popoverHandlers.open}>
                   <IconEdit />
                 </ActionIcon>
               </PopoverTarget>
@@ -286,12 +267,7 @@ const TitleComponent = ({
           }
           disabled={isLoading}
         />
-        <ActionIcon
-          variant="transparent"
-          color="green"
-          onClick={handleUpdate}
-          loading={isLoading}
-        >
+        <ActionIcon variant="transparent" color="green" onClick={handleUpdate} loading={isLoading}>
           <IconDeviceFloppy />
         </ActionIcon>
       </Group>
@@ -335,14 +311,11 @@ const ParentCategoryComponent = ({
             { body: { category: Number(value) }, params: { id: itemId } },
             {
               onSuccess: (data) => {
-                queryClient.setQueryData<ItemResponse>(
-                  itemKeys.item(itemId),
-                  (oldData) => {
-                    if (!oldData) return undefined;
+                queryClient.setQueryData<ItemResponse>(itemKeys.item(itemId), (oldData) => {
+                  if (!oldData) return undefined;
 
-                    return { ...oldData, body: data.body };
-                  },
-                );
+                  return { ...oldData, body: data.body };
+                });
                 onClose();
               },
             },
@@ -407,10 +380,7 @@ const AddComponent = ({ id }: { id: string }) => {
           form={form}
           enableQueries={opened}
           submitButton={
-            <Button
-              onClick={form.handleSubmit(onSubmit)}
-              loading={createRecord.isLoading}
-            >
+            <Button onClick={form.handleSubmit(onSubmit)} loading={createRecord.isLoading}>
               Create Record
             </Button>
           }
@@ -427,9 +397,7 @@ const BarcodeComponent = ({ id }: { id: string }) => {
   const barcodes = useBarcodes(Number(id));
   const { data } = useSession();
   const { mutate, isLoading } = useDeleteBarcode();
-  const [scannedBarcode, setScannedBarocde] = useInputState<string | number>(
-    "",
-  );
+  const [scannedBarcode, setScannedBarocde] = useInputState<string | number>("");
 
   return (
     <>
@@ -449,10 +417,7 @@ const BarcodeComponent = ({ id }: { id: string }) => {
             </TabsList>
 
             <TabsPanel value="scanner">
-              <LoadingOverlay
-                visible={createBarcode.isLoading}
-                overlayProps={{ blur: 1 }}
-              />
+              <LoadingOverlay visible={createBarcode.isLoading} overlayProps={{ blur: 1 }} />
               {data?.user.admin ? (
                 <>
                   {scannedBarcode ? (
@@ -464,10 +429,7 @@ const BarcodeComponent = ({ id }: { id: string }) => {
                         label="Barcode"
                       />
                       <Button
-                        disabled={
-                          !data?.user.admin ||
-                          scannedBarcode.toString().length !== 13
-                        }
+                        disabled={!data?.user.admin || scannedBarcode.toString().length !== 13}
                         onClick={() => {
                           createBarcode.mutate(
                             {
@@ -516,15 +478,14 @@ const BarcodeComponent = ({ id }: { id: string }) => {
                         value={b.barcode}
                         height={75}
                         width={1.5}
+                        format={b.barcode.length === 13 ? "EAN13" : "EAN8"}
                       />
                       <ActionIcon
                         color="red"
                         variant="filled"
                         size="lg"
                         disabled={!data?.user.admin}
-                        onClick={() =>
-                          mutate({ params: { id: `${b.id}` }, body: null })
-                        }
+                        onClick={() => mutate({ params: { id: `${b.id}` }, body: null })}
                         loading={isLoading}
                       >
                         <IconTrash />
@@ -555,11 +516,7 @@ const DeleteComponent = ({ id }: { id: string }) => {
       { params: { id }, body: null },
       {
         onSuccess: ({ body }) => {
-          router.push(
-            body.category
-              ? `/categories/${body.category}`
-              : "/categories/uncategorized",
-          );
+          router.push(body.category ? `/categories/${body.category}` : "/categories/uncategorized");
           toast.success(`Item ${body.name} deleted`);
         },
       },
@@ -568,21 +525,11 @@ const DeleteComponent = ({ id }: { id: string }) => {
 
   return (
     <>
-      <ActionIcon
-        variant="filled"
-        color="red"
-        onClick={handlers.open}
-        disabled={!data?.user.admin}
-      >
+      <ActionIcon variant="filled" color="red" onClick={handlers.open} disabled={!data?.user.admin}>
         <IconTrash />
       </ActionIcon>
 
-      <Modal
-        opened={opened}
-        onClose={handlers.close}
-        title="Delete this item?"
-        centered
-      >
+      <Modal opened={opened} onClose={handlers.close} title="Delete this item?" centered>
         <Stack>
           <TextInput
             label="Please type delete to confirm"
@@ -604,9 +551,7 @@ const DeleteComponent = ({ id }: { id: string }) => {
   );
 };
 
-const customUnitRecordSchema = recordDetailSchema.merge(
-  z.object({ customUnit: z.string() }),
-);
+const customUnitRecordSchema = recordDetailSchema.merge(z.object({ customUnit: z.string() }));
 
 const standardUnitRecordSchema = recordDetailSchema.merge(
   z.object({
@@ -632,17 +577,13 @@ const RecordList = ({ itemId }: { itemId: string }) => {
       const customUnitRecords = data.body
         .filter((r) => !!r.customUnit)
         .sort(
-          (a, b) =>
-            Number(a.price) / Number(a.amount) -
-            Number(b.price) / Number(b.amount),
+          (a, b) => Number(a.price) / Number(a.amount) - Number(b.price) / Number(b.amount),
         ) as CustomUnitRecord[];
 
       const standardUnitRecords = data.body
         .filter((r) => !!r.unitType)
         .sort(
-          (a, b) =>
-            Number(a.price) / Number(a.amount) -
-            Number(b.price) / Number(b.amount),
+          (a, b) => Number(a.price) / Number(a.amount) - Number(b.price) / Number(b.amount),
         ) as StandardUnitRecord[];
 
       const uniqueUnitFamilies = R.uniqueBy(
@@ -657,10 +598,7 @@ const RecordList = ({ itemId }: { itemId: string }) => {
         <Stack>
           {!!standardUnitRecords.length && (
             <Stack>
-              <StandardUnitGroups
-                unitFamilies={uniqueUnitFamilies}
-                records={standardUnitRecords}
-              />
+              <StandardUnitGroups unitFamilies={uniqueUnitFamilies} records={standardUnitRecords} />
             </Stack>
           )}
           {!!customUnitRecords.length && (
@@ -686,10 +624,7 @@ const RecordCard = (record: Record) => {
 
   return (
     <Card p="xs" style={{ position: "relative" }} pb="lg">
-      <RecordUpdatedText
-        updatedAt={record.updatedAt}
-        createdAt={record.createdAt}
-      />
+      <RecordUpdatedText updatedAt={record.updatedAt} createdAt={record.createdAt} />
       <Group style={{ flexGrow: 1 }} justify="space-between" wrap="nowrap">
         <Stack gap="xs">
           <Group gap="md">
@@ -714,11 +649,7 @@ const RecordCard = (record: Record) => {
 
           <Group justify="space-between">
             <Group>
-              <NumberFormatter
-                prefix="$ "
-                value={record.price}
-                thousandSeparator
-              />
+              <NumberFormatter prefix="$ " value={record.price} thousandSeparator />
 
               <Text>
                 Weight: {record.amount} {unitLabel}

@@ -12,7 +12,7 @@ const BarcodeScannerPolyfilled = dynamic(
 
 export default function BarcodeScanner({
   handleScan,
-  formats = ["ean_13"],
+  formats = ["ean_13", "ean_8"],
 }: {
   handleScan: (code: string) => void;
   formats?: string[];
