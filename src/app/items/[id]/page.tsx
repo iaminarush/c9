@@ -429,7 +429,11 @@ const BarcodeComponent = ({ id }: { id: string }) => {
                         label="Barcode"
                       />
                       <Button
-                        disabled={!data?.user.admin || scannedBarcode.toString().length !== 13}
+                        disabled={
+                          !data?.user.admin ||
+                          scannedBarcode.toString().length !== 13 ||
+                          scannedBarcode.toString().length !== 8
+                        }
                         onClick={() => {
                           createBarcode.mutate(
                             {
