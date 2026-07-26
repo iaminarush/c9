@@ -1,4 +1,4 @@
-onlyBuiltDependencies:
+allowBuilds:
   - bcrypt
   - esbuild
   - msgpackr-extract
