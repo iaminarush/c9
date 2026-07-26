@@ -1,4 +1,4 @@
 allowBuilds:
-  - bcrypt
-  - esbuild
-  - msgpackr-extract
+  bcrypt: true
+  esbuild: true
+  msgpackr-extract: true
