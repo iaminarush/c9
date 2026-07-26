@@ -90,5 +90,5 @@
     "prettier": "^3.0.3",
     "ts-node": "^10.9.1"
   },
-  "packageManager": "pnpm@10.25.0"
+  "packageManager": "pnpm@11.17.0"
 }
