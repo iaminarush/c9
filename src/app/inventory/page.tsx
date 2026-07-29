@@ -68,6 +68,7 @@ export default function Inventory() {
     queryText: filter,
     getText,
     mapResultItem,
+    strategy: "off",
   });
 
   if (inventory.isLoading) {
