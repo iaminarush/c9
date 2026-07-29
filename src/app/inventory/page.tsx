@@ -85,23 +85,32 @@ export default function Inventory() {
 
   return (
     <Stack>
-      <TextInput
-        value={filter}
-        onChange={(e) => setFilter(e.currentTarget.value.toLowerCase())}
-        leftSection={<IconSearch size={20} />}
-        rightSection={
-          filter && (
-            <ActionIcon
-              color="red"
-              variant="filled"
-              size={20}
-              onClick={() => setFilter("")}
-            >
-              <IconX />
-            </ActionIcon>
-          )
-        }
-      />
+      <div
+        style={{
+          position: "sticky",
+          top: "var(--app-shell-header-height, 0rem)",
+          zIndex: 10,
+          backgroundColor: "var(--mantine-color-body)",
+        }}
+      >
+        <TextInput
+          value={filter}
+          onChange={(e) => setFilter(e.currentTarget.value.toLowerCase())}
+          leftSection={<IconSearch size={20} />}
+          rightSection={
+            filter && (
+              <ActionIcon
+                color="red"
+                variant="filled"
+                size={20}
+                onClick={() => setFilter("")}
+              >
+                <IconX />
+              </ActionIcon>
+            )
+          }
+        />
+      </div>
 
       {filteredList.map(({ item: { item, ...inv }, matches }) => (
         <InventoryCard
