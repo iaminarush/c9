@@ -7,7 +7,6 @@ import {
   ActionIcon,
   Box,
   Button,
-  Center,
   Group,
   Image,
   Modal,
@@ -204,43 +203,45 @@ const FormLayout = ({
 
       <TextFormField control={control} name="remark" label="Remarks" />
 
-      <Center>
-        <Stack>
-          <Text>Logo</Text>
-          {image ? (
-            <Group>
-              <Image
-                component={NextImage}
-                style={{ objectFit: "contain" }}
-                height={200}
-                width={200}
-                src={image}
-                radius="sm"
-                alt="Logo"
-              />
-              {/* TODO: Delete on cdn */}
-              <ActionIcon
-                color="red"
-                variant="filled"
-                onClick={() => setValue("image", null)}
-              >
-                <IconTrash />
-              </ActionIcon>
-            </Group>
-          ) : (
+      <Stack>
+        <Text>Logo</Text>
+        {image ? (
+          <Group wrap="nowrap">
+            <Box w={28} />
             <Image
-              style={{ objectFit: "contain" }}
+              component={NextImage}
+              style={{
+                objectFit: "contain",
+                flexBasis: "auto",
+              }}
               height={200}
               width={200}
-              src="/noImage.svg"
+              src={image}
               radius="sm"
-              alt="Logo placeholder"
+              alt="Logo"
             />
-          )}
+            {/* TODO: Delete on cdn */}
+            <ActionIcon
+              color="red"
+              variant="filled"
+              onClick={() => setValue("image", null)}
+            >
+              <IconTrash />
+            </ActionIcon>
+          </Group>
+        ) : (
+          <Image
+            style={{ objectFit: "contain", width: "100%", height: 200 }}
+            height={200}
+            width={200}
+            src="/noImage.svg"
+            radius="sm"
+            alt="Logo placeholder"
+          />
+        )}
 
-          <UploadByUrl setValue={setValue} />
-        </Stack>
-      </Center>
+        <UploadByUrl setValue={setValue} />
+      </Stack>
       {!!data?.user.admin && (
         <UploadButton
           endpoint="imageUploader"
