@@ -9,6 +9,7 @@ export const qrcodes = pgTable("qrcodes", {
   updatedAt: timestamp("updated_at"),
   createdAt: timestamp("created_at").defaultNow(),
   image: text("image"),
+  imageKey: text("image_key"),
 });
 
 export const qrcodeSchema = createSelectSchema(qrcodes);
