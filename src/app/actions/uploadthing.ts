@@ -12,9 +12,7 @@ export async function uploadImageByUrl(imageUrl: string) {
   const blob = await response.blob();
 
   if (!ALLOWED_IMAGE_TYPES.includes(blob.type)) {
-    throw new Error(
-      `Invalid file type: ${blob.type}. Only images are allowed.`,
-    );
+    throw new Error(`Invalid file type: ${blob.type}. Only images are allowed.`);
   }
 
   const file = new File([blob], "image-uploaded-by-link.png", {
@@ -28,4 +26,14 @@ export async function uploadImageByUrl(imageUrl: string) {
   }
 
   return { success: true, data: responseUt.data };
+}
+
+export async function deleteUploadByKey(key: string) {
+  const { success, deletedCount } = await utapi.deleteFiles(key);
+
+  if (!success) {
+    throw new Error("Delete file failed");
+  }
+
+  return { success, deletedCount };
 }

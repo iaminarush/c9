@@ -21,6 +21,8 @@ import {
 import toast from "react-hot-toast";
 import { z } from "zod";
 import { type Qrcode, useAddQrcode, useQrcodes, useUpdateQrcode } from "./query";
+import { useMutation } from "@tanstack/react-query";
+import { deleteUploadByKey } from "../actions/uploadthing";
 
 export default function Qrcodes() {
   const qrcodes = useQrcodes();
@@ -88,6 +90,7 @@ export default function Qrcodes() {
           control={control}
           setValue={setValue}
           setIsUploading={setIsUploading}
+          qrcodeId={qrcodeId}
           submitButton={
             <Button
               loading={isLoading}
@@ -144,6 +147,7 @@ const AddQrcode = () => {
           control={control}
           setValue={setValue}
           setIsUploading={setIsUploading}
+          qrcodeId={null}
           submitButton={
             <Button
               onClick={handleSubmit(onSubmit)}
@@ -164,15 +168,34 @@ const FormLayout = ({
   setValue,
   submitButton,
   setIsUploading,
+  qrcodeId,
 }: {
   control: Control<FormSchema>;
   setValue: UseFormSetValue<FormSchema>;
   submitButton: ReactNode;
   setIsUploading: (value: boolean) => void;
+  qrcodeId: number | null;
 }) => {
   const image = useWatch({ control, name: "image" });
+  const imageKey = useWatch({ control, name: "imageKey" }) || "";
+  const id = qrcodeId || 0;
   const { data } = useSession();
   const [opened, handlers] = useDisclosure(false);
+  const { mutate, isLoading } = useUpdateQrcode();
+  const { mutate: deleteMutate } = useMutation({
+    mutationFn: (key: string) => deleteUploadByKey(key),
+    onSuccess: () => {
+      setValue("image", null);
+      setValue("imageKey", null);
+    },
+  });
+
+  const deleteImage = () => {
+    if (id !== 0) {
+      mutate({ params: { id: `${id}` }, body: { imageKey: null, image: null } });
+    }
+    deleteMutate(imageKey);
+  };
 
   return (
     <Stack>
@@ -226,8 +249,15 @@ const FormLayout = ({
               radius="sm"
               alt="Logo"
             />
-            {/* TODO: Delete on cdn */}
-            <ActionIcon color="red" variant="filled" onClick={() => setValue("image", null)}>
+            <ActionIcon
+              color="red"
+              variant="filled"
+              onClick={() => {
+                console.log("delete");
+                deleteImage();
+              }}
+              loading={isLoading}
+            >
               <IconTrash />
             </ActionIcon>
           </Group>
@@ -278,8 +308,6 @@ const QrcodeButton = ({
 }) => {
   // TODO: Add optimistic update
 
-  console.log(qrcode);
-
   return (
     <Button
       size="lg"
@@ -305,6 +333,7 @@ const QrcodeButton = ({
         reset({
           name: qrcode.name,
           image: qrcode.image,
+          imageKey: qrcode.imageKey,
           remark: qrcode.remark,
           data: qrcode.data,
         });
