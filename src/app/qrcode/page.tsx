@@ -4,25 +4,9 @@ import BarcodeScanner from "@/components/barcodeScanner";
 import TextFormField from "@/components/hook-form/TextFormField";
 import { UploadButton } from "@/components/util/uploadthing";
 import { createQrcodeSchema } from "@/server/db/schema";
-import {
-  ActionIcon,
-  Box,
-  Button,
-  Group,
-  Image,
-  Modal,
-  Skeleton,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { ActionIcon, Box, Button, Group, Image, Modal, Skeleton, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import {
-  IconLink,
-  IconPhotoOff,
-  IconPlus,
-  IconQrcode,
-  IconTrash,
-} from "@tabler/icons-react";
+import { IconLink, IconPhotoOff, IconPlus, IconQrcode, IconTrash } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import NextImage from "next/image";
 import { ReactNode, useState } from "react";
@@ -36,12 +20,7 @@ import {
 } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
-import {
-  type Qrcode,
-  useAddQrcode,
-  useQrcodes,
-  useUpdateQrcode,
-} from "./query";
+import { type Qrcode, useAddQrcode, useQrcodes, useUpdateQrcode } from "./query";
 
 export default function Qrcodes() {
   const qrcodes = useQrcodes();
@@ -55,6 +34,7 @@ export default function Qrcodes() {
     defaultValues: {
       name: "",
       image: "",
+      imageKey: "",
       data: "",
     },
   });
@@ -91,12 +71,7 @@ export default function Qrcodes() {
           <AddQrcode />
         </Group>
         {qrcodes.data.body.map((q) => (
-          <QrcodeButton
-            key={q.id}
-            qrcode={q}
-            setQrcodeId={setQrcodeId}
-            reset={reset}
-          />
+          <QrcodeButton key={q.id} qrcode={q} setQrcodeId={setQrcodeId} reset={reset} />
         ))}
       </Stack>
 
@@ -218,11 +193,7 @@ const FormLayout = ({
         rules={{ required: "Required" }}
         required
         rightSection={
-          <ActionIcon
-            onClick={handlers.toggle}
-            variant="subtle"
-            color={opened ? "blue" : "white"}
-          >
+          <ActionIcon onClick={handlers.toggle} variant="subtle" color={opened ? "blue" : "white"}>
             <IconQrcode />
           </ActionIcon>
         }
@@ -256,11 +227,7 @@ const FormLayout = ({
               alt="Logo"
             />
             {/* TODO: Delete on cdn */}
-            <ActionIcon
-              color="red"
-              variant="filled"
-              onClick={() => setValue("image", null)}
-            >
+            <ActionIcon color="red" variant="filled" onClick={() => setValue("image", null)}>
               <IconTrash />
             </ActionIcon>
           </Group>
@@ -280,9 +247,10 @@ const FormLayout = ({
           endpoint="imageUploader"
           onUploadBegin={() => setIsUploading(true)}
           onClientUploadComplete={(res) => {
-            if (res[0]?.url) {
+            if (res[0]?.ufsUrl && res[0]?.key) {
               toast.success("Upload Completed");
-              setValue("image", res[0].url);
+              setValue("image", res[0].ufsUrl);
+              setValue("imageKey", res[0].key);
             } else {
               toast.error("Unknown error");
             }
@@ -309,6 +277,8 @@ const QrcodeButton = ({
   reset: UseFormReset<FormSchema>;
 }) => {
   // TODO: Add optimistic update
+
+  console.log(qrcode);
 
   return (
     <Button
