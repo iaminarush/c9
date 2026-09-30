@@ -17,12 +17,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import {
-  IconPhotoOff,
-  IconPlus,
-  IconStar,
-  IconTrash,
-} from "@tabler/icons-react";
+import { IconPhotoOff, IconPlus, IconStar, IconTrash } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import { ReactNode, useState } from "react";
 import {
@@ -38,7 +33,7 @@ import { z } from "zod";
 import { Store, useAddStore, useStores, useUpdateStore } from "./query";
 import NextImage from "next/image";
 import { useMutation } from "@tanstack/react-query";
-import { uploadImageByUrl } from "../actions/upload-image-by-url";
+import { uploadImageByUrl } from "../actions/uploadthing";
 
 export default function Stores() {
   const stores = useStores();
@@ -85,12 +80,7 @@ export default function Stores() {
           <AddStore />
         </Group>
         {stores.data.body.map((s) => (
-          <StoreButton
-            key={s.id}
-            store={s}
-            setStoreId={setStoreId}
-            reset={reset}
-          />
+          <StoreButton key={s.id} store={s} setStoreId={setStoreId} reset={reset} />
         ))}
       </Stack>
       <Modal
@@ -221,11 +211,7 @@ const FormLayout = ({
               alt="Logo"
             />
             {/* TODO: Delete on cdn */}
-            <ActionIcon
-              color="red"
-              variant="filled"
-              onClick={() => setValue("image", null)}
-            >
+            <ActionIcon color="red" variant="filled" onClick={() => setValue("image", null)}>
               <IconTrash />
             </ActionIcon>
           </Group>
@@ -266,11 +252,7 @@ const FormLayout = ({
   );
 };
 
-const UploadByUrl = ({
-  setValue,
-}: {
-  setValue: UseFormSetValue<FormSchema>;
-}) => {
+const UploadByUrl = ({ setValue }: { setValue: UseFormSetValue<FormSchema> }) => {
   const [url, setUrl] = useState("");
   const mutation = useMutation({
     mutationFn: () => uploadImageByUrl(url),
@@ -278,11 +260,7 @@ const UploadByUrl = ({
   });
   return (
     <>
-      <TextInput
-        value={url}
-        onChange={(e) => setUrl(e.currentTarget.value)}
-        label="Image URL"
-      />
+      <TextInput value={url} onChange={(e) => setUrl(e.currentTarget.value)} label="Image URL" />
       <Button onClick={() => mutation.mutate()} disabled={!url}>
         <Text>Upload via URL</Text>
       </Button>
@@ -336,9 +314,7 @@ const StoreButton = ({
             });
           }}
         >
-          <IconStar
-            fill={store.favourite ? `${theme.colors.yellow[5]}` : "transparent"}
-          />
+          <IconStar fill={store.favourite ? `${theme.colors.yellow[5]}` : "transparent"} />
         </ActionIcon>
       }
       onClick={() => {
