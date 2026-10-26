@@ -7,7 +7,6 @@ import {
   ActionIcon,
   Box,
   Button,
-  Center,
   Group,
   Image,
   Modal,
@@ -18,12 +17,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import {
-  IconPhotoOff,
-  IconPlus,
-  IconStar,
-  IconTrash,
-} from "@tabler/icons-react";
+import { IconPhotoOff, IconPlus, IconStar, IconTrash } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import { ReactNode, useState } from "react";
 import {
@@ -39,7 +33,7 @@ import { z } from "zod";
 import { Store, useAddStore, useStores, useUpdateStore } from "./query";
 import NextImage from "next/image";
 import { useMutation } from "@tanstack/react-query";
-import { uploadImageByUrl } from "../actions/upload-image-by-url";
+import { deleteUploadByKey, uploadImageByUrl } from "../actions/uploadthing";
 
 export default function Stores() {
   const stores = useStores();
@@ -47,6 +41,7 @@ export default function Stores() {
     defaultValues: {
       name: "",
       image: "",
+      imageKey: "",
     },
   });
   const [storeId, setStoreId] = useState<number | null>(null);
@@ -86,12 +81,7 @@ export default function Stores() {
           <AddStore />
         </Group>
         {stores.data.body.map((s) => (
-          <StoreButton
-            key={s.id}
-            store={s}
-            setStoreId={setStoreId}
-            reset={reset}
-          />
+          <StoreButton key={s.id} store={s} setStoreId={setStoreId} reset={reset} />
         ))}
       </Stack>
       <Modal
@@ -107,6 +97,7 @@ export default function Stores() {
           control={control}
           setValue={setValue}
           setIsUploading={setIsUploading}
+          storeId={storeId}
           submitButton={
             <Button
               loading={isLoading}
@@ -163,6 +154,7 @@ const AddStore = () => {
           control={control}
           setValue={setValue}
           setIsUploading={setIsUploading}
+          storeId={null}
           submitButton={
             <Button
               onClick={handleSubmit(onSubmit)}
@@ -183,14 +175,65 @@ const FormLayout = ({
   setValue,
   submitButton,
   setIsUploading,
+  storeId,
 }: {
   control: Control<FormSchema>;
   setValue: UseFormSetValue<FormSchema>;
   submitButton: ReactNode;
   setIsUploading: (value: boolean) => void;
+  storeId: number | null;
 }) => {
   const image = useWatch({ control, name: "image" });
+  const imageKey = useWatch({ control, name: "imageKey" }) || "";
+  const id = storeId || 0;
   const { data } = useSession();
+  const { mutate, isLoading: updateLoading } = useUpdateStore();
+  const { mutate: deleteMutate, isLoading: deleteLoading } = useMutation({
+    mutationFn: (key: string) => deleteUploadByKey(key),
+    onError: () => toast.error("Failed to delete image"),
+  });
+
+  const isLoading = updateLoading || deleteLoading;
+
+  const saveImage = (url: string, key: string) => {
+    const previousKey = imageKey;
+    setValue("image", url);
+    setValue("imageKey", key);
+
+    if (!previousKey || previousKey === key) {
+      return;
+    }
+
+    if (id !== 0) {
+      // Save the new image before removing the old file so the record never
+      // points at a deleted image.
+      mutate(
+        {
+          params: { id: `${id}` },
+          body: { image: url, imageKey: key },
+        },
+        {
+          onSuccess: () => deleteMutate(previousKey),
+          onError: () => toast.error("Failed to save image"),
+        },
+      );
+    } else {
+      // Unsaved store: nothing references the previous file.
+      deleteMutate(previousKey);
+    }
+  };
+
+  const deleteImage = () => {
+    if (id !== 0) {
+      mutate({ params: { id: `${id}` }, body: { image: null, imageKey: null } });
+    }
+    setValue("image", null);
+    setValue("imageKey", null);
+
+    if (imageKey) {
+      deleteMutate(imageKey);
+    }
+  };
 
   return (
     <Stack>
@@ -204,51 +247,56 @@ const FormLayout = ({
 
       <TextFormField control={control} name="remark" label="Remarks" />
 
-      <Center>
-        <Stack>
-          <Text>Logo</Text>
-          {image ? (
-            <Group>
-              <Image
-                component={NextImage}
-                style={{ objectFit: "contain" }}
-                height={200}
-                width={200}
-                src={image}
-                radius="sm"
-                alt="Logo"
-              />
-              {/* TODO: Delete on cdn */}
-              <ActionIcon
-                color="red"
-                variant="filled"
-                onClick={() => setValue("image", null)}
-              >
-                <IconTrash />
-              </ActionIcon>
-            </Group>
-          ) : (
+      <Stack>
+        <Text>Logo</Text>
+        {image ? (
+          <Group wrap="nowrap">
+            <Box w={28} />
             <Image
-              style={{ objectFit: "contain" }}
+              component={NextImage}
+              style={{
+                objectFit: "contain",
+                flexBasis: "auto",
+              }}
               height={200}
               width={200}
-              src="/noImage.svg"
+              src={image}
               radius="sm"
-              alt="Logo placeholder"
+              alt="Logo"
             />
-          )}
+            <ActionIcon
+              color="red"
+              variant="filled"
+              onClick={deleteImage}
+              loading={isLoading}
+              disabled={!data?.user.admin}
+            >
+              <IconTrash />
+            </ActionIcon>
+          </Group>
+        ) : (
+          <Image
+            style={{ objectFit: "contain", width: "100%", height: 200 }}
+            height={200}
+            width={200}
+            src="/noImage.svg"
+            radius="sm"
+            alt="Logo placeholder"
+          />
+        )}
 
-          <UploadByUrl setValue={setValue} />
-        </Stack>
-      </Center>
+        {!!data?.user.admin && <UploadByUrl onUploaded={saveImage} />}
+      </Stack>
       {!!data?.user.admin && (
         <UploadButton
           endpoint="imageUploader"
           onUploadBegin={() => setIsUploading(true)}
           onClientUploadComplete={(res) => {
-            if (res[0]?.ufsUrl) {
+            const uploaded = res[0];
+
+            if (uploaded?.ufsUrl && uploaded.key) {
               toast.success("Upload Completed");
-              setValue("image", res[0].ufsUrl);
+              saveImage(uploaded.ufsUrl, uploaded.key);
             } else {
               toast.error("Unknown error");
             }
@@ -266,22 +314,19 @@ const FormLayout = ({
 };
 
 const UploadByUrl = ({
-  setValue,
+  onUploaded,
 }: {
-  setValue: UseFormSetValue<FormSchema>;
+  onUploaded: (url: string, key: string) => void;
 }) => {
   const [url, setUrl] = useState("");
   const mutation = useMutation({
     mutationFn: () => uploadImageByUrl(url),
-    onSuccess: (data) => setValue("image", data.data.ufsUrl),
+    onSuccess: (data) => onUploaded(data.data.ufsUrl, data.data.key),
+    onError: () => toast.error("Failed to upload image"),
   });
   return (
     <>
-      <TextInput
-        value={url}
-        onChange={(e) => setUrl(e.currentTarget.value)}
-        label="Image URL"
-      />
+      <TextInput value={url} onChange={(e) => setUrl(e.currentTarget.value)} label="Image URL" />
       <Button onClick={() => mutation.mutate()} disabled={!url}>
         <Text>Upload via URL</Text>
       </Button>
@@ -335,13 +380,16 @@ const StoreButton = ({
             });
           }}
         >
-          <IconStar
-            fill={store.favourite ? `${theme.colors.yellow[5]}` : "transparent"}
-          />
+          <IconStar fill={store.favourite ? `${theme.colors.yellow[5]}` : "transparent"} />
         </ActionIcon>
       }
       onClick={() => {
-        reset({ name: store.name, image: store.image, remark: store.remark });
+        reset({
+          name: store.name,
+          image: store.image,
+          imageKey: store.imageKey,
+          remark: store.remark,
+        });
         setStoreId(store.id);
       }}
     >

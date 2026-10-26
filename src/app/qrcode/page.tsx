@@ -4,26 +4,9 @@ import BarcodeScanner from "@/components/barcodeScanner";
 import TextFormField from "@/components/hook-form/TextFormField";
 import { UploadButton } from "@/components/util/uploadthing";
 import { createQrcodeSchema } from "@/server/db/schema";
-import {
-  ActionIcon,
-  Box,
-  Button,
-  Center,
-  Group,
-  Image,
-  Modal,
-  Skeleton,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { ActionIcon, Box, Button, Group, Image, Modal, Skeleton, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import {
-  IconLink,
-  IconPhotoOff,
-  IconPlus,
-  IconQrcode,
-  IconTrash,
-} from "@tabler/icons-react";
+import { IconLink, IconPhotoOff, IconPlus, IconQrcode, IconTrash } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import NextImage from "next/image";
 import { ReactNode, useState } from "react";
@@ -37,12 +20,9 @@ import {
 } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
-import {
-  type Qrcode,
-  useAddQrcode,
-  useQrcodes,
-  useUpdateQrcode,
-} from "./query";
+import { type Qrcode, useAddQrcode, useQrcodes, useUpdateQrcode } from "./query";
+import { useMutation } from "@tanstack/react-query";
+import { deleteUploadByKey } from "../actions/uploadthing";
 
 export default function Qrcodes() {
   const qrcodes = useQrcodes();
@@ -56,6 +36,7 @@ export default function Qrcodes() {
     defaultValues: {
       name: "",
       image: "",
+      imageKey: "",
       data: "",
     },
   });
@@ -92,12 +73,7 @@ export default function Qrcodes() {
           <AddQrcode />
         </Group>
         {qrcodes.data.body.map((q) => (
-          <QrcodeButton
-            key={q.id}
-            qrcode={q}
-            setQrcodeId={setQrcodeId}
-            reset={reset}
-          />
+          <QrcodeButton key={q.id} qrcode={q} setQrcodeId={setQrcodeId} reset={reset} />
         ))}
       </Stack>
 
@@ -114,6 +90,7 @@ export default function Qrcodes() {
           control={control}
           setValue={setValue}
           setIsUploading={setIsUploading}
+          qrcodeId={qrcodeId}
           submitButton={
             <Button
               loading={isLoading}
@@ -170,6 +147,7 @@ const AddQrcode = () => {
           control={control}
           setValue={setValue}
           setIsUploading={setIsUploading}
+          qrcodeId={null}
           submitButton={
             <Button
               onClick={handleSubmit(onSubmit)}
@@ -190,15 +168,38 @@ const FormLayout = ({
   setValue,
   submitButton,
   setIsUploading,
+  qrcodeId,
 }: {
   control: Control<FormSchema>;
   setValue: UseFormSetValue<FormSchema>;
   submitButton: ReactNode;
   setIsUploading: (value: boolean) => void;
+  qrcodeId: number | null;
 }) => {
   const image = useWatch({ control, name: "image" });
+  const imageKey = useWatch({ control, name: "imageKey" }) || "";
+  const id = qrcodeId || 0;
   const { data } = useSession();
   const [opened, handlers] = useDisclosure(false);
+  const { mutate, isLoading: updateLoading } = useUpdateQrcode();
+  const { mutate: deleteMutate, isLoading: deleteLoading } = useMutation({
+    mutationFn: (key: string) => deleteUploadByKey(key),
+    onError: () => toast.error("Failed to delete image"),
+  });
+
+  const isLoading = updateLoading || deleteLoading;
+
+  const deleteImage = () => {
+    if (id !== 0) {
+      mutate({ params: { id: `${id}` }, body: { imageKey: null, image: null } });
+    }
+    setValue("image", null);
+    setValue("imageKey", null);
+
+    if (imageKey) {
+      deleteMutate(imageKey);
+    }
+  };
 
   return (
     <Stack>
@@ -219,11 +220,7 @@ const FormLayout = ({
         rules={{ required: "Required" }}
         required
         rightSection={
-          <ActionIcon
-            onClick={handlers.toggle}
-            variant="subtle"
-            color={opened ? "blue" : "white"}
-          >
+          <ActionIcon onClick={handlers.toggle} variant="subtle" color={opened ? "blue" : "white"}>
             <IconQrcode />
           </ActionIcon>
         }
@@ -239,49 +236,77 @@ const FormLayout = ({
         />
       )}
 
-      <Center>
-        <Stack>
-          <Text>Logo</Text>
-          {image ? (
-            <Group>
-              <Image
-                component={NextImage}
-                style={{ objectFit: "contain" }}
-                height={200}
-                width={200}
-                src={image}
-                radius="sm"
-                alt="Logo"
-              />
-              {/* TODO: Delete on cdn */}
-              <ActionIcon
-                color="red"
-                variant="filled"
-                onClick={() => setValue("image", null)}
-              >
-                <IconTrash />
-              </ActionIcon>
-            </Group>
-          ) : (
+      <Stack>
+        <Text>Logo</Text>
+        {image ? (
+          <Group wrap="nowrap">
+            <Box w={28} />
             <Image
-              style={{ objectFit: "contain" }}
+              component={NextImage}
+              style={{
+                objectFit: "contain",
+                flexBasis: "auto",
+              }}
               height={200}
               width={200}
-              src="/noImage.svg"
+              src={image}
               radius="sm"
-              alt="Logo placeholder"
+              alt="Logo"
             />
-          )}
-        </Stack>
-      </Center>
+            <ActionIcon
+              color="red"
+              variant="filled"
+              onClick={deleteImage}
+              loading={isLoading}
+              disabled={!data?.user.admin}
+            >
+              <IconTrash />
+            </ActionIcon>
+          </Group>
+        ) : (
+          <Image
+            style={{ objectFit: "contain", width: "100%", height: 200 }}
+            height={200}
+            width={200}
+            src="/noImage.svg"
+            radius="sm"
+            alt="Logo placeholder"
+          />
+        )}
+      </Stack>
       {!!data?.user.admin && (
         <UploadButton
           endpoint="imageUploader"
           onUploadBegin={() => setIsUploading(true)}
           onClientUploadComplete={(res) => {
-            if (res[0]?.url) {
+            const uploaded = res[0];
+
+            if (uploaded?.ufsUrl && uploaded.key) {
               toast.success("Upload Completed");
-              setValue("image", res[0].url);
+
+              const previousKey = imageKey;
+              setValue("image", uploaded.ufsUrl);
+              setValue("imageKey", uploaded.key);
+
+              if (previousKey && previousKey !== uploaded.key) {
+                if (id !== 0) {
+                  mutate(
+                    {
+                      params: { id: `${id}` },
+                      body: {
+                        image: uploaded.ufsUrl,
+                        imageKey: uploaded.key,
+                      },
+                    },
+                    {
+                      onSuccess: () => deleteMutate(previousKey),
+                      onError: () => toast.error("Failed to save image"),
+                    },
+                  );
+                } else {
+                  deleteMutate(previousKey);
+                }
+              }
             } else {
               toast.error("Unknown error");
             }
@@ -334,6 +359,7 @@ const QrcodeButton = ({
         reset({
           name: qrcode.name,
           image: qrcode.image,
+          imageKey: qrcode.imageKey,
           remark: qrcode.remark,
           data: qrcode.data,
         });

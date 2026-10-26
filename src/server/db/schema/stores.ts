@@ -10,6 +10,7 @@ export const stores = pgTable("stores", {
   updatedAt: timestamp("updated_at"),
   createdAt: timestamp("created_at").defaultNow(),
   image: text("image"),
+  imageKey: text("image_key"),
   favourite: boolean("favourite").notNull().default(false),
 });
 
