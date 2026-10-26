@@ -181,20 +181,24 @@ const FormLayout = ({
   const id = qrcodeId || 0;
   const { data } = useSession();
   const [opened, handlers] = useDisclosure(false);
-  const { mutate, isLoading } = useUpdateQrcode();
-  const { mutate: deleteMutate } = useMutation({
+  const { mutate, isLoading: updateLoading } = useUpdateQrcode();
+  const { mutate: deleteMutate, isLoading: deleteLoading } = useMutation({
     mutationFn: (key: string) => deleteUploadByKey(key),
-    onSuccess: () => {
-      setValue("image", null);
-      setValue("imageKey", null);
-    },
+    onError: () => toast.error("Failed to delete image"),
   });
+
+  const isLoading = updateLoading || deleteLoading;
 
   const deleteImage = () => {
     if (id !== 0) {
       mutate({ params: { id: `${id}` }, body: { imageKey: null, image: null } });
     }
-    deleteMutate(imageKey);
+    setValue("image", null);
+    setValue("imageKey", null);
+
+    if (imageKey) {
+      deleteMutate(imageKey);
+    }
   };
 
   return (
@@ -252,11 +256,9 @@ const FormLayout = ({
             <ActionIcon
               color="red"
               variant="filled"
-              onClick={() => {
-                console.log("delete");
-                deleteImage();
-              }}
+              onClick={deleteImage}
               loading={isLoading}
+              disabled={!data?.user.admin}
             >
               <IconTrash />
             </ActionIcon>
@@ -277,10 +279,34 @@ const FormLayout = ({
           endpoint="imageUploader"
           onUploadBegin={() => setIsUploading(true)}
           onClientUploadComplete={(res) => {
-            if (res[0]?.ufsUrl && res[0]?.key) {
+            const uploaded = res[0];
+
+            if (uploaded?.ufsUrl && uploaded.key) {
               toast.success("Upload Completed");
-              setValue("image", res[0].ufsUrl);
-              setValue("imageKey", res[0].key);
+
+              const previousKey = imageKey;
+              setValue("image", uploaded.ufsUrl);
+              setValue("imageKey", uploaded.key);
+
+              if (previousKey && previousKey !== uploaded.key) {
+                if (id !== 0) {
+                  mutate(
+                    {
+                      params: { id: `${id}` },
+                      body: {
+                        image: uploaded.ufsUrl,
+                        imageKey: uploaded.key,
+                      },
+                    },
+                    {
+                      onSuccess: () => deleteMutate(previousKey),
+                      onError: () => toast.error("Failed to save image"),
+                    },
+                  );
+                } else {
+                  deleteMutate(previousKey);
+                }
+              }
             } else {
               toast.error("Unknown error");
             }

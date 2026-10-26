@@ -33,7 +33,7 @@ import { z } from "zod";
 import { Store, useAddStore, useStores, useUpdateStore } from "./query";
 import NextImage from "next/image";
 import { useMutation } from "@tanstack/react-query";
-import { uploadImageByUrl } from "../actions/uploadthing";
+import { deleteUploadByKey, uploadImageByUrl } from "../actions/uploadthing";
 
 export default function Stores() {
   const stores = useStores();
@@ -41,6 +41,7 @@ export default function Stores() {
     defaultValues: {
       name: "",
       image: "",
+      imageKey: "",
     },
   });
   const [storeId, setStoreId] = useState<number | null>(null);
@@ -96,6 +97,7 @@ export default function Stores() {
           control={control}
           setValue={setValue}
           setIsUploading={setIsUploading}
+          storeId={storeId}
           submitButton={
             <Button
               loading={isLoading}
@@ -152,6 +154,7 @@ const AddStore = () => {
           control={control}
           setValue={setValue}
           setIsUploading={setIsUploading}
+          storeId={null}
           submitButton={
             <Button
               onClick={handleSubmit(onSubmit)}
@@ -172,14 +175,65 @@ const FormLayout = ({
   setValue,
   submitButton,
   setIsUploading,
+  storeId,
 }: {
   control: Control<FormSchema>;
   setValue: UseFormSetValue<FormSchema>;
   submitButton: ReactNode;
   setIsUploading: (value: boolean) => void;
+  storeId: number | null;
 }) => {
   const image = useWatch({ control, name: "image" });
+  const imageKey = useWatch({ control, name: "imageKey" }) || "";
+  const id = storeId || 0;
   const { data } = useSession();
+  const { mutate, isLoading: updateLoading } = useUpdateStore();
+  const { mutate: deleteMutate, isLoading: deleteLoading } = useMutation({
+    mutationFn: (key: string) => deleteUploadByKey(key),
+    onError: () => toast.error("Failed to delete image"),
+  });
+
+  const isLoading = updateLoading || deleteLoading;
+
+  const saveImage = (url: string, key: string) => {
+    const previousKey = imageKey;
+    setValue("image", url);
+    setValue("imageKey", key);
+
+    if (!previousKey || previousKey === key) {
+      return;
+    }
+
+    if (id !== 0) {
+      // Save the new image before removing the old file so the record never
+      // points at a deleted image.
+      mutate(
+        {
+          params: { id: `${id}` },
+          body: { image: url, imageKey: key },
+        },
+        {
+          onSuccess: () => deleteMutate(previousKey),
+          onError: () => toast.error("Failed to save image"),
+        },
+      );
+    } else {
+      // Unsaved store: nothing references the previous file.
+      deleteMutate(previousKey);
+    }
+  };
+
+  const deleteImage = () => {
+    if (id !== 0) {
+      mutate({ params: { id: `${id}` }, body: { image: null, imageKey: null } });
+    }
+    setValue("image", null);
+    setValue("imageKey", null);
+
+    if (imageKey) {
+      deleteMutate(imageKey);
+    }
+  };
 
   return (
     <Stack>
@@ -210,8 +264,13 @@ const FormLayout = ({
               radius="sm"
               alt="Logo"
             />
-            {/* TODO: Delete on cdn */}
-            <ActionIcon color="red" variant="filled" onClick={() => setValue("image", null)}>
+            <ActionIcon
+              color="red"
+              variant="filled"
+              onClick={deleteImage}
+              loading={isLoading}
+              disabled={!data?.user.admin}
+            >
               <IconTrash />
             </ActionIcon>
           </Group>
@@ -226,16 +285,18 @@ const FormLayout = ({
           />
         )}
 
-        <UploadByUrl setValue={setValue} />
+        {!!data?.user.admin && <UploadByUrl onUploaded={saveImage} />}
       </Stack>
       {!!data?.user.admin && (
         <UploadButton
           endpoint="imageUploader"
           onUploadBegin={() => setIsUploading(true)}
           onClientUploadComplete={(res) => {
-            if (res[0]?.ufsUrl) {
+            const uploaded = res[0];
+
+            if (uploaded?.ufsUrl && uploaded.key) {
               toast.success("Upload Completed");
-              setValue("image", res[0].ufsUrl);
+              saveImage(uploaded.ufsUrl, uploaded.key);
             } else {
               toast.error("Unknown error");
             }
@@ -252,11 +313,16 @@ const FormLayout = ({
   );
 };
 
-const UploadByUrl = ({ setValue }: { setValue: UseFormSetValue<FormSchema> }) => {
+const UploadByUrl = ({
+  onUploaded,
+}: {
+  onUploaded: (url: string, key: string) => void;
+}) => {
   const [url, setUrl] = useState("");
   const mutation = useMutation({
     mutationFn: () => uploadImageByUrl(url),
-    onSuccess: (data) => setValue("image", data.data.ufsUrl),
+    onSuccess: (data) => onUploaded(data.data.ufsUrl, data.data.key),
+    onError: () => toast.error("Failed to upload image"),
   });
   return (
     <>
@@ -318,7 +384,12 @@ const StoreButton = ({
         </ActionIcon>
       }
       onClick={() => {
-        reset({ name: store.name, image: store.image, remark: store.remark });
+        reset({
+          name: store.name,
+          image: store.image,
+          imageKey: store.imageKey,
+          remark: store.remark,
+        });
         setStoreId(store.id);
       }}
     >
