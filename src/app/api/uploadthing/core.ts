@@ -1,26 +1,21 @@
-import { getToken } from "next-auth/jwt";
 import { createUploadthing } from "uploadthing/next";
 import { UploadThingError, type FileRouter } from "uploadthing/server";
 import { auth } from "../auth/[...nextauth]/auth";
 
 const f = createUploadthing();
 
-// const auth = () => ({ id: "fakeId" });
-
 export const ourFileRouter = {
   imageUploader: f({ image: {} })
-    .middleware(async ({ req }) => {
-      const token = await getToken({ req });
-
-      // if (!token?.admin) throw new UploadThingError("Unauthorized");
-
+    .middleware(async () => {
       const session = await auth();
 
+      // The UI only exposes uploads to admins; enforce it here too.
       if (!session) throw new UploadThingError("Unauthorized");
+      if (!session.user.admin) throw new UploadThingError("No permission");
 
       return { userId: session.user.id };
     })
-    .onUploadComplete(async ({ metadata, file }) => {
+    .onUploadComplete(async ({ metadata }) => {
       return { uploadedBy: metadata.userId };
     }),
 } satisfies FileRouter;
