@@ -10,14 +10,7 @@ import { IconLink, IconPhotoOff, IconPlus, IconQrcode, IconTrash } from "@tabler
 import { useSession } from "next-auth/react";
 import NextImage from "next/image";
 import { ReactNode, useState } from "react";
-import {
-  Control,
-  SubmitHandler,
-  useForm,
-  UseFormReset,
-  UseFormSetValue,
-  useWatch,
-} from "react-hook-form";
+import { Control, SubmitHandler, useForm, UseFormSetValue } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 import { type Qrcode, useAddQrcode, useQrcodes, useUpdateQrcode } from "./query";
@@ -28,6 +21,7 @@ export default function Qrcodes() {
   const qrcodes = useQrcodes();
 
   const [qrcodeId, setQrcodeId] = useState<number | null>(null);
+  const [imageState, setImageState] = useState<ImageState>(emptyImage);
   const [isUploading, setIsUploading] = useState(false);
   const { mutate, isLoading } = useUpdateQrcode();
   const { data } = useSession();
@@ -35,16 +29,17 @@ export default function Qrcodes() {
   const { control, setValue, reset, handleSubmit } = useForm<FormSchema>({
     defaultValues: {
       name: "",
-      image: "",
-      imageKey: "",
       data: "",
     },
   });
 
-  const onSubmit: SubmitHandler<FormSchema> = (data) => {
+  const onSubmit: SubmitHandler<FormSchema> = ({ name, remark, data }) => {
     if (qrcodeId) {
       mutate(
-        { params: { id: `${qrcodeId}` }, body: data },
+        {
+          params: { id: `${qrcodeId}` },
+          body: { name, remark, data },
+        },
         {
           onSuccess: ({ body }) => {
             toast.success(`Updated ${body.name}`);
@@ -73,7 +68,22 @@ export default function Qrcodes() {
           <AddQrcode />
         </Group>
         {qrcodes.data.body.map((q) => (
-          <QrcodeButton key={q.id} qrcode={q} setQrcodeId={setQrcodeId} reset={reset} />
+          <QrcodeButton
+            key={q.id}
+            qrcode={q}
+            onSelect={(qrcode) => {
+              reset({
+                name: qrcode.name,
+                remark: qrcode.remark,
+                data: qrcode.data,
+              });
+              setImageState({
+                image: qrcode.image,
+                imageKey: qrcode.imageKey,
+              });
+              setQrcodeId(qrcode.id);
+            }}
+          />
         ))}
       </Stack>
 
@@ -81,6 +91,7 @@ export default function Qrcodes() {
         opened={!!qrcodeId}
         onClose={() => {
           setQrcodeId(null);
+          setImageState(emptyImage);
           setIsUploading(false);
         }}
         centered
@@ -91,6 +102,9 @@ export default function Qrcodes() {
           setValue={setValue}
           setIsUploading={setIsUploading}
           qrcodeId={qrcodeId}
+          image={imageState.image}
+          imageKey={imageState.imageKey}
+          onImageChange={setImageState}
           submitButton={
             <Button
               loading={isLoading}
@@ -106,7 +120,17 @@ export default function Qrcodes() {
   );
 }
 
-type FormSchema = z.infer<typeof createQrcodeSchema>;
+type FormSchema = Pick<
+  z.infer<typeof createQrcodeSchema>,
+  "name" | "remark" | "data"
+>;
+
+type ImageState = {
+  image: string | null;
+  imageKey: string | null;
+};
+
+const emptyImage: ImageState = { image: null, imageKey: null };
 
 const AddQrcode = () => {
   const [opened, handlers] = useDisclosure(false);
@@ -114,14 +138,16 @@ const AddQrcode = () => {
   const { data } = useSession();
   const { mutate, isLoading } = useAddQrcode();
   const [isUploading, setIsUploading] = useState(false);
+  const [imageState, setImageState] = useState<ImageState>(emptyImage);
 
   const onSubmit: SubmitHandler<FormSchema> = (data) => {
     mutate(
-      { body: data },
+      { body: { ...data, image: imageState.image, imageKey: imageState.imageKey } },
       {
         onSuccess: ({ body }) => {
           toast.success(`${body.name} added`);
           reset();
+          setImageState(emptyImage);
           handlers.close();
         },
       },
@@ -148,6 +174,9 @@ const AddQrcode = () => {
           setValue={setValue}
           setIsUploading={setIsUploading}
           qrcodeId={null}
+          image={imageState.image}
+          imageKey={imageState.imageKey}
+          onImageChange={setImageState}
           submitButton={
             <Button
               onClick={handleSubmit(onSubmit)}
@@ -169,15 +198,19 @@ const FormLayout = ({
   submitButton,
   setIsUploading,
   qrcodeId,
+  image,
+  imageKey,
+  onImageChange,
 }: {
   control: Control<FormSchema>;
   setValue: UseFormSetValue<FormSchema>;
   submitButton: ReactNode;
   setIsUploading: (value: boolean) => void;
   qrcodeId: number | null;
+  image: string | null;
+  imageKey: string | null;
+  onImageChange: (image: ImageState) => void;
 }) => {
-  const image = useWatch({ control, name: "image" });
-  const imageKey = useWatch({ control, name: "imageKey" }) || "";
   const id = qrcodeId || 0;
   const { data } = useSession();
   const [opened, handlers] = useDisclosure(false);
@@ -189,17 +222,41 @@ const FormLayout = ({
 
   const isLoading = updateLoading || deleteLoading;
 
-  const deleteImage = () => {
-    if (id !== 0) {
-      mutate({ params: { id: `${id}` }, body: { imageKey: null, image: null } });
-    }
-    setValue("image", null);
-    setValue("imageKey", null);
+  // Image changes are persisted on their own, without waiting for the form
+  // submit. A qrcode that has not been created yet keeps the image in state so
+  // it can be sent along with the "Add" request.
+  const saveImage = (nextImage: string | null, nextImageKey: string | null) => {
+    const previous: ImageState = { image, imageKey };
 
-    if (imageKey) {
-      deleteMutate(imageKey);
+    onImageChange({ image: nextImage, imageKey: nextImageKey });
+
+    if (id === 0) {
+      if (imageKey && imageKey !== nextImageKey) {
+        deleteMutate(imageKey);
+      }
+      return;
     }
+
+    mutate(
+      {
+        params: { id: `${id}` },
+        body: { image: nextImage, imageKey: nextImageKey },
+      },
+      {
+        onSuccess: () => {
+          if (imageKey && imageKey !== nextImageKey) {
+            deleteMutate(imageKey);
+          }
+        },
+        onError: () => {
+          toast.error("Failed to save image");
+          onImageChange(previous);
+        },
+      },
+    );
   };
+
+  const deleteImage = () => saveImage(null, null);
 
   return (
     <Stack>
@@ -283,30 +340,7 @@ const FormLayout = ({
 
             if (uploaded?.ufsUrl && uploaded.key) {
               toast.success("Upload Completed");
-
-              const previousKey = imageKey;
-              setValue("image", uploaded.ufsUrl);
-              setValue("imageKey", uploaded.key);
-
-              if (previousKey && previousKey !== uploaded.key) {
-                if (id !== 0) {
-                  mutate(
-                    {
-                      params: { id: `${id}` },
-                      body: {
-                        image: uploaded.ufsUrl,
-                        imageKey: uploaded.key,
-                      },
-                    },
-                    {
-                      onSuccess: () => deleteMutate(previousKey),
-                      onError: () => toast.error("Failed to save image"),
-                    },
-                  );
-                } else {
-                  deleteMutate(previousKey);
-                }
-              }
+              saveImage(uploaded.ufsUrl, uploaded.key);
             } else {
               toast.error("Unknown error");
             }
@@ -325,12 +359,10 @@ const FormLayout = ({
 
 const QrcodeButton = ({
   qrcode,
-  setQrcodeId,
-  reset,
+  onSelect,
 }: {
   qrcode: Qrcode;
-  setQrcodeId: (id: number) => void;
-  reset: UseFormReset<FormSchema>;
+  onSelect: (qrcode: Qrcode) => void;
 }) => {
   // TODO: Add optimistic update
 
@@ -355,16 +387,7 @@ const QrcodeButton = ({
           <IconPhotoOff width={40} />
         )
       }
-      onClick={() => {
-        reset({
-          name: qrcode.name,
-          image: qrcode.image,
-          imageKey: qrcode.imageKey,
-          remark: qrcode.remark,
-          data: qrcode.data,
-        });
-        setQrcodeId(qrcode.id);
-      }}
+      onClick={() => onSelect(qrcode)}
       rightSection={
         <ActionIcon
           variant="subtle"
