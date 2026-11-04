@@ -20,14 +20,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconPhotoOff, IconPlus, IconStar, IconTrash } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import { ReactNode, useState } from "react";
-import {
-  Control,
-  SubmitHandler,
-  UseFormReset,
-  UseFormSetValue,
-  useForm,
-  useWatch,
-} from "react-hook-form";
+import { Control, SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 import { Store, useAddStore, useStores, useUpdateStore } from "./query";
@@ -37,22 +30,24 @@ import { deleteUploadByKey, uploadImageByUrl } from "../actions/uploadthing";
 
 export default function Stores() {
   const stores = useStores();
-  const { control, setValue, reset, handleSubmit } = useForm<FormSchema>({
+  const { control, reset, handleSubmit } = useForm<FormSchema>({
     defaultValues: {
       name: "",
-      image: "",
-      imageKey: "",
     },
   });
   const [storeId, setStoreId] = useState<number | null>(null);
+  const [imageState, setImageState] = useState<ImageState>(emptyImage);
   const { mutate, isLoading } = useUpdateStore();
   const { data } = useSession();
   const [isUploading, setIsUploading] = useState(false);
 
-  const onSubmit: SubmitHandler<FormSchema> = (data) => {
+  const onSubmit: SubmitHandler<FormSchema> = ({ name, remark }) => {
     if (storeId) {
       mutate(
-        { params: { id: `${storeId}` }, body: data },
+        {
+          params: { id: `${storeId}` },
+          body: { name, remark },
+        },
         {
           onSuccess: ({ body }) => {
             toast.success(`Updated ${body.name}`);
@@ -81,13 +76,28 @@ export default function Stores() {
           <AddStore />
         </Group>
         {stores.data.body.map((s) => (
-          <StoreButton key={s.id} store={s} setStoreId={setStoreId} reset={reset} />
+          <StoreButton
+            key={s.id}
+            store={s}
+            onSelect={(store) => {
+              reset({
+                name: store.name,
+                remark: store.remark,
+              });
+              setImageState({
+                image: store.image,
+                imageKey: store.imageKey,
+              });
+              setStoreId(store.id);
+            }}
+          />
         ))}
       </Stack>
       <Modal
         opened={!!storeId}
         onClose={() => {
           setStoreId(null);
+          setImageState(emptyImage);
           setIsUploading(false);
         }}
         centered
@@ -95,9 +105,11 @@ export default function Stores() {
       >
         <FormLayout
           control={control}
-          setValue={setValue}
           setIsUploading={setIsUploading}
           storeId={storeId}
+          image={imageState.image}
+          imageKey={imageState.imageKey}
+          onImageChange={setImageState}
           submitButton={
             <Button
               loading={isLoading}
@@ -113,22 +125,31 @@ export default function Stores() {
   );
 }
 
-type FormSchema = z.infer<typeof createStoreSchema>;
+type FormSchema = Pick<z.infer<typeof createStoreSchema>, "name" | "remark">;
+
+type ImageState = {
+  image: string | null;
+  imageKey: string | null;
+};
+
+const emptyImage: ImageState = { image: null, imageKey: null };
 
 const AddStore = () => {
   const [opened, handlers] = useDisclosure(false);
-  const { control, handleSubmit, setValue, reset } = useForm<FormSchema>();
+  const { control, handleSubmit, reset } = useForm<FormSchema>();
   const { data } = useSession();
   const { mutate, isLoading } = useAddStore();
   const [isUploading, setIsUploading] = useState(false);
+  const [imageState, setImageState] = useState<ImageState>(emptyImage);
 
   const onSubmit: SubmitHandler<FormSchema> = (data) => {
     mutate(
-      { body: data },
+      { body: { ...data, image: imageState.image, imageKey: imageState.imageKey } },
       {
         onSuccess: ({ body }) => {
           toast.success(`${body.name} added`);
           reset();
+          setImageState(emptyImage);
           handlers.close();
         },
       },
@@ -152,9 +173,11 @@ const AddStore = () => {
       >
         <FormLayout
           control={control}
-          setValue={setValue}
           setIsUploading={setIsUploading}
           storeId={null}
+          image={imageState.image}
+          imageKey={imageState.imageKey}
+          onImageChange={setImageState}
           submitButton={
             <Button
               onClick={handleSubmit(onSubmit)}
@@ -172,19 +195,21 @@ const AddStore = () => {
 
 const FormLayout = ({
   control,
-  setValue,
   submitButton,
   setIsUploading,
   storeId,
+  image,
+  imageKey,
+  onImageChange,
 }: {
   control: Control<FormSchema>;
-  setValue: UseFormSetValue<FormSchema>;
   submitButton: ReactNode;
   setIsUploading: (value: boolean) => void;
   storeId: number | null;
+  image: string | null;
+  imageKey: string | null;
+  onImageChange: (image: ImageState) => void;
 }) => {
-  const image = useWatch({ control, name: "image" });
-  const imageKey = useWatch({ control, name: "imageKey" }) || "";
   const id = storeId || 0;
   const { data } = useSession();
   const { mutate, isLoading: updateLoading } = useUpdateStore();
@@ -195,45 +220,43 @@ const FormLayout = ({
 
   const isLoading = updateLoading || deleteLoading;
 
-  const saveImage = (url: string, key: string) => {
-    const previousKey = imageKey;
-    setValue("image", url);
-    setValue("imageKey", key);
+  // Image changes are persisted on their own, without waiting for the form
+  // submit. A store that has not been created yet keeps the image in state so
+  // it can be sent along with the "Add" request.
+  const saveImage = (nextImage: string | null, nextImageKey: string | null) => {
+    const previous: ImageState = { image, imageKey };
 
-    if (!previousKey || previousKey === key) {
+    onImageChange({ image: nextImage, imageKey: nextImageKey });
+
+    if (id === 0) {
+      if (imageKey && imageKey !== nextImageKey) {
+        deleteMutate(imageKey);
+      }
       return;
     }
 
-    if (id !== 0) {
-      // Save the new image before removing the old file so the record never
-      // points at a deleted image.
-      mutate(
-        {
-          params: { id: `${id}` },
-          body: { image: url, imageKey: key },
+    mutate(
+      {
+        params: { id: `${id}` },
+        body: { image: nextImage, imageKey: nextImageKey },
+      },
+      {
+        // Save the new image before removing the old file so the record never
+        // points at a deleted image.
+        onSuccess: () => {
+          if (imageKey && imageKey !== nextImageKey) {
+            deleteMutate(imageKey);
+          }
         },
-        {
-          onSuccess: () => deleteMutate(previousKey),
-          onError: () => toast.error("Failed to save image"),
+        onError: () => {
+          toast.error("Failed to save image");
+          onImageChange(previous);
         },
-      );
-    } else {
-      // Unsaved store: nothing references the previous file.
-      deleteMutate(previousKey);
-    }
+      },
+    );
   };
 
-  const deleteImage = () => {
-    if (id !== 0) {
-      mutate({ params: { id: `${id}` }, body: { image: null, imageKey: null } });
-    }
-    setValue("image", null);
-    setValue("imageKey", null);
-
-    if (imageKey) {
-      deleteMutate(imageKey);
-    }
-  };
+  const deleteImage = () => saveImage(null, null);
 
   return (
     <Stack>
@@ -336,12 +359,10 @@ const UploadByUrl = ({
 
 const StoreButton = ({
   store,
-  setStoreId,
-  reset,
+  onSelect,
 }: {
   store: Store;
-  setStoreId: (id: number) => void;
-  reset: UseFormReset<FormSchema>;
+  onSelect: (store: Store) => void;
 }) => {
   const theme = useMantineTheme();
   // TODO: Add optimistic update
@@ -383,15 +404,7 @@ const StoreButton = ({
           <IconStar fill={store.favourite ? `${theme.colors.yellow[5]}` : "transparent"} />
         </ActionIcon>
       }
-      onClick={() => {
-        reset({
-          name: store.name,
-          image: store.image,
-          imageKey: store.imageKey,
-          remark: store.remark,
-        });
-        setStoreId(store.id);
-      }}
+      onClick={() => onSelect(store)}
     >
       {store.name}
     </Button>
