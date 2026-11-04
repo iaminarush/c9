@@ -120,10 +120,7 @@ export default function Qrcodes() {
   );
 }
 
-type FormSchema = Pick<
-  z.infer<typeof createQrcodeSchema>,
-  "name" | "remark" | "data"
->;
+type FormSchema = Pick<z.infer<typeof createQrcodeSchema>, "name" | "remark" | "data">;
 
 type ImageState = {
   image: string | null;
@@ -222,9 +219,6 @@ const FormLayout = ({
 
   const isLoading = updateLoading || deleteLoading;
 
-  // Image changes are persisted on their own, without waiting for the form
-  // submit. A qrcode that has not been created yet keeps the image in state so
-  // it can be sent along with the "Add" request.
   const saveImage = (nextImage: string | null, nextImageKey: string | null) => {
     const previous: ImageState = { image, imageKey };
 
