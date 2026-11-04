@@ -36,6 +36,31 @@ npx ts-node dbml.ts
 - **Env validation at runtime**: `@t3-oss/env-nextjs` in `src/env.mjs` validates `DATABASE_URL`, `NEXTAUTH_SECRET`, `UPLOADTHING_TOKEN`. `next.config.mjs` imports this file first, so invalid env crashes import-time. CI provides fake values for these.
 - **Drizzle uses `push`, not migrate**: schema changes are pushed directly. The `drizzle/` directory holds Drizzle Kit metadata, not migration files.
 
+## Secrets & Data Access
+
+Tool output is sent to the model provider. Anything a command prints enters
+provider logs, so treat the terminal as an egress path, not a private scratchpad.
+
+- **Never read `.env`.** No `cat`, `grep`, `head`, `sed -n`, or any command that
+  emits its contents. Do not print `DATABASE_URL`, `NEXTAUTH_SECRET`, or
+  `UPLOADTHING_TOKEN` — masked or otherwise.
+- **Never connect to the database.** `DATABASE_URL` points at Neon prod. Running
+  SQL, `drizzle-kit`, or any node script that imports `src/server/db/db.ts`
+  transmits the credential and exports real row data.
+- **Never invoke `pnpm push`, `pnpm pull`, or `pnpm studio`.** All three hit the
+  live database. The human runs these.
+- **Derive DB facts from source.** Answer column/row questions from
+  `src/server/db/schema/*.ts` and the Drizzle types — not from
+  `information_schema`. To inspect generated SQL, call `.toSQL()` on a Drizzle
+  query instead of executing it.
+- **Never write to the database.** No `INSERT`/`UPDATE`/`DELETE` under any
+  circumstances.
+- **Masking is not a safe substitute.** Piping a secret through `sed` still
+  hands the raw value to the child process, and leaks fragments when the value
+  contains shell metacharacters.
+- **Ask first.** If a task appears to genuinely require `.env` or database
+  access, stop and request permission instead of proceeding.
+
 ## Code Conventions
 
 - `@/*` → `./src/*`
